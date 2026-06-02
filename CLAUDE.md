@@ -10,7 +10,7 @@ Detta dokument innehåller all kontext som behövs för att göra ändringar i p
 
 1. Scolia darttavla detekterar kast via kamera
 2. Scolia SBC skickar event till Scolia Cloud
-3. Vår app (index.js) tar emot THROW_DETECTED via WebSocket
+3. Vår app (src/index.ts → Application.ts) tar emot THROW_DETECTED via WebSocket
 4. App triggar LightShark executor via OSC baserat på kasttyp
 5. Vid TAKEOUT_FINISHED (pilar tas ut) → återställ till basbelysning
 6. Playwright öppnar Scolia webbapp och övervakar DOM för bust/leg-won/set-won
@@ -141,8 +141,8 @@ KNX IP-gateway ──extern länk──→ LightShark (KNX allOff/allOn påverka
 
 - GameState.test.ts (22 tests, 100% coverage)
 - EffectResolver.test.ts (18 tests)
-- SpecialEventDetector.test.ts (8 tests)
-- **Total: 48 passing tests**
+- SpecialEventDetector.test.ts (9 tests)
+- **Total: 49 passing tests**
 
 ---
 
