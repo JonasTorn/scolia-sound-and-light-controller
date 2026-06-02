@@ -1,0 +1,43 @@
+{
+	"name": "scolia-light-controller",
+	"version": "1.0.0",
+	"description": "Styr LightShark belysning baserat på Scolia darttavla events",
+	"main": "index.js",
+	"scripts": {
+		"start": "ts-node src/index.ts",
+		"simulate": "ts-node src/simulator.ts",
+		"test": "jest",
+		"test:connection": "ts-node src/test-connection.ts",
+		"build": "tsc",
+		"dev": "ts-node-dev --respawn src/index.ts"
+	},
+	"keywords": [
+		"scolia",
+		"dart",
+		"lightshark",
+		"osc"
+	],
+	"author": "",
+	"license": "MIT",
+	"engines": {
+		"node": ">=18"
+	},
+	"dependencies": {
+		"knx": "2.5.4",
+		"node-osc": "9.1.7",
+		"play-sound": "1.1.6",
+		"playwright": "1.58.2",
+		"ws": "8.19.0"
+	},
+	"devDependencies": {
+		"@types/jest": "^29.5.13",
+		"@types/node": "^22.5.5",
+		"@types/node-osc": "^11.0.0",
+		"@types/ws": "^8.18.1",
+		"jest": "^29.7.0",
+		"ts-jest": "^29.1.5",
+		"ts-node": "^10.9.2",
+		"ts-node-dev": "^2.0.0",
+		"typescript": "^5.6.2"
+	}
+}

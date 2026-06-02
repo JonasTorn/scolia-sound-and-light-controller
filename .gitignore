@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.log
+throw-history.json
+scolia-cookies.json
+config.json
+sounds/
+.claude/
