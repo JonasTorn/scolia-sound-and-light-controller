@@ -59,17 +59,21 @@ describe("SpecialEventDetector", () => {
 	});
 
 	describe("120 Detection", () => {
-		it("should detect 120 (two consecutive T20s) - skipped due to detector strategy", () => {
-			// Note: 120 uses "consecutivePattern" detector which looks for singles with matching segments
-			// The pattern [60, 60] doesn't match this detector's logic
-			// This is a limitation of the current consecutivePattern strategy
-			// A dedicated "sumLastN" strategy for 120 would be needed
-			const history: GameThrow[] = [createThrow(60, 20, 3)];
-			const current = createThrow(60, 20, 3);
+		it("should detect 120 (two consecutive T20s)", () => {
+			const history: GameThrow[] = [createThrow(60, 20, 3)]; // T20 = 60
+			const current = createThrow(60, 20, 3); // T20 = 60
 
 			const result = detector.detect(history, current);
 
-			// Currently won't detect 120 because consecutivePattern only checks for singles
+			expect(result?.eventName).toBe("120");
+		});
+
+		it("should not detect 120 with only one T20", () => {
+			const history: GameThrow[] = [createThrow(20, 20, 1)]; // S20 = 20
+			const current = createThrow(60, 20, 3); // T20 = 60
+
+			const result = detector.detect(history, current);
+
 			expect(result?.eventName).not.toBe("120");
 		});
 	});

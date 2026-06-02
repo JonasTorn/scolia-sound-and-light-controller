@@ -77,12 +77,11 @@ export class SpecialEventDetector {
 		if (throwHistory.length < pattern.length - 1) return false;
 
 		const lastN = throwHistory.slice(-(pattern.length - 1));
-		const sequence = [...lastN.map((t) => t.segment), currentThrow.segment];
+		const sequence = [...lastN, currentThrow];
 
-		// Check if all are singles with matching segments
+		// Check if each throw matches the expected point value in the pattern
 		for (let i = 0; i < pattern.length; i++) {
-			const t = i === pattern.length - 1 ? currentThrow : lastN[i];
-			if (t.multiplier !== 1 || t.segment !== pattern[i]) {
+			if (sequence[i].points !== pattern[i]) {
 				return false;
 			}
 		}
