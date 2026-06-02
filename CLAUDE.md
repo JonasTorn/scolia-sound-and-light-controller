@@ -528,7 +528,7 @@ Segment-specifika ljud har prioritet via `playSoundWithFallback()`:
 - **Architecture**: Monolithic 864-line index.js → 7 focused classes
 - **Special Events**: 430-line if-chain → data-driven config (20 events)
 - **State**: Global variables → GameState class with persistence
-- **Tests**: 0 tests → 48 unit tests (100% passing)
+- **Tests**: 0 tests → 49 unit tests (100% passing)
 - **Entry Point**: `npm start` (index.js) → `npm start` (src/index.ts via ts-node)
 
 ### Benefits
@@ -537,7 +537,7 @@ Segment-specifika ljud har prioritet via `playSoundWithFallback()`:
 2. **Maintainability**: Easy to understand data flow (Scolia → Orchestrator → Controllers)
 3. **Debugging**: Type safety catches errors at compile time (no implicit any)
 4. **Extensibility**: Add special events by editing config (no code changes needed)
-5. **Testability**: 48 unit tests for business logic (GameState, EffectResolver, SpecialEventDetector)
+5. **Testability**: 49 unit tests for business logic (GameState, EffectResolver, SpecialEventDetector)
 6. **Resilience**: GameState persistence prevents state loss on crashes
 7. **Bug Fixes**: Clear separation of concerns eliminates implicit bugs
 
@@ -553,7 +553,9 @@ Segment-specifika ljud har prioritet via `playSoundWithFallback()`:
 
 - **Production**: `npm start` (ts-node + WebSocket to Scolia)
 - **Simulator**: `npm run simulate` (test effects without hardware)
-- **Tests**: `npm test` (48 Jest tests, TypeScript)
+- **Tests**: `npm test` (49 Jest tests, TypeScript)
+- **Build**: `npm run build` (compiles TypeScript to dist/)
+- **Dev**: `npm run dev` (ts-node-dev with auto-restart)
 
 ---
 
@@ -577,3 +579,49 @@ npm run simulate
 - `webapp/` - Next.js webapp (ersatt av Playwright DOM-polling mot Scolias webbapp)
 - REST API (Express) - Borttaget, poängspårning sköts nu av Scolia + Playwright
 - `gameState` / `handleGameThrow()` / `advanceTurn()` / `revertTurn()` - Intern spellogik borttagen
+
+---
+
+## Bug Fixes (Post-Refactor)
+
+### Application.ts import paths (fixed 2026-06-03)
+`Application.ts` used `../` import prefixes as if it were inside a subdirectory, but it lives at the `src/` root. Fixed to `./` — matching how `simulator.ts` already did it. This caused `npm run build` to fail with TS2307 errors (ts-node was unaffected).
+
+### jest.config.js ts-jest deprecation (fixed 2026-06-03)
+Moved ts-jest config from deprecated `globals` to `transform` option (required by ts-jest v29+).
+
+### 120 detection regression (fixed 2026-06-03)
+The `consecutivePattern` detector in `SpecialEventDetector.ts` was comparing `t.segment` against pattern values and required `multiplier === 1` (singles only). This meant two T20s never matched `pattern: [60, 60]`. Fixed to compare `t.points` against the pattern — so `[60, 60]` correctly means "two throws worth 60 points each". The old `index.js` checked `segment === 20 && multiplier === 3` explicitly; the new code is more general and readable.
+
+**Note on `consecutivePattern`:** Pattern values are **point totals per throw**, not segment numbers. `pattern: [60, 60]` = two throws of 60 points each (T20+T20). Works for any multiplier.
+
+---
+
+## Git Branches
+
+- **`main`** — Active development (TypeScript refactor). Default branch.
+- **`original`** — Untouched fork of the original JavaScript codebase. Kept for reference.
+
+---
+
+## Future Roadmap
+
+### Next immediate steps
+1. **Test against real hardware** — verify TypeScript refactor behaves identically to old `index.js`
+2. **EventOrchestrator unit tests** — mock-based tests for the 10-step throw pipeline (currently 0% tested)
+
+### Game mode support (planned)
+Goal: different light/sound setups per Scolia game mode (501, Half It, Elimination, etc.)
+- Add `gameMode` field to `GameState` (detected via Playwright DOM or Scolia API)
+- Extend `specialEvents.config.ts` to support per-mode event sets
+- Keep config-driven approach — avoid hardcoding anything 501-specific
+
+### Player & score detection (planned)
+- Scolia Social API only sends throw-by-throw data — no scores, no player names, no game mode
+- **Playwright scraping** is the practical path: player names, scores, and game mode are visible in the Scolia web app DOM
+- Could save per-player throw history to enable a future scoreboard
+
+### Scoreboard app (future, separate project)
+- This app acts as data collector (sessions, throws per player, scores saved to file/DB)
+- Separate app reads that data and displays a scoreboard
+- SQLite or JSON files would be sufficient as the data layer
