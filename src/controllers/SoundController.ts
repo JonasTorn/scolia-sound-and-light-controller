@@ -112,7 +112,7 @@ export class SoundController {
 						}
 					},
 				);
-				this.logger.debug(`Playing audio: ${eventName} (${soundConfig.file})`);
+				this.logger.info(`🔊 Sound: ${eventName} (${soundConfig.file})`);
 				return;
 			}
 		} else if (process.platform === "darwin") {
@@ -142,7 +142,7 @@ export class SoundController {
 			});
 		}
 
-		this.logger.debug(`Playing audio: ${eventName} (${soundConfig.file})`);
+		this.logger.info(`🔊 Sound: ${eventName} (${soundConfig.file})`);
 	}
 
 	playSoundWithFallback(specificEvent: string, fallbackEvent: string): void {

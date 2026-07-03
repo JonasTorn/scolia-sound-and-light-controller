@@ -24,8 +24,8 @@ export class EffectResolver {
 				executor: cfg.colorMode.bullseyeExecutor,
 				effectName: "bullseye",
 				hasStrobe: true,
-				strobeExecutor: cfg.colorMode.triple20Strobe.executor,
-				strobeDurationMs: cfg.colorMode.triple20Strobe.durationMs,
+				strobeExecutor: cfg.colorMode.triple20Strobe?.executor ?? null,
+				strobeDurationMs: cfg.colorMode.triple20Strobe?.durationMs ?? 0,
 			};
 		}
 
@@ -50,8 +50,8 @@ export class EffectResolver {
 				executor: cfg.colorMode.redExecutor,
 				effectName: "triple_20",
 				hasStrobe: true,
-				strobeExecutor: cfg.colorMode.triple20Strobe.executor,
-				strobeDurationMs: cfg.colorMode.triple20Strobe.durationMs,
+				strobeExecutor: cfg.colorMode.triple20Strobe?.executor ?? null,
+				strobeDurationMs: cfg.colorMode.triple20Strobe?.durationMs ?? 0,
 			};
 		}
 

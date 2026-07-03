@@ -11,6 +11,11 @@ interface EdgeDetectionState {
 	setWon: boolean;
 }
 
+interface PlayerInfo {
+	id: string;
+	nickname: string;
+}
+
 export class PlaywrightController extends EventEmitter {
 	private browser: Browser | null = null;
 	private context: BrowserContext | null = null;
@@ -25,6 +30,12 @@ export class PlaywrightController extends EventEmitter {
 		legWon: false,
 		setWon: false,
 	};
+
+	private players: Map<string, PlayerInfo> = new Map();
+
+	getPlayerName(id: string): string {
+		return this.players.get(id)?.nickname ?? id;
+	}
 
 	constructor(
 		private config: PlaywrightConfig,
@@ -66,6 +77,39 @@ export class PlaywrightController extends EventEmitter {
 			}
 
 			this.page = await this.context.newPage();
+
+			// Intercept WebSocket frames from the Scolia web app
+			this.page.on("websocket", (ws) => {
+				this.logger.debug(`Playwright: WebSocket opened: ${ws.url()}`);
+				ws.on("framereceived", (frame) => {
+					const payload =
+						typeof frame.payload === "string"
+							? frame.payload
+							: frame.payload.toString("utf-8");
+					try {
+						const msg = JSON.parse(payload);
+						if (!msg.type) return;
+
+						if (msg.type === "API::COMMON::PLAYER_JOINED") {
+							const p = msg.payload?.player;
+							if (p?._id && p?.nickname) {
+								this.players.set(p._id, { id: p._id, nickname: p.nickname });
+								this.logger.info(`👤 Player joined: ${p.nickname} (${p._id})`);
+							}
+						} else if (msg.type === "API::COMMON::TAKEOUT_STARTED") {
+							this.logger.debug("Playwright WS: TAKEOUT_STARTED");
+							this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_STARTED" }));
+						} else if (msg.type === "API::COMMON::TAKEOUT_FINISHED") {
+							this.logger.debug("Playwright WS: TAKEOUT_FINISHED");
+							this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_FINISHED" }));
+						} else if (msg.type === "API::GAME::GAME_STATE_CHANGED") {
+							this.extractThrows(msg.payload);
+						}
+					} catch {
+						// ignore non-JSON frames
+					}
+				});
+			});
 
 			const url = this.config.url || "https://game.scoliadarts.com";
 			this.logger.info(`Playwright: Navigating to ${url}/game`);
@@ -119,6 +163,39 @@ export class PlaywrightController extends EventEmitter {
 		} catch (err) {
 			this.logger.error(`Playwright launch failed: ${err}`);
 			throw err;
+		}
+	}
+
+	private extractThrows(payload: any): void {
+		const triplets = payload?.state?.game?.lastTriplets;
+		if (!triplets || typeof triplets !== "object") return;
+
+		for (const playerId of Object.keys(triplets)) {
+			const playerDarts = triplets[playerId];
+			if (!playerDarts || typeof playerDarts !== "object") continue;
+
+			for (const key of Object.keys(playerDarts)) {
+				// Only process numeric keys (0, 1, 2) — new dart additions
+				// Skip _t, _0, _1, _2 (jsondiffpatch metadata/deletions)
+				if (!/^\d+$/.test(key)) continue;
+
+				const dartArray = playerDarts[key];
+				if (!Array.isArray(dartArray) || dartArray.length === 0) continue;
+
+				const dart = dartArray[0];
+				if (!dart || typeof dart !== "object" || !dart.sector) continue;
+
+				const throwMsg = JSON.stringify({
+					type: "THROW_DETECTED",
+					sector: dart.sector,
+					coordinates: dart.coordinates || [0, 0],
+					bounceout: dart.bounceout || false,
+				});
+
+				const name = this.getPlayerName(playerId);
+				this.logger.info(`Playwright: Throw — ${name}: ${dart.sector} = ${dart.score}p (remaining: ${dart.remainingScore})`);
+				this.emit("scoliamessage", throwMsg);
+			}
 		}
 	}
 

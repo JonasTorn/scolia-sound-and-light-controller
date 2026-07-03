@@ -72,6 +72,11 @@ export class Application {
 		this.playwrightController.on("set-won", () => {
 			this.handleSetWon();
 		});
+
+		// Route Scolia messages intercepted from the web app's WebSocket
+		this.playwrightController.on("scoliamessage", (data: string) => {
+			this.handleScoliaMessage(data);
+		});
 	}
 
 	async start(): Promise<void> {
