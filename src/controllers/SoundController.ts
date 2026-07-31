@@ -9,6 +9,7 @@ export class SoundController {
 	private activeProcess: ChildProcess | null = null;
 	private closing = false;
 	private player: any = null;
+	private currentPlayer: string | null = null;
 
 	constructor(
 		private config: SoundConfig,
@@ -70,8 +71,26 @@ export class SoundController {
 		this.logger.debug("PowerShell audio process started");
 	}
 
+	setCurrentPlayer(name: string | null): void {
+		this.currentPlayer = name;
+	}
+
 	async playSound(eventName: string): Promise<void> {
 		if (!this.config.enabled) return;
+
+		// Per-player override takes priority over global sounds
+		if (this.currentPlayer) {
+			const playerEntry = this.config.players?.[this.currentPlayer]?.[eventName];
+			const playerFiles = this.getFiles(playerEntry);
+			if (playerFiles.length > 0 && playerEntry?.enabled !== false) {
+				const file = playerFiles[Math.floor(Math.random() * playerFiles.length)];
+				const filePath = path.resolve(this.soundsDir, file);
+				if (filePath.startsWith(this.soundsDir)) {
+					await this.playFile(filePath, playerEntry?.volume ?? 1.0, eventName);
+					return;
+				}
+			}
+		}
 
 		const entry = this.config.sounds?.[eventName];
 		const files = this.getFiles(entry);

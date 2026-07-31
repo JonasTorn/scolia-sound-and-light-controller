@@ -73,6 +73,13 @@ export class Application {
 			this.handleSetWon();
 		});
 
+		// Update active player when Playwright detects a new thrower
+		this.playwrightController.on("player-change", (name: string) => {
+			this.gameState.setCurrentPlayer(name);
+			this.soundController.setCurrentPlayer(name);
+			this.logger.info(`🎯 Active player: ${name}`);
+		});
+
 		// Route Scolia messages intercepted from the web app's WebSocket
 		this.playwrightController.on("scoliamessage", (data: string) => {
 			this.handleScoliaMessage(data);

@@ -12,6 +12,7 @@ export class GameState {
 	private specialExecutors: LightSharkExecutor[] = [];
 	private knxState: "on" | "off" = "on";
 	private strobeActive = false;
+	private currentPlayer: string | null = null; // not persisted — detected at runtime
 	private persistencePath: string;
 	private readonly MAX_HISTORY = 100;
 
@@ -110,6 +111,15 @@ export class GameState {
 
 	isStrobeActive(): boolean {
 		return this.strobeActive;
+	}
+
+	// Current player tracking (ephemeral — set by PlaywrightController on each throw)
+	setCurrentPlayer(name: string | null): void {
+		this.currentPlayer = name;
+	}
+
+	getCurrentPlayer(): string | null {
+		return this.currentPlayer;
 	}
 
 	// Special event tracking (prevent duplicates)

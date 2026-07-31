@@ -117,10 +117,14 @@ export interface SoundEntry {
 	enabled?: boolean;
 }
 
+// Per-player sound overrides — same structure as sounds, applied first before global lookup
+export type PlayerSoundOverrides = Record<string, SoundEntry>;
+
 export interface SoundConfig {
 	enabled: boolean;
 	soundsDir: string;
 	sounds: Record<string, SoundEntry>;
+	players?: Record<string, PlayerSoundOverrides>;
 }
 
 export interface PlaywrightConfig {

@@ -32,6 +32,7 @@ export class PlaywrightController extends EventEmitter {
 	};
 
 	private players: Map<string, PlayerInfo> = new Map();
+	private currentPlayerId: string | null = null;
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -173,6 +174,18 @@ export class PlaywrightController extends EventEmitter {
 		for (const playerId of Object.keys(triplets)) {
 			const playerDarts = triplets[playerId];
 			if (!playerDarts || typeof playerDarts !== "object") continue;
+
+			// Check for new dart throws (numeric keys only)
+			const hasNewThrows = Object.keys(playerDarts).some((k) => /^\d+$/.test(k));
+			if (!hasNewThrows) continue;
+
+			// Emit player-change when the active thrower switches
+			if (playerId !== this.currentPlayerId) {
+				this.currentPlayerId = playerId;
+				const name = this.getPlayerName(playerId);
+				this.logger.info(`👤 Current player: ${name}`);
+				this.emit("player-change", name);
+			}
 
 			for (const key of Object.keys(playerDarts)) {
 				// Only process numeric keys (0, 1, 2) — new dart additions
