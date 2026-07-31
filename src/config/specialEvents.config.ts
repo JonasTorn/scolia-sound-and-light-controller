@@ -72,7 +72,14 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		name: "sixty_nine",
 		enabled: true,
 		detector: "consecutivePattern",
-		params: { pattern: [6, 9], description: "single 6 followed by single 9" },
+		params: { pattern: [6, 9], description: "any 6-point throw followed by any 9-point throw" },
+		effects: [{ type: "sound", event: "sixty_nine" }],
+	},
+	{
+		name: "sixty_nine_sum",
+		enabled: true,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: 69, description: "3 darts totalling 69 points" },
 		effects: [{ type: "sound", event: "sixty_nine" }],
 	},
 	{
