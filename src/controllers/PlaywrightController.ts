@@ -33,6 +33,7 @@ export class PlaywrightController extends EventEmitter {
 
 	private players: Map<string, PlayerInfo> = new Map();
 	private currentPlayerId: string | null = null;
+	private lastLegWonAt = 0;
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -167,7 +168,28 @@ export class PlaywrightController extends EventEmitter {
 		}
 	}
 
+	private extractPlayers(payload: any): void {
+		// GAME_STATE_CHANGED may include full player list — grab names before they throw
+		const sources = [
+			payload?.state?.players,
+			payload?.players,
+			payload?.state?.game?.players,
+		];
+		for (const source of sources) {
+			if (!source) continue;
+			const arr = Array.isArray(source) ? source : Object.values(source);
+			for (const p of arr as any[]) {
+				if (p?._id && p?.nickname && !this.players.has(p._id)) {
+					this.players.set(p._id, { id: p._id, nickname: p.nickname });
+					this.logger.info(`👤 Player found in game state: ${p.nickname}`);
+				}
+			}
+		}
+	}
+
 	private extractThrows(payload: any): void {
+		this.extractPlayers(payload);
+
 		const triplets = payload?.state?.game?.lastTriplets;
 		if (!triplets || typeof triplets !== "object") return;
 
@@ -208,6 +230,12 @@ export class PlaywrightController extends EventEmitter {
 				const name = this.getPlayerName(playerId);
 				this.logger.info(`Playwright: Throw — ${name}: ${dart.sector} = ${dart.score}p (remaining: ${dart.remainingScore})`);
 				this.emit("scoliamessage", throwMsg);
+
+				if (dart.remainingScore === 0) {
+					this.lastLegWonAt = Date.now();
+					this.logger.info(`🏆 Leg won: ${name} finished on ${dart.sector}!`);
+					this.emit("leg-won");
+				}
 			}
 		}
 	}
@@ -249,8 +277,11 @@ export class PlaywrightController extends EventEmitter {
 			}
 
 			if (state.legWon && !this.lastState.legWon) {
-				this.emit("leg-won");
-				this.logger.info("Leg won detected via DOM");
+				// Only fire if WebSocket didn't already catch it (within 2s)
+				if (Date.now() - this.lastLegWonAt > 2000) {
+					this.emit("leg-won");
+					this.logger.info("Leg won detected via DOM");
+				}
 			}
 
 			if (state.setWon && !this.lastState.setWon) {
