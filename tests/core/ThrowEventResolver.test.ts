@@ -90,7 +90,7 @@ describe("ThrowEventResolver", () => {
 			expect(light?.mode).toBe("main");
 			const strobe = findEffect(event, "strobe") as any;
 			expect(strobe?.durationMs).toBe(3000);
-			expect(findEffect(event, "sound")).toEqual({ type: "sound", event: "score_60" });
+			expect(findEffect(event, "sound")).toEqual({ type: "sound", event: "triple_20" });
 		});
 	});
 
@@ -101,7 +101,7 @@ describe("ThrowEventResolver", () => {
 			expect(event.name).toBe("double_20");
 			const light = findEffect(event, "light") as any;
 			expect(light?.executor).toEqual(redExecutor);
-			expect(findEffect(event, "sound")).toEqual({ type: "sound", event: "score_40" });
+			expect(findEffect(event, "sound")).toEqual({ type: "sound", event: "double_20" });
 		});
 
 		it("should resolve green segment double to green executor", () => {
@@ -135,7 +135,7 @@ describe("ThrowEventResolver", () => {
 
 			expect(event.name).toBe("single_8");
 			expect(findEffect(event, "light")).toBeUndefined();
-			expect(findEffect(event, "sound")).toEqual({ type: "sound", event: "score_8" });
+			expect(findEffect(event, "sound")).toEqual({ type: "sound", event: "single_8" });
 			expect(findEffect(event, "knx")).toEqual({ type: "knx", action: "allOn" });
 		});
 	});

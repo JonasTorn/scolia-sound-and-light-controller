@@ -49,7 +49,7 @@ export class ThrowEventResolver {
 
 		if (segment === 20 && multiplier === 3) {
 			const effects: Effect[] = [
-				{ type: "sound", event: `score_${points}` },
+				{ type: "sound", event: "triple_20" },
 				{ type: "light", executor: cfg.colorMode.redExecutor, mode: "main" },
 			];
 			if (cfg.colorMode.triple20Strobe) {
@@ -68,20 +68,22 @@ export class ThrowEventResolver {
 				? cfg.colorMode.redExecutor
 				: cfg.colorMode.greenExecutor;
 			const prefix = multiplier === 3 ? "triple" : "double";
+			const name = `${prefix}_${segment}`;
 			return {
-				name: `${prefix}_${segment}`,
+				name,
 				effects: [
-					{ type: "sound", event: `score_${points}` },
+					{ type: "sound", event: name },
 					{ type: "light", executor, mode: "main" },
 				],
 			};
 		}
 
 		// Singles: no light effect; KNX allOn recovers from miss state
+		const singleName = `single_${segment}`;
 		return {
-			name: `single_${segment}`,
+			name: singleName,
 			effects: [
-				{ type: "sound", event: `score_${points}` },
+				{ type: "sound", event: singleName },
 				{ type: "knx", action: "allOn" },
 			],
 		};
