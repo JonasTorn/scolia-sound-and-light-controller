@@ -6,7 +6,9 @@ export class SpecialEventDetector {
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
 	): ThrowEvent | null {
-		// Try each special event in order (first match wins)
+		// Collect all matching events, then return the highest-priority one
+		let best: { priority: number; event: ThrowEvent } | null = null;
+
 		for (const eventDef of specialEventsConfig) {
 			if (!eventDef.enabled) continue;
 
@@ -16,15 +18,24 @@ export class SpecialEventDetector {
 				throwHistory,
 				currentThrow,
 			);
-			if (isMatch) {
-				return {
-					name: eventDef.name,
-					effects: eventDef.effects,
+			if (!isMatch) continue;
+
+			const priority = eventDef.priority ?? 0;
+			if (best === null || priority > best.priority) {
+				best = {
+					priority,
+					event: {
+						name: eventDef.name,
+						// Copy event priority onto sound effects so EffectExecutor can use it
+						effects: eventDef.effects.map((e) =>
+							e.type === "sound" ? { ...e, priority } : e,
+						),
+					},
 				};
 			}
 		}
 
-		return null;
+		return best?.event ?? null;
 	}
 
 	private checkPattern(

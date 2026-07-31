@@ -1,9 +1,17 @@
 import { SpecialEventDefinition } from "../types/index";
 
+// Priority scale:
+//   0 = regular throws (default, no entry needed)
+//   1 = minor fun events
+//   2 = notable combos
+//   3 = big scores / game-changing moments
+// Game events (bust, leg won, set won) use priority 5 — set in Application.ts
+
 export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "180",
 		enabled: true,
+		priority: 3,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: 180 },
 		effects: [
@@ -15,6 +23,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "120",
 		enabled: true,
+		priority: 3,
 		detector: "consecutivePattern",
 		params: { pattern: [60, 60], description: "two triple 20s" },
 		effects: [{ type: "sound", event: "120" }],
@@ -22,6 +31,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "one_two_three",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [1, 2, 3], multiplier: "single" },
 		effects: [{ type: "sound", event: "one_two_three" }],
@@ -29,6 +39,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "three_ones",
 		enabled: true,
+		priority: 1,
 		detector: "sequentialSegments",
 		params: { segments: [1, 1, 1], multiplier: "single" },
 		effects: [{ type: "sound", event: "three_ones" }],
@@ -36,6 +47,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "three_sixes",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [6, 6, 6], multiplier: "single" },
 		effects: [{ type: "sound", event: "three_sixes" }],
@@ -43,6 +55,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "double_oh_seven",
 		enabled: true,
+		priority: 2,
 		detector: "doubleOhSeven",
 		params: { description: "miss, miss, single 7" },
 		effects: [{ type: "sound", event: "double_oh_seven" }],
@@ -50,6 +63,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "four_twenty",
 		enabled: true,
+		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [4, 20], description: "single 4 followed by single 20" },
 		effects: [{ type: "sound", event: "four_twenty" }],
@@ -57,6 +71,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "thirteen_thirty_seven",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [13, 3, 7], multiplier: "single" },
 		effects: [{ type: "sound", event: "thirteen_thirty_seven" }],
@@ -64,6 +79,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "triple_seven",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [7, 7, 7], multiplier: "single" },
 		effects: [{ type: "sound", event: "triple_seven" }],
@@ -71,6 +87,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "sixty_nine",
 		enabled: true,
+		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [6, 9], description: "any 6-point throw followed by any 9-point throw" },
 		effects: [{ type: "sound", event: "sixty_nine" }],
@@ -78,6 +95,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "sixty_nine_sum",
 		enabled: true,
+		priority: 3, // higher than consecutive — sum always wins
 		detector: "sumLastN",
 		params: { n: 3, targetSum: 69, description: "3 darts totalling 69 points" },
 		effects: [{ type: "sound", event: "sixty_nine" }],
@@ -85,6 +103,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "one_one_two",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [1, 1, 2], multiplier: "single" },
 		effects: [{ type: "sound", event: "one_one_two" }],
@@ -92,6 +111,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "nine_one_one",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [9, 1, 1], multiplier: "single" },
 		effects: [{ type: "sound", event: "nine_one_one" }],
@@ -99,6 +119,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "six_seven",
 		enabled: true,
+		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [6, 7], description: "single 6 followed by single 7" },
 		effects: [{ type: "sound", event: "six_seven" }],
@@ -106,6 +127,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "nineteen_oh_four",
 		enabled: true,
+		priority: 2,
 		detector: "nineteenOhFour",
 		params: { description: "single 19, miss, single 4" },
 		effects: [{ type: "sound", event: "nineteen_oh_four" }],
@@ -113,6 +135,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "eighteen_eighty_eight",
 		enabled: true,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { segments: [18, 8, 8], multiplier: "single" },
 		effects: [{ type: "sound", event: "eighteen_eighty_eight" }],
@@ -120,6 +143,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "ninety_nine",
 		enabled: true,
+		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [9, 9], description: "two single 9s" },
 		effects: [{ type: "sound", event: "ninety_nine" }],
@@ -127,6 +151,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "twenty_one",
 		enabled: true,
+		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [2, 1], description: "single 2 followed by single 1" },
 		effects: [{ type: "sound", event: "twenty_one" }],
@@ -134,6 +159,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "twenty_three",
 		enabled: true,
+		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [2, 3], description: "single 2 followed by single 3" },
 		effects: [{ type: "sound", event: "twenty_three" }],
@@ -141,6 +167,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "four_oh_four",
 		enabled: true,
+		priority: 2,
 		detector: "fourOhFour",
 		params: { description: "single 4, miss, single 4" },
 		effects: [{ type: "sound", event: "four_oh_four" }],
@@ -148,6 +175,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "three_misses",
 		enabled: true,
+		priority: 2,
 		detector: "consecutiveMisses",
 		params: { count: 3 },
 		effects: [{ type: "sound", event: "three_misses" }],

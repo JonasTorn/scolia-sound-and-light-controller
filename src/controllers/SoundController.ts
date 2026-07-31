@@ -10,6 +10,7 @@ export class SoundController {
 	private closing = false;
 	private player: any = null;
 	private currentPlayer: string | null = null;
+	private currentSoundPriority = 0;
 
 	constructor(
 		private config: SoundConfig,
@@ -75,8 +76,13 @@ export class SoundController {
 		this.currentPlayer = name;
 	}
 
-	async playSound(eventName: string): Promise<void> {
+	async playSound(eventName: string, priority = 0): Promise<void> {
 		if (!this.config.enabled) return;
+
+		if (priority < this.currentSoundPriority) {
+			this.logger.debug(`Skipped: ${eventName} (priority ${priority} < active ${this.currentSoundPriority})`);
+			return;
+		}
 
 		// Per-player override takes priority over global sounds
 		if (this.currentPlayer) {
@@ -86,7 +92,7 @@ export class SoundController {
 				const file = playerFiles[Math.floor(Math.random() * playerFiles.length)];
 				const filePath = path.resolve(this.soundsDir, file);
 				if (filePath.startsWith(this.soundsDir)) {
-					await this.playFile(filePath, playerEntry?.volume ?? 1.0, eventName);
+					await this.playFile(filePath, playerEntry?.volume ?? 1.0, eventName, priority);
 					return;
 				}
 			}
@@ -102,7 +108,7 @@ export class SoundController {
 				this.logger.warn(`Invalid audio path for: ${eventName}`);
 				return;
 			}
-			await this.playFile(filePath, entry?.volume ?? 1.0, eventName);
+			await this.playFile(filePath, entry?.volume ?? 1.0, eventName, priority);
 			return;
 		}
 
@@ -113,7 +119,7 @@ export class SoundController {
 			const score = multMap[throwMatch[1]] * parseInt(throwMatch[2]);
 			const ttsPath = path.resolve(this.soundsDir, `tts/${score}.wav`);
 			if (ttsPath.startsWith(this.soundsDir)) {
-				await this.playFile(ttsPath, 1.0, eventName);
+				await this.playFile(ttsPath, 1.0, eventName, priority);
 			}
 			return;
 		}
@@ -125,8 +131,10 @@ export class SoundController {
 		filePath: string,
 		volume: number,
 		eventName: string,
+		priority = 0,
 	): Promise<void> {
 		const fileName = path.basename(filePath);
+		this.currentSoundPriority = priority;
 
 		if (process.platform === "win32") {
 			if (this.psProcess?.stdin?.writable) {
@@ -159,7 +167,10 @@ export class SoundController {
 				this.logger.warn(`Audio error "${eventName}": ${err.message}`);
 			});
 			proc.on("exit", () => {
-				if (this.activeProcess === proc) this.activeProcess = null;
+				if (this.activeProcess === proc) {
+					this.activeProcess = null;
+					this.currentSoundPriority = 0; // reset when sound finishes naturally
+				}
 			});
 		} else if (this.player) {
 			this.player.play(filePath, (err: Error | null) => {

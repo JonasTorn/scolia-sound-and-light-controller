@@ -239,21 +239,21 @@ export class Application {
 	private async handleBustDetected(): Promise<void> {
 		this.logger.info("Bust detected");
 		if (this.config.sound.enabled) {
-			await this.soundController.playSound("bust");
+			await this.soundController.playSound("bust", 5);
 		}
 	}
 
 	private async handleLegWon(): Promise<void> {
 		this.logger.info("Leg won");
 		if (this.config.sound.enabled) {
-			await this.soundController.playSound("leg_won");
+			await this.soundController.playSound("leg_won", 5);
 		}
 	}
 
 	private async handleSetWon(): Promise<void> {
 		this.logger.info("Set won");
 		if (this.config.sound.enabled) {
-			await this.soundController.playSound("set_won");
+			await this.soundController.playSound("set_won", 5);
 		}
 	}
 

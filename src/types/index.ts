@@ -41,7 +41,7 @@ export interface LightSharkExecutor {
 
 // Unified effect system
 export type Effect =
-	| { type: "sound"; event: string }
+	| { type: "sound"; event: string; priority?: number }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
 	| { type: "knx"; action: string };
@@ -55,6 +55,7 @@ export interface ThrowEvent {
 export interface SpecialEventDefinition {
 	name: string;
 	enabled: boolean;
+	priority?: number; // higher wins when multiple events match the same throw
 	detector: string;
 	params: Record<string, any>;
 	effects: Effect[];
