@@ -106,32 +106,12 @@ export class SoundController {
 			return;
 		}
 
-		// Throw-specific name (triple_20, double_5, single_1) → fall back to score_N → tts/N.wav
+		// Throw-specific name (triple_20, double_5, single_1) → tts/N.wav
 		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);
 		if (throwMatch) {
 			const multMap: Record<string, number> = { triple: 3, double: 2, single: 1 };
 			const score = multMap[throwMatch[1]] * parseInt(throwMatch[2]);
-			const scoreEntry = this.config.sounds?.[`score_${score}`];
-			const scoreFiles = this.getFiles(scoreEntry);
-			if (scoreFiles.length > 0 && scoreEntry?.enabled !== false) {
-				const file = scoreFiles[Math.floor(Math.random() * scoreFiles.length)];
-				const filePath = path.resolve(this.soundsDir, file);
-				if (filePath.startsWith(this.soundsDir)) {
-					await this.playFile(filePath, scoreEntry?.volume ?? 1.0, eventName);
-					return;
-				}
-			}
 			const ttsPath = path.resolve(this.soundsDir, `tts/${score}.wav`);
-			if (ttsPath.startsWith(this.soundsDir)) {
-				await this.playFile(ttsPath, 1.0, eventName);
-			}
-			return;
-		}
-
-		// score_N events: tts/N.wav
-		const scoreMatch = eventName.match(/^score_(\d+)$/);
-		if (scoreMatch) {
-			const ttsPath = path.resolve(this.soundsDir, `tts/${scoreMatch[1]}.wav`);
 			if (ttsPath.startsWith(this.soundsDir)) {
 				await this.playFile(ttsPath, 1.0, eventName);
 			}
