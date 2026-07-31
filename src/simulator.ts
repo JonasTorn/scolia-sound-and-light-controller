@@ -1,7 +1,7 @@
 import { Logger } from "./utils/Logger";
 import { ConfigManager } from "./core/ConfigManager";
 import { GameState } from "./core/GameState";
-import { EffectResolver } from "./core/EffectResolver";
+import { ThrowEventResolver } from "./core/ThrowEventResolver";
 import { SectorParser } from "./utils/SectorParser";
 import { GameThrow } from "./types/index";
 
@@ -20,8 +20,8 @@ async function runSimulator(): Promise<void> {
 		// Create game state
 		const gameState = new GameState();
 
-		// Create effect resolver
-		const effectResolver = new EffectResolver(config.lightshark);
+		// Create throw event resolver
+		const effectResolver = new ThrowEventResolver(config.lightshark);
 
 		// Test throws
 		const testThrows = [
@@ -45,17 +45,17 @@ async function runSimulator(): Promise<void> {
 			};
 
 			gameState.addThrow(gameThrow);
-			const effect = effectResolver.resolve(gameThrow);
+			const event = effectResolver.resolve(gameThrow);
+			const lightEffect = event.effects.find((e) => e.type === "light") as any;
+			const strobeEffect = event.effects.find((e) => e.type === "strobe") as any;
 
-			const executor = effect.executor
-				? `${effect.executor.page}/${effect.executor.column}/${effect.executor.row}`
+			const executor = lightEffect
+				? `${lightEffect.executor.page}/${lightEffect.executor.column}/${lightEffect.executor.row}`
 				: "none";
-			const strobe = effect.hasStrobe
-				? ` + STROBE (${effect.strobeDurationMs}ms)`
-				: "";
+			const strobe = strobeEffect ? ` + STROBE (${strobeEffect.durationMs}ms)` : "";
 
 			logger.success(
-				`${test.description}: ${gameThrow.points}p [${effect.effectName}] → executor ${executor}${strobe}`,
+				`${test.description}: ${gameThrow.points}p [${event.name}] → executor ${executor}${strobe}`,
 			);
 		}
 

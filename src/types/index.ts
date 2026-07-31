@@ -39,36 +39,25 @@ export interface LightSharkExecutor {
 	row: number;
 }
 
-// Effect resolution output
-export interface EffectResolution {
-	executor: LightSharkExecutor | null;
-	effectName: string;
-	hasStrobe: boolean;
-	strobeExecutor: LightSharkExecutor | null;
-	strobeDurationMs: number;
+// Unified effect system
+export type Effect =
+	| { type: "sound"; event: string }
+	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
+	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
+	| { type: "knx"; action: string };
+
+export interface ThrowEvent {
+	name: string;
+	effects: Effect[];
 }
 
 // Special event detection
 export interface SpecialEventDefinition {
 	name: string;
 	enabled: boolean;
-	detector: string; // Strategy name: 'sumLastN', 'consecutiveTriples', 'sequentialSegments', etc.
+	detector: string;
 	params: Record<string, any>;
-	sound: string | null;
-	effects: SpecialEventEffect[];
-}
-
-export interface SpecialEventEffect {
-	type: "lightshark" | "knx" | "sound";
-	executor?: LightSharkExecutor;
-	action?: string;
-	sound?: string;
-}
-
-export interface SpecialEventMatch {
-	eventName: string;
-	sound: string | null;
-	effects: SpecialEventEffect[];
+	effects: Effect[];
 }
 
 // Config types
@@ -121,10 +110,17 @@ export interface KNXConfig {
 	};
 }
 
+export interface SoundEntry {
+	file?: string; // legacy single-file (backward compat)
+	files?: string[]; // multiple files — one is picked at random on each play
+	volume?: number;
+	enabled?: boolean;
+}
+
 export interface SoundConfig {
 	enabled: boolean;
 	soundsDir: string;
-	sounds: Record<string, { file: string; volume?: number; enabled?: boolean }>;
+	sounds: Record<string, SoundEntry>;
 }
 
 export interface PlaywrightConfig {

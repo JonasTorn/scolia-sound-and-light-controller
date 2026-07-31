@@ -31,7 +31,7 @@ describe("SpecialEventDetector", () => {
 			const result = detector.detect(history, current);
 
 			expect(result).not.toBeNull();
-			expect(result?.eventName).toBe("180");
+			expect(result?.name).toBe("180");
 		});
 
 		it("should not detect 180 with different sum", () => {
@@ -44,7 +44,7 @@ describe("SpecialEventDetector", () => {
 			const result = detector.detect(history, current);
 
 			// Should not be 180
-			expect(result?.eventName).not.toBe("180");
+			expect(result?.name).not.toBe("180");
 		});
 
 		it("should not detect 180 with insufficient throws", () => {
@@ -54,7 +54,7 @@ describe("SpecialEventDetector", () => {
 			const result = detector.detect(history, current);
 
 			// Not enough history
-			expect(result?.eventName).not.toBe("180");
+			expect(result?.name).not.toBe("180");
 		});
 	});
 
@@ -65,7 +65,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("120");
+			expect(result?.name).toBe("120");
 		});
 
 		it("should not detect 120 with only one T20", () => {
@@ -74,7 +74,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).not.toBe("120");
+			expect(result?.name).not.toBe("120");
 		});
 	});
 
@@ -88,7 +88,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("one_two_three");
+			expect(result?.name).toBe("one_two_three");
 		});
 
 		it("should not detect 1-2-3 with doubles", () => {
@@ -100,7 +100,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).not.toBe("one_two_three");
+			expect(result?.name).not.toBe("one_two_three");
 		});
 	});
 
@@ -111,7 +111,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("three_ones");
+			expect(result?.name).toBe("three_ones");
 		});
 	});
 
@@ -125,7 +125,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("double_oh_seven");
+			expect(result?.name).toBe("double_oh_seven");
 		});
 
 		it("should not detect 007 with different segment", () => {
@@ -134,7 +134,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).not.toBe("double_oh_seven");
+			expect(result?.name).not.toBe("double_oh_seven");
 		});
 	});
 
@@ -148,7 +148,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("nineteen_oh_four");
+			expect(result?.name).toBe("nineteen_oh_four");
 		});
 	});
 
@@ -162,7 +162,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("four_oh_four");
+			expect(result?.name).toBe("four_oh_four");
 		});
 	});
 
@@ -173,7 +173,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("three_misses");
+			expect(result?.name).toBe("three_misses");
 		});
 	});
 
@@ -185,7 +185,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.eventName).toBe("one_two_three");
+			expect(result?.name).toBe("one_two_three");
 		});
 	});
 
@@ -212,7 +212,7 @@ describe("SpecialEventDetector", () => {
 	});
 
 	describe("Special Events Config", () => {
-		it("should have 180 enabled", () => {
+		it("should have 180 enabled with light effects but no sound", () => {
 			const history: GameThrow[] = [
 				createThrow(60, 20, 3),
 				createThrow(60, 20, 3),
@@ -221,18 +221,19 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			// Should detect 180 because it's enabled in config
-			expect(result?.eventName).toBe("180");
-			expect(result?.sound).toBeNull(); // 180 has no sound in config
+			expect(result?.name).toBe("180");
+			expect(result?.effects.some((e) => e.type === "light")).toBe(true);
+			expect(result?.effects.some((e) => e.type === "sound")).toBe(false);
 		});
 
-		it("should have sound configured for special events", () => {
+		it("should have sound effect configured for special events", () => {
 			const history: GameThrow[] = [createThrow(1, 1, 1), createThrow(2, 2, 1)];
 			const current = createThrow(3, 3, 1);
 
 			const result = detector.detect(history, current);
 
-			expect(result?.sound).toBe("one_two_three");
+			const soundEffect = result?.effects.find((e) => e.type === "sound") as any;
+			expect(soundEffect?.event).toBe("one_two_three");
 		});
 	});
 });

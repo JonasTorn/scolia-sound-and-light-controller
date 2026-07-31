@@ -1,11 +1,11 @@
-import { GameThrow, SpecialEventMatch } from "../types/index";
+import { GameThrow, ThrowEvent } from "../types/index";
 import { specialEventsConfig } from "../config/specialEvents.config";
 
 export class SpecialEventDetector {
 	detect(
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
-	): SpecialEventMatch | null {
+	): ThrowEvent | null {
 		// Try each special event in order (first match wins)
 		for (const eventDef of specialEventsConfig) {
 			if (!eventDef.enabled) continue;
@@ -18,8 +18,7 @@ export class SpecialEventDetector {
 			);
 			if (isMatch) {
 				return {
-					eventName: eventDef.name,
-					sound: eventDef.sound,
+					name: eventDef.name,
 					effects: eventDef.effects,
 				};
 			}
