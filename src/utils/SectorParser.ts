@@ -2,7 +2,7 @@ import { ParsedThrow } from "../types/index";
 
 export class SectorParser {
 	static parse(sector: string | null | undefined): ParsedThrow {
-		if (!sector) return { points: 0, multiplier: 0, segment: 0 };
+		if (!sector) return { points: 0, multiplier: 1, segment: 0 };
 
 		const s = sector.toLowerCase();
 
@@ -13,7 +13,7 @@ export class SectorParser {
 
 		// Miss
 		if (s === "none" || s === "miss" || s === "0") {
-			return { points: 0, multiplier: 0, segment: 0 };
+			return { points: 0, multiplier: 1, segment: 0 };
 		}
 
 		// Single (s), Double (d), Triple (t) - e.g. "s20", "d16", "t19"
@@ -25,6 +25,6 @@ export class SectorParser {
 			return { points: seg * mult, multiplier: mult, segment: seg };
 		}
 
-		return { points: 0, multiplier: 0, segment: 0 };
+		return { points: 0, multiplier: 1, segment: 0 };
 	}
 }

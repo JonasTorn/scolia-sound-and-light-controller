@@ -26,7 +26,7 @@ const testEventDefs: SpecialEventDefinition[] = [
 		enabled: true,
 		priority: 2,
 		detector: "sequentialSegments",
-		params: { segments: [1, 2, 3], multiplier: "single" },
+		params: { throws: ["s1", "s2", "s3"] },
 		sound: { files: ["tts/one_two_three.wav"] },
 	},
 	{
@@ -34,15 +34,15 @@ const testEventDefs: SpecialEventDefinition[] = [
 		enabled: true,
 		priority: 1,
 		detector: "sequentialSegments",
-		params: { segments: [1, 1, 1], multiplier: "single" },
+		params: { throws: ["s1", "s1", "s1"] },
 		sound: { files: ["tts/three_ones.wav"] },
 	},
 	{
 		name: "double_oh_seven",
 		enabled: true,
 		priority: 2,
-		detector: "doubleOhSeven",
-		params: {},
+		detector: "sequentialSegments",
+		params: { throws: ["None", "None", "s7"] },
 		sound: { files: ["tts/double_oh_seven.wav"] },
 	},
 	{
@@ -188,8 +188,8 @@ describe("SpecialEventDetector", () => {
 	describe("007 Detection", () => {
 		it("should detect 007 (miss, miss, single 7)", () => {
 			const history: GameThrow[] = [
-				createThrow(0, 0, 0), // Miss
-				createThrow(0, 0, 0), // Miss
+				createThrow(0, 0, 1), // Miss
+				createThrow(0, 0, 1), // Miss
 			];
 			const current = createThrow(7, 7, 1); // S7
 
@@ -199,7 +199,7 @@ describe("SpecialEventDetector", () => {
 		});
 
 		it("should not detect 007 with different segment", () => {
-			const history: GameThrow[] = [createThrow(0, 0, 0), createThrow(0, 0, 0)];
+			const history: GameThrow[] = [createThrow(0, 0, 1), createThrow(0, 0, 1)];
 			const current = createThrow(3, 3, 1); // S3, not S7
 
 			const result = detector.detect(history, current);
@@ -212,7 +212,7 @@ describe("SpecialEventDetector", () => {
 		it("should detect 1904 (single 19, miss, single 4)", () => {
 			const history: GameThrow[] = [
 				createThrow(19, 19, 1), // S19
-				createThrow(0, 0, 0), // Miss
+				createThrow(0, 0, 1), // Miss
 			];
 			const current = createThrow(4, 4, 1); // S4
 
@@ -226,7 +226,7 @@ describe("SpecialEventDetector", () => {
 		it("should detect 404 (single 4, miss, single 4)", () => {
 			const history: GameThrow[] = [
 				createThrow(4, 4, 1), // S4
-				createThrow(0, 0, 0), // Miss
+				createThrow(0, 0, 1), // Miss
 			];
 			const current = createThrow(4, 4, 1); // S4
 
@@ -238,8 +238,8 @@ describe("SpecialEventDetector", () => {
 
 	describe("Three Misses Detection", () => {
 		it("should detect three consecutive misses", () => {
-			const history: GameThrow[] = [createThrow(0, 0, 0), createThrow(0, 0, 0)];
-			const current = createThrow(0, 0, 0);
+			const history: GameThrow[] = [createThrow(0, 0, 1), createThrow(0, 0, 1)];
+			const current = createThrow(0, 0, 1);
 
 			const result = detector.detect(history, current);
 

@@ -1,5 +1,6 @@
 import { Effect, GameThrow, SpecialEventDefinition, ThrowEvent } from "../types/index";
 import { specialEventsConfig } from "../config/specialEvents.config";
+import { SectorParser } from "../utils/SectorParser";
 
 export class SpecialEventDetector {
 	constructor(private eventDefs: SpecialEventDefinition[] = specialEventsConfig) {}
@@ -57,8 +58,6 @@ export class SpecialEventDetector {
 				return this.consecutivePattern(throwHistory, currentThrow, params);
 			case "sequentialSegments":
 				return this.sequentialSegments(throwHistory, currentThrow, params);
-			case "doubleOhSeven":
-				return this.doubleOhSeven(throwHistory, currentThrow);
 			case "nineteenOhFour":
 				return this.nineteenOhFour(throwHistory, currentThrow);
 			case "fourOhFour":
@@ -110,34 +109,19 @@ export class SpecialEventDetector {
 		currentThrow: GameThrow,
 		params: Record<string, any>,
 	): boolean {
-		const { segments, multiplier } = params;
-		if (throwHistory.length < segments.length - 1) return false;
+		const { throws } = params as { throws: string[] };
+		if (throwHistory.length < throws.length - 1) return false;
 
-		const lastN = throwHistory.slice(-(segments.length - 1));
+		const lastN = throwHistory.slice(-(throws.length - 1));
 		const sequence = [...lastN, currentThrow];
 
-		for (let i = 0; i < segments.length; i++) {
-			const t = sequence[i];
-			if (multiplier === "single" && t.multiplier !== 1) return false;
-			if (t.segment !== segments[i]) return false;
+		for (let i = 0; i < throws.length; i++) {
+			const expected = SectorParser.parse(throws[i]);
+			const actual = sequence[i];
+			if (actual.segment !== expected.segment || actual.multiplier !== expected.multiplier) return false;
 		}
 
 		return true;
-	}
-
-	private doubleOhSeven(
-		throwHistory: GameThrow[],
-		currentThrow: GameThrow,
-	): boolean {
-		if (throwHistory.length < 2) return false;
-
-		const last2 = throwHistory.slice(-2);
-		return (
-			last2[0].points === 0 &&
-			last2[1].points === 0 &&
-			currentThrow.segment === 7 &&
-			currentThrow.multiplier === 1
-		);
 	}
 
 	private nineteenOhFour(
@@ -148,11 +132,9 @@ export class SpecialEventDetector {
 
 		const last2 = throwHistory.slice(-2);
 		return (
-			last2[0].segment === 19 &&
-			last2[0].multiplier === 1 &&
+			last2[0].points === 19 &&
 			last2[1].points === 0 &&
-			currentThrow.segment === 4 &&
-			currentThrow.multiplier === 1
+			currentThrow.points === 4
 		);
 	}
 
@@ -164,11 +146,9 @@ export class SpecialEventDetector {
 
 		const last2 = throwHistory.slice(-2);
 		return (
-			last2[0].segment === 4 &&
-			last2[0].multiplier === 1 &&
+			last2[0].points === 4 &&
 			last2[1].points === 0 &&
-			currentThrow.segment === 4 &&
-			currentThrow.multiplier === 1
+			currentThrow.points === 4
 		);
 	}
 

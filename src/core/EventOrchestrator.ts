@@ -124,7 +124,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 		// Bounceout counts as miss
 		if (payload.bounceout) {
-			throwData = { points: 0, multiplier: 0, segment: 0 };
+			throwData = { points: 0, multiplier: 1, segment: 0 };
 		}
 
 		return {
