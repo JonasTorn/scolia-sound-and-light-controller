@@ -163,6 +163,9 @@ export class SoundController {
 			}
 			const proc = spawn("afplay", ["-v", String(volume), filePath]);
 			this.activeProcess = proc;
+			// Reset priority once the sound is running so future events (throws
+			// arriving after a long set_won sound starts) can always interrupt.
+			this.currentSoundPriority = 0;
 			proc.on("error", (err) => { this.logger.warn(`Audio error "${eventName}": ${err.message}`); });
 			proc.on("exit", () => {
 				if (this.activeProcess === proc) {
