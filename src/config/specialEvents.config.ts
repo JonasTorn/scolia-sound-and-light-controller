@@ -146,6 +146,14 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	// ── Minor fun events ─────────────────────────────────────────────────────
 
 	{
+		name: "bullseye",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["50"] },
+		sound: { files: ["headshot.wav"] },
+	},
+	{
 		name: "sixty_nine",
 		enabled: true,
 		priority: 2,
@@ -195,4 +203,5 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "consecutivePattern",
 		params: { pattern: [2, 3] },
 	},
+
 ];

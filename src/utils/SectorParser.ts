@@ -7,7 +7,8 @@ export class SectorParser {
 		const s = sector.toLowerCase();
 
 		// Bull (inner/outer distinguished by Scolia via multiplier in payload)
-		if (s === "bull" || s === "25" || s === "50") {
+		if (s === "50") return { points: 50, multiplier: 1, segment: 50 };
+		if (s === "bull" || s === "25") {
 			return { points: 25, multiplier: 1, segment: 25 };
 		}
 

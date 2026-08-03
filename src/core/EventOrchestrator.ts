@@ -113,8 +113,9 @@ export class EventOrchestrator implements IEventOrchestrator {
 		const parsed = SectorParser.parse(payload.sector);
 		let throwData = { ...parsed };
 
-		// Distinguish inner bull (50p) from outer bull (25p) via coordinates
-		if (parsed.segment === 25) {
+		// Scolia sends "Bull" for both inner and outer bull — use coordinates to distinguish.
+		// Explicit "25" / "50" from the simulator are already unambiguous.
+		if (payload.sector === "Bull" && parsed.segment === 25) {
 			const [x, y] = payload.coordinates;
 			const distance = Math.sqrt(x * x + y * y);
 			if (distance <= 7) {

@@ -112,7 +112,8 @@ export class SpecialEventDetector {
 		const { throws } = params as { throws: string[] };
 		if (throwHistory.length < throws.length - 1) return false;
 
-		const lastN = throwHistory.slice(-(throws.length - 1));
+		const n = throws.length - 1;
+		const lastN = n > 0 ? throwHistory.slice(-n) : [];
 		const sequence = [...lastN, currentThrow];
 
 		for (let i = 0; i < throws.length; i++) {
