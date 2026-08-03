@@ -41,7 +41,7 @@ export interface LightSharkExecutor {
 
 // Unified effect system
 export type Effect =
-	| { type: "sound"; event: string; priority?: number }
+	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
 	| { type: "knx"; action: string };
@@ -58,7 +58,8 @@ export interface SpecialEventDefinition {
 	priority?: number; // higher wins when multiple events match the same throw
 	detector: string;
 	params: Record<string, any>;
-	effects: Effect[];
+	sound?: SoundEntry; // inline sound — plays without a sounds-table entry
+	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
 }
 
 // Config types
@@ -155,7 +156,7 @@ export interface FullConfig {
 	sound: SoundConfig;
 	playwright: PlaywrightConfig;
 	logging: LoggingConfig;
-	special_events: Record<string, { enabled: boolean }>;
+	special_events: SpecialEventDefinition[];
 }
 
 // Logger types
@@ -167,7 +168,7 @@ export interface ILightSharkController {
 }
 
 export interface ISoundController {
-	playSound(eventName: string): Promise<void>;
+	playSound(eventName: string, priority?: number, inlineFiles?: string[], inlineVolume?: number): Promise<void>;
 }
 
 export interface IKNXController {

@@ -10,6 +10,9 @@ export interface IEventOrchestrator {
 	handleThrowDetected(payload: ScoliaThrowPayload): Promise<void>;
 	handleTakeoutFinished(): Promise<void>;
 	handleTakeoutStarted(): Promise<void>;
+	handleBustDetected(): Promise<void>;
+	handleLegWon(): Promise<void>;
+	handleSetWon(): Promise<void>;
 }
 
 export class EventOrchestrator implements IEventOrchestrator {
@@ -26,7 +29,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 		knxController: any,
 	) {
 		this.throwEventResolver = new ThrowEventResolver(config.lightshark);
-		this.specialEventDetector = new SpecialEventDetector();
+		this.specialEventDetector = new SpecialEventDetector(config.special_events);
 		this.effectExecutor = new EffectExecutor(
 			gameState,
 			lightsharkController,
@@ -81,6 +84,33 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	async handleTakeoutStarted(): Promise<void> {
 		this.logger.info("Takeout started");
+	}
+
+	async handleBustDetected(): Promise<void> {
+		try {
+			this.logger.info("Bust detected");
+			await this.effectExecutor.execute([{ type: "sound", event: "bust", priority: 5 }]);
+		} catch (err) {
+			this.logger.error("Error handling bust:", err);
+		}
+	}
+
+	async handleLegWon(): Promise<void> {
+		try {
+			this.logger.info("Leg won");
+			await this.effectExecutor.execute([{ type: "sound", event: "leg_won", priority: 5 }]);
+		} catch (err) {
+			this.logger.error("Error handling leg won:", err);
+		}
+	}
+
+	async handleSetWon(): Promise<void> {
+		try {
+			this.logger.info("Set won");
+			await this.effectExecutor.execute([{ type: "sound", event: "set_won", priority: 5 }]);
+		} catch (err) {
+			this.logger.error("Error handling set won:", err);
+		}
 	}
 
 	// Special sound replaces throw sound; all other effects stack.

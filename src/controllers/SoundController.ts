@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import * as path from "path";
 import { execFile, spawn, ChildProcess } from "child_process";
 import { Logger } from "../utils/Logger";
@@ -76,7 +77,7 @@ export class SoundController {
 		this.currentPlayer = name;
 	}
 
-	async playSound(eventName: string, priority = 0): Promise<void> {
+	async playSound(eventName: string, priority = 0, inlineFiles?: string[], inlineVolume?: number): Promise<void> {
 		if (!this.config.enabled) return;
 
 		if (priority < this.currentSoundPriority) {
@@ -84,7 +85,7 @@ export class SoundController {
 			return;
 		}
 
-		// Per-player override takes priority over global sounds
+		// 1. Per-player override — always first
 		if (this.currentPlayer) {
 			const playerEntry = this.config.players?.[this.currentPlayer]?.[eventName];
 			const playerFiles = this.getFiles(playerEntry);
@@ -98,9 +99,19 @@ export class SoundController {
 			}
 		}
 
+		// 2. Inline files from event definition (special events carry their sound with them)
+		if (inlineFiles?.length) {
+			const file = inlineFiles[Math.floor(Math.random() * inlineFiles.length)];
+			const filePath = path.resolve(this.soundsDir, file);
+			if (filePath.startsWith(this.soundsDir)) {
+				await this.playFile(filePath, inlineVolume ?? 1.0, eventName, priority);
+				return;
+			}
+		}
+
+		// 3. Global sounds table
 		const entry = this.config.sounds?.[eventName];
 		const files = this.getFiles(entry);
-
 		if (files.length > 0 && entry?.enabled !== false) {
 			const file = files[Math.floor(Math.random() * files.length)];
 			const filePath = path.resolve(this.soundsDir, file);
@@ -112,7 +123,7 @@ export class SoundController {
 			return;
 		}
 
-		// Throw-specific name (triple_20, double_5, single_1) → tts/N.wav
+		// 4. Throw-specific name (triple_20, double_5, single_1) → tts/N.wav
 		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);
 		if (throwMatch) {
 			const multMap: Record<string, number> = { triple: 3, double: 2, single: 1 };
@@ -121,6 +132,13 @@ export class SoundController {
 			if (ttsPath.startsWith(this.soundsDir)) {
 				await this.playFile(ttsPath, 1.0, eventName, priority);
 			}
+			return;
+		}
+
+		// 5. General tts fallback — any event name that has a matching tts file
+		const generalTtsPath = path.resolve(this.soundsDir, `tts/${eventName}.wav`);
+		if (generalTtsPath.startsWith(this.soundsDir) && fs.existsSync(generalTtsPath)) {
+			await this.playFile(generalTtsPath, 1.0, eventName, priority);
 			return;
 		}
 

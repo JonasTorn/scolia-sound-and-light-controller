@@ -1,11 +1,81 @@
 import { SpecialEventDetector } from "../../src/core/SpecialEventDetector";
-import { GameThrow } from "../../src/types/index";
+import { GameThrow, SpecialEventDefinition } from "../../src/types/index";
+
+const testEventDefs: SpecialEventDefinition[] = [
+	{
+		name: "180",
+		enabled: true,
+		priority: 3,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: 180 },
+		lights: [
+			{ executor: { page: 1, column: 6, row: 2 }, mode: "additive" },
+			{ executor: { page: 1, column: 7, row: 2 }, mode: "additive" },
+		],
+	},
+	{
+		name: "120",
+		enabled: true,
+		priority: 3,
+		detector: "consecutivePattern",
+		params: { pattern: [60, 60] },
+		sound: { files: ["tts/one_twenty.wav"] },
+	},
+	{
+		name: "one_two_three",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { segments: [1, 2, 3], multiplier: "single" },
+		sound: { files: ["tts/one_two_three.wav"] },
+	},
+	{
+		name: "three_ones",
+		enabled: true,
+		priority: 1,
+		detector: "sequentialSegments",
+		params: { segments: [1, 1, 1], multiplier: "single" },
+		sound: { files: ["tts/three_ones.wav"] },
+	},
+	{
+		name: "double_oh_seven",
+		enabled: true,
+		priority: 2,
+		detector: "doubleOhSeven",
+		params: {},
+		sound: { files: ["tts/double_oh_seven.wav"] },
+	},
+	{
+		name: "nineteen_oh_four",
+		enabled: true,
+		priority: 2,
+		detector: "nineteenOhFour",
+		params: {},
+		sound: { files: ["tts/nineteen_oh_four.wav"] },
+	},
+	{
+		name: "four_oh_four",
+		enabled: true,
+		priority: 2,
+		detector: "fourOhFour",
+		params: {},
+		sound: { files: ["tts/four_oh_four.wav"] },
+	},
+	{
+		name: "three_misses",
+		enabled: true,
+		priority: 2,
+		detector: "consecutiveMisses",
+		params: { count: 3 },
+		sound: { files: ["tts/three_misses.wav"] },
+	},
+];
 
 describe("SpecialEventDetector", () => {
 	let detector: SpecialEventDetector;
 
 	beforeEach(() => {
-		detector = new SpecialEventDetector();
+		detector = new SpecialEventDetector(testEventDefs);
 	});
 
 	const createThrow = (

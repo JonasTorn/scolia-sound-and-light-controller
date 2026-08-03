@@ -1,15 +1,15 @@
-import { GameThrow, ThrowEvent } from "../types/index";
-import { specialEventsConfig } from "../config/specialEvents.config";
+import { Effect, GameThrow, SpecialEventDefinition, ThrowEvent } from "../types/index";
 
 export class SpecialEventDetector {
+	constructor(private eventDefs: SpecialEventDefinition[]) {}
+
 	detect(
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
 	): ThrowEvent | null {
-		// Collect all matching events, then return the highest-priority one
 		let best: { priority: number; event: ThrowEvent } | null = null;
 
-		for (const eventDef of specialEventsConfig) {
+		for (const eventDef of this.eventDefs) {
 			if (!eventDef.enabled) continue;
 
 			const isMatch = this.checkPattern(
@@ -22,16 +22,20 @@ export class SpecialEventDetector {
 
 			const priority = eventDef.priority ?? 0;
 			if (best === null || priority > best.priority) {
-				best = {
-					priority,
-					event: {
-						name: eventDef.name,
-						// Copy event priority onto sound effects so EffectExecutor can use it
-						effects: eventDef.effects.map((e) =>
-							e.type === "sound" ? { ...e, priority } : e,
-						),
-					},
-				};
+				const effects: Effect[] = [];
+				if (eventDef.sound) {
+					effects.push({
+						type: "sound",
+						event: eventDef.name,
+						files: eventDef.sound.files,
+						volume: eventDef.sound.volume,
+						priority,
+					});
+				}
+				for (const light of eventDef.lights ?? []) {
+					effects.push({ type: "light", executor: light.executor, mode: light.mode });
+				}
+				best = { priority, event: { name: eventDef.name, effects } };
 			}
 		}
 
@@ -89,7 +93,7 @@ export class SpecialEventDetector {
 		const lastN = throwHistory.slice(-(pattern.length - 1));
 		const sequence = [...lastN, currentThrow];
 
-		// Check if each throw matches the expected point value in the pattern
+		// Pattern values are point totals per throw (e.g. [60, 60] = two T20s)
 		for (let i = 0; i < pattern.length; i++) {
 			if (sequence[i].points !== pattern[i]) {
 				return false;
@@ -112,7 +116,6 @@ export class SpecialEventDetector {
 
 		for (let i = 0; i < segments.length; i++) {
 			const t = sequence[i];
-			// Check segment and multiplier match
 			if (multiplier === "single" && t.multiplier !== 1) return false;
 			if (t.segment !== segments[i]) return false;
 		}
@@ -124,7 +127,6 @@ export class SpecialEventDetector {
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
 	): boolean {
-		// Pattern: miss, miss, single 7
 		if (throwHistory.length < 2) return false;
 
 		const last2 = throwHistory.slice(-2);
@@ -140,7 +142,6 @@ export class SpecialEventDetector {
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
 	): boolean {
-		// Pattern: single 19, miss, single 4
 		if (throwHistory.length < 2) return false;
 
 		const last2 = throwHistory.slice(-2);
@@ -157,7 +158,6 @@ export class SpecialEventDetector {
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
 	): boolean {
-		// Pattern: single 4, miss, single 4
 		if (throwHistory.length < 2) return false;
 
 		const last2 = throwHistory.slice(-2);
