@@ -17,27 +17,24 @@ export class LightSharkController {
 		return this.client;
 	}
 
-	private createMessage(address: string, floatValue: number = 0.0): Message {
+	private send(address: string, value = 0.0): Promise<boolean> {
 		const msg = new Message(address);
-		msg.append({ type: "f", value: floatValue });
-		return msg;
+		msg.append({ type: "f", value });
+		return new Promise((resolve) => {
+			this.getClient().send(msg, (err: Error | null) => {
+				if (err) {
+					this.logger.error(`LightShark OSC error: ${err.message}`);
+					resolve(false);
+				} else {
+					resolve(true);
+				}
+			});
+		});
 	}
 
 	async testConnection(): Promise<boolean> {
 		try {
-			const client = this.getClient();
-			const msg = this.createMessage("/LS/Sync");
-
-			return new Promise((resolve) => {
-				client.send(msg, (err: Error | null) => {
-					if (err) {
-						this.logger.error(`LightShark OSC test failed: ${err.message}`);
-						resolve(false);
-					} else {
-						resolve(true);
-					}
-				});
-			});
+			return await this.send("/LS/Sync");
 		} catch (err) {
 			this.logger.error(`LightShark test failed: ${err}`);
 			return false;
@@ -46,24 +43,12 @@ export class LightSharkController {
 
 	async triggerExecutor(executor: LightSharkExecutor): Promise<boolean> {
 		try {
-			const client = this.getClient();
 			const { page, column, row } = executor;
-			const address = `/LS/Executor/${page}/${column}/${row}`;
-			const msg = this.createMessage(address, 0.0);
-
-			return new Promise((resolve) => {
-				client.send(msg, (err: Error | null) => {
-					if (err) {
-						this.logger.error(`LightShark error: ${err.message}`);
-						resolve(false);
-					} else {
-						this.logger.debug(
-							`✓ LightShark executor ${page}/${column}/${row} triggered`,
-						);
-						resolve(true);
-					}
-				});
-			});
+			const success = await this.send(`/LS/Executor/${page}/${column}/${row}`);
+			if (success) {
+				this.logger.debug(`✓ LightShark executor ${page}/${column}/${row} triggered`);
+			}
+			return success;
 		} catch (err) {
 			this.logger.error(`LightShark error: ${err}`);
 			return false;

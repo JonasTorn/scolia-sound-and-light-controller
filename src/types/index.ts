@@ -5,10 +5,6 @@ export interface ScoliaThrowPayload {
 	bounceout: boolean;
 }
 
-export interface ScoliaTakeoutPayload {
-	// Takeout event payload (minimal)
-}
-
 // Parsed throw data
 export interface ParsedThrow {
 	points: number;
@@ -120,14 +116,11 @@ export interface SoundEntry {
 	enabled?: boolean;
 }
 
-// Per-player sound overrides — same structure as sounds, applied first before global lookup
-export type PlayerSoundOverrides = Record<string, SoundEntry>;
-
 export interface SoundConfig {
 	enabled: boolean;
 	soundsDir: string;
 	sounds: Record<string, SoundEntry>;
-	players?: Record<string, PlayerSoundOverrides>;
+	players?: Record<string, Record<string, SoundEntry>>;
 }
 
 export interface PlaywrightConfig {
@@ -164,7 +157,7 @@ export type LogLevel = "INFO" | "SUCCESS" | "WARN" | "ERROR" | "DEBUG";
 
 // Controller interfaces
 export interface ILightSharkController {
-	triggerExecutor(executor: LightSharkExecutor): Promise<void>;
+	triggerExecutor(executor: LightSharkExecutor): Promise<boolean>;
 }
 
 export interface ISoundController {
@@ -172,7 +165,7 @@ export interface ISoundController {
 }
 
 export interface IKNXController {
-	triggerAction(actionName: string): Promise<void>;
+	triggerAction(actionName: string): void;
 }
 
 export interface IPlaywrightController {

@@ -1,4 +1,4 @@
-import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ThrowEvent } from "../types/index";
+import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ThrowEvent, ILightSharkController, ISoundController, IKNXController } from "../types/index";
 import { Logger } from "../utils/Logger";
 import { SectorParser } from "../utils/SectorParser";
 import { GameState } from "./GameState";
@@ -24,9 +24,9 @@ export class EventOrchestrator implements IEventOrchestrator {
 		private gameState: GameState,
 		private config: FullConfig,
 		private logger: Logger,
-		lightsharkController: any,
-		soundController: any,
-		knxController: any,
+		lightsharkController: ILightSharkController,
+		soundController: ISoundController,
+		knxController: IKNXController,
 	) {
 		this.throwEventResolver = new ThrowEventResolver(config.lightshark);
 		this.specialEventDetector = new SpecialEventDetector();
@@ -86,30 +86,16 @@ export class EventOrchestrator implements IEventOrchestrator {
 		this.logger.info("Takeout started");
 	}
 
-	async handleBustDetected(): Promise<void> {
-		try {
-			this.logger.info("Bust detected");
-			await this.effectExecutor.execute([{ type: "sound", event: "bust", priority: 5 }]);
-		} catch (err) {
-			this.logger.error("Error handling bust:", err);
-		}
-	}
+	async handleBustDetected(): Promise<void> { await this.fireGameEvent("bust", "Bust detected"); }
+	async handleLegWon(): Promise<void>        { await this.fireGameEvent("leg_won", "Leg won"); }
+	async handleSetWon(): Promise<void>        { await this.fireGameEvent("set_won", "Set won"); }
 
-	async handleLegWon(): Promise<void> {
+	private async fireGameEvent(name: string, logMsg: string): Promise<void> {
 		try {
-			this.logger.info("Leg won");
-			await this.effectExecutor.execute([{ type: "sound", event: "leg_won", priority: 5 }]);
+			this.logger.info(logMsg);
+			await this.effectExecutor.execute([{ type: "sound", event: name, priority: 5 }]);
 		} catch (err) {
-			this.logger.error("Error handling leg won:", err);
-		}
-	}
-
-	async handleSetWon(): Promise<void> {
-		try {
-			this.logger.info("Set won");
-			await this.effectExecutor.execute([{ type: "sound", event: "set_won", priority: 5 }]);
-		} catch (err) {
-			this.logger.error("Error handling set won:", err);
+			this.logger.error(`Error handling ${name}:`, err);
 		}
 	}
 

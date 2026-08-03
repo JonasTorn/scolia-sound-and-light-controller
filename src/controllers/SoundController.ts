@@ -9,7 +9,7 @@ export class SoundController {
 	private psProcess: ChildProcess | null = null;
 	private activeProcess: ChildProcess | null = null;
 	private closing = false;
-	private player: any = null;
+	private linuxPlayer: any = null; // play-sound has no type definitions
 	private currentPlayer: string | null = null;
 	private currentSoundPriority = 0;
 
@@ -17,17 +17,13 @@ export class SoundController {
 		private config: SoundConfig,
 		private logger: Logger,
 	) {
-		this.soundsDir = path.resolve(
-			process.cwd(),
-			config.soundsDir || "./sounds",
-		);
+		this.soundsDir = path.resolve(process.cwd(), config.soundsDir || "./sounds");
 
 		if (process.platform === "win32") {
 			this.spawnPowerShell();
 		} else if (process.platform !== "darwin") {
-			// Linux: play-sound (aplay, mpg123, etc.)
 			try {
-				this.player = require("play-sound")();
+				this.linuxPlayer = require("play-sound")();
 			} catch {
 				this.logger.warn("play-sound not available on Linux");
 			}
@@ -51,10 +47,7 @@ export class SoundController {
 		this.psProcess = spawn(
 			"powershell",
 			["-NoProfile", "-NonInteractive", "-Command", script],
-			{
-				windowsHide: true,
-				stdio: ["pipe", "ignore", "pipe"],
-			},
+			{ windowsHide: true, stdio: ["pipe", "ignore", "pipe"] },
 		);
 
 		this.psProcess.stderr?.on("data", (data) => {
@@ -64,9 +57,7 @@ export class SoundController {
 		this.psProcess.on("exit", (code) => {
 			this.psProcess = null;
 			if (this.closing) return;
-			this.logger.warn(
-				`PowerShell audio process exited (code ${code}), restarting...`,
-			);
+			this.logger.warn(`PowerShell audio process exited (code ${code}), restarting...`);
 			setTimeout(() => this.spawnPowerShell(), 100);
 		});
 
@@ -77,7 +68,13 @@ export class SoundController {
 		this.currentPlayer = name;
 	}
 
-	async playSound(eventName: string, priority = 0, inlineFiles?: string[], inlineVolume?: number, playerSounds?: Record<string, import("../types/index").SoundEntry>): Promise<void> {
+	async playSound(
+		eventName: string,
+		priority = 0,
+		inlineFiles?: string[],
+		inlineVolume?: number,
+		playerSounds?: Record<string, SoundEntry>,
+	): Promise<void> {
 		if (!this.config.enabled) return;
 
 		if (priority < this.currentSoundPriority) {
@@ -85,78 +82,58 @@ export class SoundController {
 			return;
 		}
 
-		// 1. Event-level per-player override (defined in specialEvents.config.ts)
+		// 1. Event-level per-player override (from specialEvents.config.ts → playerSounds)
 		if (this.currentPlayer && playerSounds?.[this.currentPlayer]) {
 			const entry = playerSounds[this.currentPlayer];
-			const files = this.getFiles(entry);
-			if (files.length > 0 && entry?.enabled !== false) {
-				const file = files[Math.floor(Math.random() * files.length)];
-				const filePath = path.resolve(this.soundsDir, file);
-				if (filePath.startsWith(this.soundsDir)) {
-					await this.playFile(filePath, entry.volume ?? 1.0, eventName, priority);
-					return;
-				}
-			}
+			if (entry.enabled !== false && await this.tryPlayEntry(entry, eventName, priority)) return;
 		}
 
-		// 2. Global per-player override (from config.json → sound.players, for throw sounds)
+		// 2. Config-level per-player override (from config.json → sound.players, for throw sounds)
 		if (this.currentPlayer) {
-			const playerEntry = this.config.players?.[this.currentPlayer]?.[eventName];
-			const playerFiles = this.getFiles(playerEntry);
-			if (playerFiles.length > 0 && playerEntry?.enabled !== false) {
-				const file = playerFiles[Math.floor(Math.random() * playerFiles.length)];
-				const filePath = path.resolve(this.soundsDir, file);
-				if (filePath.startsWith(this.soundsDir)) {
-					await this.playFile(filePath, playerEntry?.volume ?? 1.0, eventName, priority);
-					return;
-				}
-			}
+			const entry = this.config.players?.[this.currentPlayer]?.[eventName];
+			if (entry && entry.enabled !== false && await this.tryPlayEntry(entry, eventName, priority)) return;
 		}
 
 		// 3. Inline files from event definition
-		if (inlineFiles?.length) {
-			const file = inlineFiles[Math.floor(Math.random() * inlineFiles.length)];
-			const filePath = path.resolve(this.soundsDir, file);
-			if (filePath.startsWith(this.soundsDir)) {
-				await this.playFile(filePath, inlineVolume ?? 1.0, eventName, priority);
-				return;
-			}
-		}
+		if (inlineFiles?.length && await this.tryPlayFiles(inlineFiles, inlineVolume ?? 1.0, eventName, priority)) return;
 
-		// 3. Global sounds table
-		const entry = this.config.sounds?.[eventName];
-		const files = this.getFiles(entry);
-		if (files.length > 0 && entry?.enabled !== false) {
-			const file = files[Math.floor(Math.random() * files.length)];
-			const filePath = path.resolve(this.soundsDir, file);
-			if (!filePath.startsWith(this.soundsDir)) {
-				this.logger.warn(`Invalid audio path for: ${eventName}`);
-				return;
-			}
-			await this.playFile(filePath, entry?.volume ?? 1.0, eventName, priority);
-			return;
-		}
+		// 4. Global sounds table
+		const tableEntry = this.config.sounds?.[eventName];
+		if (tableEntry && tableEntry.enabled !== false && await this.tryPlayEntry(tableEntry, eventName, priority)) return;
 
-		// 4. Throw-specific name (triple_20, double_5, single_1) → tts/N.wav
+		// 5. TTS for throw names (triple_20 → tts/60.wav, double_5 → tts/10.wav, etc.)
 		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);
 		if (throwMatch) {
-			const multMap: Record<string, number> = { triple: 3, double: 2, single: 1 };
-			const score = multMap[throwMatch[1]] * parseInt(throwMatch[2]);
-			const ttsPath = path.resolve(this.soundsDir, `tts/${score}.wav`);
-			if (ttsPath.startsWith(this.soundsDir)) {
-				await this.playFile(ttsPath, 1.0, eventName, priority);
-			}
+			const multipliers: Record<string, number> = { triple: 3, double: 2, single: 1 };
+			const score = multipliers[throwMatch[1]] * parseInt(throwMatch[2]);
+			await this.tryPlayFiles([`tts/${score}.wav`], 1.0, eventName, priority);
 			return;
 		}
 
-		// 5. General tts fallback — any event name that has a matching tts file
-		const generalTtsPath = path.resolve(this.soundsDir, `tts/${eventName}.wav`);
-		if (generalTtsPath.startsWith(this.soundsDir) && fs.existsSync(generalTtsPath)) {
-			await this.playFile(generalTtsPath, 1.0, eventName, priority);
-			return;
+		// 6. General TTS fallback — tts/{eventName}.wav if it exists
+		if (!await this.tryPlayFiles([`tts/${eventName}.wav`], 1.0, eventName, priority, true)) {
+			this.logger.debug(`No audio configured for: ${eventName}`);
 		}
+	}
 
-		this.logger.debug(`No audio configured for: ${eventName}`);
+	private async tryPlayEntry(entry: SoundEntry, eventName: string, priority: number): Promise<boolean> {
+		return this.tryPlayFiles(this.getFiles(entry), entry.volume ?? 1.0, eventName, priority);
+	}
+
+	private async tryPlayFiles(
+		files: string[],
+		volume: number,
+		eventName: string,
+		priority: number,
+		requireExist = false,
+	): Promise<boolean> {
+		if (!files.length) return false;
+		const file = files[Math.floor(Math.random() * files.length)];
+		const filePath = path.resolve(this.soundsDir, file);
+		if (!filePath.startsWith(this.soundsDir)) return false;
+		if (requireExist && !fs.existsSync(filePath)) return false;
+		await this.playFile(filePath, volume, eventName, priority);
+		return true;
 	}
 
 	private async playFile(
@@ -165,7 +142,6 @@ export class SoundController {
 		eventName: string,
 		priority = 0,
 	): Promise<void> {
-		const fileName = path.basename(filePath);
 		this.currentSoundPriority = priority;
 
 		if (process.platform === "win32") {
@@ -174,18 +150,10 @@ export class SoundController {
 			} else {
 				execFile(
 					"powershell",
-					[
-						"-NoProfile",
-						"-NonInteractive",
-						"-Command",
-						"(New-Object Media.SoundPlayer $args[0]).PlaySync()",
-						filePath,
-					],
+					["-NoProfile", "-NonInteractive", "-Command",
+						"(New-Object Media.SoundPlayer $args[0]).PlaySync()", filePath],
 					{ windowsHide: true },
-					(err) => {
-						if (err)
-							this.logger.warn(`Audio error "${eventName}": ${err.message}`);
-					},
+					(err) => { if (err) this.logger.warn(`Audio error "${eventName}": ${err.message}`); },
 				);
 			}
 		} else if (process.platform === "darwin") {
@@ -195,22 +163,20 @@ export class SoundController {
 			}
 			const proc = spawn("afplay", ["-v", String(volume), filePath]);
 			this.activeProcess = proc;
-			proc.on("error", (err) => {
-				this.logger.warn(`Audio error "${eventName}": ${err.message}`);
-			});
+			proc.on("error", (err) => { this.logger.warn(`Audio error "${eventName}": ${err.message}`); });
 			proc.on("exit", () => {
 				if (this.activeProcess === proc) {
 					this.activeProcess = null;
-					this.currentSoundPriority = 0; // reset when sound finishes naturally
+					this.currentSoundPriority = 0;
 				}
 			});
-		} else if (this.player) {
-			this.player.play(filePath, (err: Error | null) => {
+		} else if (this.linuxPlayer) {
+			this.linuxPlayer.play(filePath, (err: Error | null) => {
 				if (err) this.logger.warn(`Audio error "${eventName}": ${err.message}`);
 			});
 		}
 
-		this.logger.info(`🔊 Sound: ${eventName} (${fileName})`);
+		this.logger.info(`🔊 Sound: ${eventName} (${path.basename(filePath)})`);
 	}
 
 	private getFiles(entry: SoundEntry | undefined): string[] {

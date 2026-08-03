@@ -41,30 +41,6 @@ export class ConfigManager {
 		return this.config;
 	}
 
-	getScolia() {
-		return this.getConfig().scolia;
-	}
-
-	getLightShark() {
-		return this.getConfig().lightshark;
-	}
-
-	getSound() {
-		return this.getConfig().sound;
-	}
-
-	getKNX() {
-		return this.getConfig().knx;
-	}
-
-	getPlaywright() {
-		return this.getConfig().playwright;
-	}
-
-	getLogging() {
-		return this.getConfig().logging;
-	}
-
 	reload(): FullConfig {
 		this.config = null;
 		return this.load();

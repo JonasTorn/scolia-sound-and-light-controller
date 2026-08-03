@@ -1,4 +1,4 @@
-import { Effect, FullConfig, LightSharkExecutor } from "../types/index";
+import { Effect, FullConfig, IKNXController, ILightSharkController, ISoundController, LightSharkExecutor } from "../types/index";
 import { GameState } from "./GameState";
 import { Logger } from "../utils/Logger";
 
@@ -8,9 +8,9 @@ export class EffectExecutor {
 
 	constructor(
 		private gameState: GameState,
-		private lightshark: any,
-		private sound: any,
-		private knx: any,
+		private lightshark: ILightSharkController,
+		private sound: ISoundController,
+		private knx: IKNXController,
 		private config: FullConfig,
 		private logger: Logger,
 	) {}

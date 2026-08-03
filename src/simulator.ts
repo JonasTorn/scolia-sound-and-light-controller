@@ -6,8 +6,8 @@ import { SoundController } from "./controllers/SoundController";
 import { ScoliaThrowPayload } from "./types/index";
 
 // No-op stubs for hardware controllers
-const noopLightshark = { triggerExecutor: async () => {} };
-const noopKnx = { triggerAction: async () => {} };
+const noopLightshark = { triggerExecutor: async () => true };
+const noopKnx = { triggerAction: () => {} };
 
 // Each sequence represents one "turn" — throws are processed in order,
 // then takeout fires to reset state before the next sequence.

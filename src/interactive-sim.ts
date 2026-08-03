@@ -13,14 +13,16 @@ const logger = new Logger({ enabled: true, consoleOutput: true });
 
 // Stub controllers that just log instead of sending to hardware
 const stubLightShark = {
-	triggerExecutor: (executor: { page: number; column: number; row: number }) =>
-		logger.info(`  💡 LightShark → executor ${executor.page}/${executor.column}/${executor.row}`),
+	triggerExecutor: async (executor: { page: number; column: number; row: number }) => {
+		logger.info(`  💡 LightShark → executor ${executor.page}/${executor.column}/${executor.row}`);
+		return true;
+	},
 	testConnection: async () => true,
 	close: () => {},
 };
 const stubKnx = {
 	connect: async () => true,
-	triggerAction: (name: string) => logger.info(`  🔌 KNX → ${name}`),
+	triggerAction: (name: string) => { logger.info(`  🔌 KNX → ${name}`); },
 	disconnect: () => {},
 };
 

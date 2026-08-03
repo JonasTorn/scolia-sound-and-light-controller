@@ -260,6 +260,7 @@ describe("GameState", () => {
 				timestamp: 12345,
 			});
 			gs1.setKNXState("off");
+			gs1.flush();
 
 			// Create new instance, should load persisted state
 			const gs2 = new GameState(testPersistencePath);

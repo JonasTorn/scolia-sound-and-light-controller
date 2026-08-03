@@ -14,6 +14,7 @@ export class GameState {
 	private strobeActive = false;
 	private currentPlayer: string | null = null; // not persisted — detected at runtime
 	private persistencePath: string;
+	private saveScheduled = false;
 	private readonly MAX_HISTORY = 100;
 
 	constructor(persistencePath?: string) {
@@ -36,7 +37,7 @@ export class GameState {
 			this.throwHistory = this.throwHistory.slice(-this.MAX_HISTORY);
 		}
 
-		this.saveToDisk();
+		this.scheduleSave();
 		return gameThrow;
 	}
 
@@ -60,7 +61,7 @@ export class GameState {
 	// Executor tracking
 	setLastExecutor(executor: LightSharkExecutor | null): void {
 		this.lastExecutor = executor;
-		this.saveToDisk();
+		this.scheduleSave();
 	}
 
 	getLastExecutor(): LightSharkExecutor | null {
@@ -70,7 +71,7 @@ export class GameState {
 	// Special executors (for multi-executor effects like 180)
 	setSpecialExecutors(executors: LightSharkExecutor[]): void {
 		this.specialExecutors = [...executors];
-		this.saveToDisk();
+		this.scheduleSave();
 	}
 
 	getSpecialExecutors(): LightSharkExecutor[] {
@@ -80,20 +81,20 @@ export class GameState {
 	addSpecialExecutor(executor: LightSharkExecutor): void {
 		if (!this.specialExecutors.some((e) => this.executorEquals(e, executor))) {
 			this.specialExecutors.push(executor);
-			this.saveToDisk();
+			this.scheduleSave();
 		}
 	}
 
 	clearSpecialExecutors(): void {
 		this.specialExecutors = [];
-		this.saveToDisk();
+		this.scheduleSave();
 	}
 
 	// KNX state tracking
 	setKNXState(state: "on" | "off"): void {
 		if (this.knxState !== state) {
 			this.knxState = state;
-			this.saveToDisk();
+			this.scheduleSave();
 		}
 	}
 
@@ -105,7 +106,7 @@ export class GameState {
 	setStrobeActive(active: boolean): void {
 		if (this.strobeActive !== active) {
 			this.strobeActive = active;
-			this.saveToDisk();
+			this.scheduleSave();
 		}
 	}
 
@@ -126,7 +127,7 @@ export class GameState {
 	markEventPlayed(throwIndex: number, eventName: string): void {
 		if (throwIndex >= 0 && throwIndex < this.throwHistory.length) {
 			this.throwHistory[throwIndex].playedEvents[eventName] = true;
-			this.saveToDisk();
+			this.scheduleSave();
 		}
 	}
 
@@ -144,7 +145,7 @@ export class GameState {
 		this.specialExecutors = [];
 		this.knxState = "on";
 		this.strobeActive = false;
-		this.saveToDisk();
+		this.scheduleSave();
 	}
 
 	// Serialization
@@ -158,7 +159,23 @@ export class GameState {
 		};
 	}
 
+	flush(): void {
+		if (this.saveScheduled) {
+			this.saveScheduled = false;
+			this.saveToDisk();
+		}
+	}
+
 	// Persistence
+	private scheduleSave(): void {
+		if (this.saveScheduled) return;
+		this.saveScheduled = true;
+		setImmediate(() => {
+			this.saveScheduled = false;
+			this.saveToDisk();
+		});
+	}
+
 	private saveToDisk(): void {
 		try {
 			const snapshot = this.serialize();
