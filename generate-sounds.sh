@@ -1,12 +1,12 @@
 #!/bin/bash
-# Generates TTS placeholder WAV files into sounds/tts/.
+# Generates TTS placeholder WAV files into sounds/core/.
 # Uses macOS say + afconvert (no dependencies needed).
 # Run from project root: bash generate-sounds.sh
 # Replace individual files later with ElevenLabs or real recordings.
 
 VOICE="Daniel"  # British English — sounds more announcer-like
 RATE=160
-OUT="./sounds/tts"
+OUT="./sounds/core"
 
 mkdir -p "$OUT"
 
@@ -79,4 +79,4 @@ COUNT=$(ls "$OUT"/*.wav 2>/dev/null | wc -l | tr -d ' ')
 echo "Done. $COUNT files in $OUT/"
 echo ""
 echo "To override a score, add to config.json sounds:"
-echo '  "score_60": { "files": ["tts/60.wav", "your_custom.wav"] }'
+echo '  "score_60": { "files": ["core/60.wav", "your_custom.wav"] }'

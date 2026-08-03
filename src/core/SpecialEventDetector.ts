@@ -58,10 +58,8 @@ export class SpecialEventDetector {
 				return this.consecutivePattern(throwHistory, currentThrow, params);
 			case "sequentialSegments":
 				return this.sequentialSegments(throwHistory, currentThrow, params);
-			case "nineteenOhFour":
-				return this.nineteenOhFour(throwHistory, currentThrow);
-			case "fourOhFour":
-				return this.fourOhFour(throwHistory, currentThrow);
+			case "concatenatesTo":
+				return this.concatenatesTo(throwHistory, currentThrow, params);
 			case "consecutiveMisses":
 				return this.consecutiveMisses(throwHistory, currentThrow, params);
 			default:
@@ -125,32 +123,37 @@ export class SpecialEventDetector {
 		return true;
 	}
 
-	private nineteenOhFour(
+	// Matches when the scores of the last N throws concatenate (as digit strings)
+	// to form params.number. E.g. number=1337, throws [13,3,7] → "13"+"3"+"7"="1337" ✓
+	//                                              throws [1,33,7] → "1"+"33"+"7"="1337" ✓ (T11=33p)
+	private concatenatesTo(
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
+		params: Record<string, any>,
 	): boolean {
-		if (throwHistory.length < 2) return false;
+		const str = String(params.number);
+		const n = 3;
+		if (throwHistory.length < n - 1) return false;
 
-		const last2 = throwHistory.slice(-2);
-		return (
-			last2[0].points === 19 &&
-			last2[1].points === 0 &&
-			currentThrow.points === 4
+		const lastN = throwHistory.slice(-(n - 1));
+		const sequence = [...lastN, currentThrow];
+
+		return this.stringSplits(str, n).some((parts) =>
+			parts.every((part, i) => sequence[i].points === parseInt(part, 10)),
 		);
 	}
 
-	private fourOhFour(
-		throwHistory: GameThrow[],
-		currentThrow: GameThrow,
-	): boolean {
-		if (throwHistory.length < 2) return false;
-
-		const last2 = throwHistory.slice(-2);
-		return (
-			last2[0].points === 4 &&
-			last2[1].points === 0 &&
-			currentThrow.points === 4
-		);
+	// All ways to split str into exactly `parts` non-empty substrings (ordered).
+	private stringSplits(str: string, parts: number): string[][] {
+		if (parts === 1) return str.length > 0 ? [[str]] : [];
+		const results: string[][] = [];
+		for (let i = 1; i <= str.length - parts + 1; i++) {
+			const first = str.slice(0, i);
+			for (const rest of this.stringSplits(str.slice(i), parts - 1)) {
+				results.push([first, ...rest]);
+			}
+		}
+		return results;
 	}
 
 	private consecutiveMisses(

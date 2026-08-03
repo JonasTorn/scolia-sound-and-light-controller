@@ -19,47 +19,55 @@ const testEventDefs: SpecialEventDefinition[] = [
 		priority: 3,
 		detector: "consecutivePattern",
 		params: { pattern: [60, 60] },
-		sound: { files: ["tts/one_twenty.wav"] },
+		sound: { files: ["core/one_twenty.wav"] },
 	},
 	{
-		name: "one_two_three",
+		name: "123",
 		enabled: true,
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s1", "s2", "s3"] },
-		sound: { files: ["tts/one_two_three.wav"] },
+		sound: { files: ["core/one_two_three.wav"] },
 	},
 	{
-		name: "three_ones",
+		name: "111",
 		enabled: true,
 		priority: 1,
 		detector: "sequentialSegments",
 		params: { throws: ["s1", "s1", "s1"] },
-		sound: { files: ["tts/three_ones.wav"] },
+		sound: { files: ["core/three_ones.wav"] },
 	},
 	{
-		name: "double_oh_seven",
+		name: "007",
 		enabled: true,
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["None", "None", "s7"] },
-		sound: { files: ["tts/double_oh_seven.wav"] },
+		sound: { files: ["core/double_oh_seven.wav"] },
 	},
 	{
-		name: "nineteen_oh_four",
+		name: "1337",
 		enabled: true,
 		priority: 2,
-		detector: "nineteenOhFour",
-		params: {},
-		sound: { files: ["tts/nineteen_oh_four.wav"] },
+		detector: "concatenatesTo",
+		params: { number: 1337 },
+		sound: { files: ["core/1337.wav"] },
 	},
 	{
-		name: "four_oh_four",
+		name: "1904",
 		enabled: true,
 		priority: 2,
-		detector: "fourOhFour",
-		params: {},
-		sound: { files: ["tts/four_oh_four.wav"] },
+		detector: "concatenatesTo",
+		params: { number: 1904 },
+		sound: { files: ["core/nineteen_oh_four.wav"] },
+	},
+	{
+		name: "404",
+		enabled: true,
+		priority: 2,
+		detector: "concatenatesTo",
+		params: { number: 404 },
+		sound: { files: ["core/four_oh_four.wav"] },
 	},
 	{
 		name: "three_misses",
@@ -67,7 +75,7 @@ const testEventDefs: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "consecutiveMisses",
 		params: { count: 3 },
-		sound: { files: ["tts/three_misses.wav"] },
+		sound: { files: ["core/three_misses.wav"] },
 	},
 ];
 
@@ -158,7 +166,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).toBe("one_two_three");
+			expect(result?.name).toBe("123");
 		});
 
 		it("should not detect 1-2-3 with doubles", () => {
@@ -170,7 +178,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).not.toBe("one_two_three");
+			expect(result?.name).not.toBe("123");
 		});
 	});
 
@@ -181,7 +189,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).toBe("three_ones");
+			expect(result?.name).toBe("111");
 		});
 	});
 
@@ -195,7 +203,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).toBe("double_oh_seven");
+			expect(result?.name).toBe("007");
 		});
 
 		it("should not detect 007 with different segment", () => {
@@ -204,26 +212,64 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).not.toBe("double_oh_seven");
+			expect(result?.name).not.toBe("007");
 		});
 	});
 
-	describe("19-04 Detection", () => {
-		it("should detect 1904 (single 19, miss, single 4)", () => {
+	describe("1337 Detection (concatenatesTo)", () => {
+		it("should detect 1337 with s13, s3, s7", () => {
+			const history: GameThrow[] = [
+				createThrow(13, 13, 1), // S13
+				createThrow(3, 3, 1),  // S3
+			];
+			const current = createThrow(7, 7, 1); // S7
+
+			const result = detector.detect(history, current);
+
+			expect(result?.name).toBe("1337");
+		});
+
+		it("should detect 1337 with s1, T11 (33p), s7", () => {
+			const history: GameThrow[] = [
+				createThrow(1, 1, 1),   // S1
+				createThrow(33, 11, 3), // T11 = 33p
+			];
+			const current = createThrow(7, 7, 1); // S7
+
+			const result = detector.detect(history, current);
+
+			expect(result?.name).toBe("1337");
+		});
+	});
+
+	describe("19-04 Detection (concatenatesTo)", () => {
+		it("should detect 1904 (19p, miss, 4p)", () => {
 			const history: GameThrow[] = [
 				createThrow(19, 19, 1), // S19
-				createThrow(0, 0, 1), // Miss
+				createThrow(0, 0, 1),  // Miss
 			];
 			const current = createThrow(4, 4, 1); // S4
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).toBe("nineteen_oh_four");
+			expect(result?.name).toBe("1904");
+		});
+
+		it("should detect 1904 with d2 as the final 4p throw", () => {
+			const history: GameThrow[] = [
+				createThrow(19, 19, 1), // S19
+				createThrow(0, 0, 1),  // Miss
+			];
+			const current = createThrow(4, 2, 2); // D2 = 4p
+
+			const result = detector.detect(history, current);
+
+			expect(result?.name).toBe("1904");
 		});
 	});
 
-	describe("404 Detection", () => {
-		it("should detect 404 (single 4, miss, single 4)", () => {
+	describe("404 Detection (concatenatesTo)", () => {
+		it("should detect 404 (4p, miss, 4p)", () => {
 			const history: GameThrow[] = [
 				createThrow(4, 4, 1), // S4
 				createThrow(0, 0, 1), // Miss
@@ -232,7 +278,19 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).toBe("four_oh_four");
+			expect(result?.name).toBe("404");
+		});
+
+		it("should detect 404 with d2 (also 4p)", () => {
+			const history: GameThrow[] = [
+				createThrow(4, 2, 2), // D2 = 4p
+				createThrow(0, 0, 1), // Miss
+			];
+			const current = createThrow(4, 4, 1); // S4
+
+			const result = detector.detect(history, current);
+
+			expect(result?.name).toBe("404");
 		});
 	});
 
@@ -255,7 +313,7 @@ describe("SpecialEventDetector", () => {
 
 			const result = detector.detect(history, current);
 
-			expect(result?.name).toBe("one_two_three");
+			expect(result?.name).toBe("123");
 		});
 	});
 
@@ -303,7 +361,7 @@ describe("SpecialEventDetector", () => {
 			const result = detector.detect(history, current);
 
 			const soundEffect = result?.effects.find((e) => e.type === "sound") as any;
-			expect(soundEffect?.event).toBe("one_two_three");
+			expect(soundEffect?.event).toBe("123");
 		});
 	});
 });

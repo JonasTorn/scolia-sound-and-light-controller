@@ -101,17 +101,17 @@ export class SoundController {
 		const tableEntry = this.config.sounds?.[eventName];
 		if (tableEntry && tableEntry.enabled !== false && await this.tryPlayEntry(tableEntry, eventName, priority)) return;
 
-		// 5. TTS for throw names (triple_20 → tts/60.wav, double_5 → tts/10.wav, etc.)
+		// 5. Core sounds for throw names (triple_20 → core/60.wav, double_5 → core/10.wav, etc.)
 		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);
 		if (throwMatch) {
 			const multipliers: Record<string, number> = { triple: 3, double: 2, single: 1 };
 			const score = multipliers[throwMatch[1]] * parseInt(throwMatch[2]);
-			await this.tryPlayFiles([`tts/${score}.wav`], 1.0, eventName, priority);
+			await this.tryPlayFiles([`core/${score}.wav`], 1.0, eventName, priority);
 			return;
 		}
 
-		// 6. General TTS fallback — tts/{eventName}.wav if it exists
-		if (!await this.tryPlayFiles([`tts/${eventName}.wav`], 1.0, eventName, priority, true)) {
+		// 6. Core sound fallback — core/{eventName}.wav if it exists
+		if (!await this.tryPlayFiles([`core/${eventName}.wav`], 1.0, eventName, priority, true)) {
 			this.logger.debug(`No audio configured for: ${eventName}`);
 		}
 	}
