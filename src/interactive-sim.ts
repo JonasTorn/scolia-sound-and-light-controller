@@ -40,6 +40,7 @@ Commands:
   bust      simulate bust
   leg       simulate leg won
   set       simulate set won
+  elim      simulate player eliminated
   reset     reset throw history
   q / quit  exit
 `;
@@ -106,21 +107,28 @@ async function main() {
 
 		if (input === "bust") {
 			logger.info("→ BUST detected");
-			await soundController.playSound("bust");
+			await orchestrator.handleBustDetected();
 			rl.prompt();
 			return;
 		}
 
 		if (input === "leg") {
 			logger.info("→ LEG WON");
-			await soundController.playSound("leg_won");
+			await orchestrator.handleLegWon();
 			rl.prompt();
 			return;
 		}
 
 		if (input === "set") {
 			logger.info("→ SET WON");
-			await soundController.playSound("set_won");
+			await orchestrator.handleSetWon();
+			rl.prompt();
+			return;
+		}
+
+		if (input === "elim") {
+			logger.info("→ PLAYER ELIMINATED");
+			await orchestrator.handlePlayerEliminated();
 			rl.prompt();
 			return;
 		}
