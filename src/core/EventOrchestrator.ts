@@ -13,6 +13,7 @@ export interface IEventOrchestrator {
 	handleBustDetected(): Promise<void>;
 	handleLegWon(): Promise<void>;
 	handleSetWon(): Promise<void>;
+	handlePlayerEliminated(): Promise<void>;
 }
 
 export class EventOrchestrator implements IEventOrchestrator {
@@ -86,9 +87,10 @@ export class EventOrchestrator implements IEventOrchestrator {
 		this.logger.info("Takeout started");
 	}
 
-	async handleBustDetected(): Promise<void> { await this.fireGameEvent("bust", "Bust detected"); }
-	async handleLegWon(): Promise<void>        { await this.fireGameEvent("leg_won", "Leg won"); }
-	async handleSetWon(): Promise<void>        { await this.fireGameEvent("set_won", "Set won"); }
+	async handleBustDetected(): Promise<void>     { await this.fireGameEvent("bust", "Bust detected"); }
+	async handleLegWon(): Promise<void>           { await this.fireGameEvent("leg_won", "Leg won"); }
+	async handleSetWon(): Promise<void>           { await this.fireGameEvent("set_won", "Set won"); }
+	async handlePlayerEliminated(): Promise<void> { await this.fireGameEvent("eliminated", "Player eliminated"); }
 
 	private async fireGameEvent(name: string, logMsg: string): Promise<void> {
 		try {

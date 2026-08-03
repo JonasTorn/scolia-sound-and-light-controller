@@ -73,6 +73,10 @@ export class Application {
 			this.handleSetWon();
 		});
 
+		this.playwrightController.on("eliminated", () => {
+			this.handlePlayerEliminated();
+		});
+
 		// Update active player when Playwright detects a new thrower
 		this.playwrightController.on("player-change", (name: string) => {
 			this.gameState.setCurrentPlayer(name);
@@ -246,6 +250,10 @@ export class Application {
 
 	private async handleSetWon(): Promise<void> {
 		await this.eventOrchestrator.handleSetWon();
+	}
+
+	private async handlePlayerEliminated(): Promise<void> {
+		await this.eventOrchestrator.handlePlayerEliminated();
 	}
 
 	async shutdown(): Promise<void> {

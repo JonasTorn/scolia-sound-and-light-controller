@@ -9,6 +9,7 @@ interface EdgeDetectionState {
 	bustCount: number;
 	legWon: boolean;
 	setWon: boolean;
+	eliminated: boolean;
 }
 
 interface PlayerInfo {
@@ -29,6 +30,7 @@ export class PlaywrightController extends EventEmitter {
 		bustCount: 0,
 		legWon: false,
 		setWon: false,
+		eliminated: false,
 	};
 
 	private players: Map<string, PlayerInfo> = new Map();
@@ -260,10 +262,14 @@ export class PlaywrightController extends EventEmitter {
 					.querySelector('[class*="winnerTile"]')
 					?.textContent?.includes("Won the Set");
 
+				// TODO: inspect Elimination mode UI to find the right selector
+				const eliminated = false;
+
 				return {
 					bustCount: bustElements.length,
 					legWon,
 					setWon,
+					eliminated,
 				};
 			});
 
@@ -287,6 +293,11 @@ export class PlaywrightController extends EventEmitter {
 			if (state.setWon && !this.lastState.setWon) {
 				this.emit("set-won");
 				this.logger.info("Set won detected via DOM");
+			}
+
+			if (state.eliminated && !this.lastState.eliminated) {
+				this.emit("eliminated");
+				this.logger.info("Player eliminated detected via DOM");
 			}
 
 			this.lastState = state;
