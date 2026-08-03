@@ -1,7 +1,8 @@
 import { Effect, GameThrow, SpecialEventDefinition, ThrowEvent } from "../types/index";
+import { specialEventsConfig } from "../config/specialEvents.config";
 
 export class SpecialEventDetector {
-	constructor(private eventDefs: SpecialEventDefinition[]) {}
+	constructor(private eventDefs: SpecialEventDefinition[] = specialEventsConfig) {}
 
 	detect(
 		throwHistory: GameThrow[],
@@ -23,12 +24,13 @@ export class SpecialEventDetector {
 			const priority = eventDef.priority ?? 0;
 			if (best === null || priority > best.priority) {
 				const effects: Effect[] = [];
-				if (eventDef.sound) {
+				if (eventDef.sound || eventDef.playerSounds) {
 					effects.push({
 						type: "sound",
 						event: eventDef.name,
-						files: eventDef.sound.files,
-						volume: eventDef.sound.volume,
+						files: eventDef.sound?.files,
+						volume: eventDef.sound?.volume,
+						playerSounds: eventDef.playerSounds,
 						priority,
 					});
 				}

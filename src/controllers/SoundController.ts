@@ -77,7 +77,7 @@ export class SoundController {
 		this.currentPlayer = name;
 	}
 
-	async playSound(eventName: string, priority = 0, inlineFiles?: string[], inlineVolume?: number): Promise<void> {
+	async playSound(eventName: string, priority = 0, inlineFiles?: string[], inlineVolume?: number, playerSounds?: Record<string, import("../types/index").SoundEntry>): Promise<void> {
 		if (!this.config.enabled) return;
 
 		if (priority < this.currentSoundPriority) {
@@ -85,7 +85,21 @@ export class SoundController {
 			return;
 		}
 
-		// 1. Per-player override — always first
+		// 1. Event-level per-player override (defined in specialEvents.config.ts)
+		if (this.currentPlayer && playerSounds?.[this.currentPlayer]) {
+			const entry = playerSounds[this.currentPlayer];
+			const files = this.getFiles(entry);
+			if (files.length > 0 && entry?.enabled !== false) {
+				const file = files[Math.floor(Math.random() * files.length)];
+				const filePath = path.resolve(this.soundsDir, file);
+				if (filePath.startsWith(this.soundsDir)) {
+					await this.playFile(filePath, entry.volume ?? 1.0, eventName, priority);
+					return;
+				}
+			}
+		}
+
+		// 2. Global per-player override (from config.json → sound.players, for throw sounds)
 		if (this.currentPlayer) {
 			const playerEntry = this.config.players?.[this.currentPlayer]?.[eventName];
 			const playerFiles = this.getFiles(playerEntry);
@@ -99,7 +113,7 @@ export class SoundController {
 			}
 		}
 
-		// 2. Inline files from event definition (special events carry their sound with them)
+		// 3. Inline files from event definition
 		if (inlineFiles?.length) {
 			const file = inlineFiles[Math.floor(Math.random() * inlineFiles.length)];
 			const filePath = path.resolve(this.soundsDir, file);

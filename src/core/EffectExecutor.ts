@@ -69,7 +69,7 @@ export class EffectExecutor {
 		effect: Extract<Effect, { type: "sound" }>,
 	): Promise<void> {
 		if (this.config.sound.enabled) {
-			await this.sound.playSound(effect.event, effect.priority ?? 0, effect.files, effect.volume);
+			await this.sound.playSound(effect.event, effect.priority ?? 0, effect.files, effect.volume, effect.playerSounds);
 		}
 	}
 

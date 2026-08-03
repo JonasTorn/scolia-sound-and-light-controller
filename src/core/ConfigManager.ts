@@ -65,10 +65,6 @@ export class ConfigManager {
 		return this.getConfig().logging;
 	}
 
-	getSpecialEvents() {
-		return this.getConfig().special_events;
-	}
-
 	reload(): FullConfig {
 		this.config = null;
 		return this.load();

@@ -29,7 +29,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 		knxController: any,
 	) {
 		this.throwEventResolver = new ThrowEventResolver(config.lightshark);
-		this.specialEventDetector = new SpecialEventDetector(config.special_events);
+		this.specialEventDetector = new SpecialEventDetector();
 		this.effectExecutor = new EffectExecutor(
 			gameState,
 			lightsharkController,

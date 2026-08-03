@@ -41,7 +41,7 @@ export interface LightSharkExecutor {
 
 // Unified effect system
 export type Effect =
-	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number }
+	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number; playerSounds?: Record<string, SoundEntry> }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
 	| { type: "knx"; action: string };
@@ -58,8 +58,9 @@ export interface SpecialEventDefinition {
 	priority?: number; // higher wins when multiple events match the same throw
 	detector: string;
 	params: Record<string, any>;
-	sound?: SoundEntry; // inline sound — plays without a sounds-table entry
+	sound?: SoundEntry; // default sound — auto-falls back to tts/{name}.wav if omitted
 	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
+	playerSounds?: Record<string, SoundEntry>; // per-thrower overrides, keyed by player nickname
 }
 
 // Config types
@@ -156,7 +157,6 @@ export interface FullConfig {
 	sound: SoundConfig;
 	playwright: PlaywrightConfig;
 	logging: LoggingConfig;
-	special_events: SpecialEventDefinition[];
 }
 
 // Logger types
@@ -168,7 +168,7 @@ export interface ILightSharkController {
 }
 
 export interface ISoundController {
-	playSound(eventName: string, priority?: number, inlineFiles?: string[], inlineVolume?: number): Promise<void>;
+	playSound(eventName: string, priority?: number, inlineFiles?: string[], inlineVolume?: number, playerSounds?: Record<string, SoundEntry>): Promise<void>;
 }
 
 export interface IKNXController {
