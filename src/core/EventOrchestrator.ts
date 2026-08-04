@@ -74,17 +74,17 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	async handleTakeoutFinished(): Promise<void> {
 		try {
-			this.logger.info("Takeout finished - resetting state");
+			this.logger.info("Takeout finished");
 			await this.effectExecutor.execute([{ type: "sound", event: "takeout" }]);
 			await this.effectExecutor.cleanup();
-			this.gameState.reset();
 		} catch (err) {
 			this.logger.error("Error handling takeout:", err);
 		}
 	}
 
 	async handleTakeoutStarted(): Promise<void> {
-		this.logger.info("Takeout started");
+		this.logger.info("Takeout started - resetting state");
+		this.gameState.reset();
 	}
 
 	async handleBustDetected(): Promise<void>     { await this.fireGameEvent("bust", "Bust detected"); }

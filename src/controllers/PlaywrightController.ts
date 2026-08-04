@@ -193,7 +193,14 @@ export class PlaywrightController extends EventEmitter {
 		this.extractPlayers(payload);
 
 		const triplets = payload?.state?.game?.lastTriplets;
-		if (!triplets || typeof triplets !== "object") return;
+		if (!triplets || typeof triplets !== "object") {
+			// Log the game state keys so we can identify the structure for other game modes (e.g. Elimination)
+			const gameKeys = payload?.state?.game ? Object.keys(payload.state.game) : [];
+			if (gameKeys.length) {
+				this.logger.debug(`GAME_STATE_CHANGED — no lastTriplets. game keys: ${gameKeys.join(", ")}`);
+			}
+			return;
+		}
 
 		for (const playerId of Object.keys(triplets)) {
 			const playerDarts = triplets[playerId];
@@ -262,8 +269,9 @@ export class PlaywrightController extends EventEmitter {
 					.querySelector('[class*="winnerTile"]')
 					?.textContent?.includes("Won the Set");
 
-				// TODO: inspect Elimination mode UI to find the right selector
-				const eliminated = false;
+				const eliminated =
+					!!document.querySelector('[class*="eliminated"], [class*="Eliminated"], [class*="isEliminated"]') ||
+					!!(document.querySelector('[class*="winnerTile"]')?.textContent?.toLowerCase().includes("eliminated"));
 
 				return {
 					bustCount: bustElements.length,

@@ -39,20 +39,22 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 			{ executor: { page: 1, column: 7, row: 2 }, mode: "additive" },
 		],
 	},
-	{
-		name: "69_sum",
+		{
+		name: "69",
 		enabled: true,
-		priority: 3, // beats the consecutive 6→9 below when sum wins
-		detector: "sumLastN",
-		params: { n: 3, targetSum: 69 },
-		sound: { files: ["core/sixty_nine.wav"] },
+		priority: 2,
+		detector: "concatenatesTo",
+		params: { number: 69 },
+		sound: { files: ["gunther.mp3"] },
 	},
+
 	{
-		name: "120",
+		name: "2xt20",
 		enabled: true,
 		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["t20", "t20"] },
+		sound: { files: ["monsterkill.wav"] },
 	},
 
 	// ── Notable combos ────────────────────────────────────────────────────────
@@ -63,6 +65,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["None", "None", "s7"] },
+		sound: { files: ["007.mp3"] },
 	},
 	{
 		name: "123",
@@ -77,14 +80,39 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s7", "s7", "s7"] },
+		sound: { files: ["jackpot.mp3"] },
+	},
+		{
+		name: "s1",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s1"] },
+		sound: { files: ["cd1.wav"] },
 	},
 	{
-		name: "777_hit",
+		name: "t1",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["t1"] },
+		sound: { files: ["ohh_baby_a_triple.mp3"] },
+	},
+	{
+		name: "t7",
 		enabled: true,
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["t7"] },
-		sound: { files: ["core/triple_seven.wav"] },
+		sound: { files: ["jackpot.mp3"] },
+	},
+		{
+		name: "t20",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["t20"] },
+		sound: { files: ["godlike.wav"] },
 	},
 	{
 		name: "1337",
@@ -92,6 +120,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "concatenatesTo",
 		params: { number: 1337 }, // 13+3+7 or 1+33(T11)+7
+		sound: { files: ["machoman_1337.mp3"] },
 	},
 	{
 		name: "1904",
@@ -136,11 +165,28 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { number: 404 }, // 4+0(miss)+4
 	},
 	{
-		name: "three_misses",
+		name: "420", // smoke weed every day!
+		enabled: true,
+		priority: 2,
+		detector: "concatenatesTo",
+		params: { number: 420 },
+		sound: { files: ["smoke_weed_everyday.mp3"] },
+	},
+	{
+		name: "000",
 		enabled: true,
 		priority: 2,
 		detector: "consecutiveMisses",
 		params: { count: 3 },
+		sound: { files: ["all-hail-king-of-the-losers.wav"] },
+	},
+	{
+		name: "20x3",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s20", "s20", "s20"] },
+		sound: { files: ["rrriktigt_bra.mp3"] },
 	},
 
 	// ── Minor fun events ─────────────────────────────────────────────────────
@@ -197,11 +243,12 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { pattern: [2, 1] },
 	},
 	{
-		name: "23",
+		name: "33",
 		enabled: true,
 		priority: 1,
 		detector: "consecutivePattern",
-		params: { pattern: [2, 3] },
+		params: { pattern: [3, 3] },
+		sound: { files: ["32_33.mp3"] }
 	},
 
 ];
