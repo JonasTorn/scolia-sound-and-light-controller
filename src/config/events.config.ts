@@ -1,5 +1,47 @@
-import { SpecialEventDefinition } from "../types/index";
+import { SpecialEventDefinition, SoundEntry } from "../types/index";
 
+// ============================================================
+// GAME EVENTS
+// Sounds and overlays for game-level events.
+// These are triggered by game state (bust, win, miss, etc.)
+// rather than throw patterns.
+// ============================================================
+
+export interface GameEventConfig {
+	sound?: SoundEntry;
+	overlay?: { file: string; durationMs: number };
+}
+
+export const gameEventsConfig: Record<string, GameEventConfig> = {
+	miss: {
+		sound: { files: ["BRUH.mp3", "ERROR.mp3"] },
+	},
+	bull25: {
+		sound: { files: ["core/twenty_five.wav"] },
+	},
+	takeout: {
+		sound: { files: ["yoshi_tongue.mp3"], volume: 0.70 },
+	},
+	bust: {
+		sound: { files: ["fahhh.mp3", "vad_fet_du_ar.mp3", "tjockisleif.mp3"] },
+	},
+	leg_won: {
+		sound: { files: ["winner.wav"] },
+		overlay: { file: "overlays/leg_won.gif", durationMs: 4000 },
+	},
+	set_won: {
+		sound: { files: ["simply_the_best.mp3"] },
+		overlay: { file: "overlays/set_won.gif", durationMs: 6000 },
+	},
+	eliminated: {
+		sound: { files: ["core/eliminated.wav"] },
+	},
+};
+
+// ============================================================
+// SPECIAL EVENTS
+// Throw-pattern based events detected from throw history.
+//
 // Priority scale:
 //   1 = minor fun events (two-dart combos like 21, 67, 99)
 //   2 = notable combos (three-dart sequences, 007, 404, etc.)
@@ -23,6 +65,7 @@ import { SpecialEventDefinition } from "../types/index";
 //   2. Add an entry below with name, detector, params
 //   3. Drop a WAV file at sounds/core/{name}.wav — done.
 //   For a brand-new pattern shape, add a detector method in SpecialEventDetector.ts first.
+// ============================================================
 
 export const specialEventsConfig: SpecialEventDefinition[] = [
 	// ── High priority ────────────────────────────────────────────────────────
@@ -39,7 +82,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 			{ executor: { page: 1, column: 7, row: 2 }, mode: "additive" },
 		],
 	},
-		{
+	{
 		name: "69",
 		enabled: true,
 		priority: 2,
@@ -82,7 +125,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { throws: ["s7", "s7", "s7"] },
 		sound: { files: ["jackpot.mp3"] },
 	},
-		{
+	{
 		name: "s1",
 		enabled: true,
 		priority: 2,
@@ -106,7 +149,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { throws: ["t7"] },
 		sound: { files: ["jackpot.mp3"] },
 	},
-		{
+	{
 		name: "t20",
 		enabled: true,
 		priority: 2,
@@ -248,7 +291,6 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [3, 3] },
-		sound: { files: ["32_33.mp3"] }
+		sound: { files: ["32_33.mp3"] },
 	},
-
 ];

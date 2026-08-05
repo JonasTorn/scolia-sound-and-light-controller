@@ -4,6 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { Logger } from "../utils/Logger";
 import { PlaywrightConfig } from "../types/index";
+import { gameEventsConfig } from "../config/events.config";
 
 interface EdgeDetectionState {
 	bustCount: number;
@@ -356,7 +357,7 @@ export class PlaywrightController extends EventEmitter {
 	}
 
 	async showOverlay(eventName: string): Promise<void> {
-		const cfg = this.config.overlays?.[eventName];
+		const cfg = gameEventsConfig[eventName]?.overlay;
 		if (!cfg || !this.page) return;
 
 		const filePath = path.resolve(process.cwd(), cfg.file);

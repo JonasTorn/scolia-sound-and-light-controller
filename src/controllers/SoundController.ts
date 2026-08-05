@@ -3,6 +3,7 @@ import * as path from "path";
 import { execFile, spawn, ChildProcess } from "child_process";
 import { Logger } from "../utils/Logger";
 import { SoundConfig, SoundEntry } from "../types/index";
+import { gameEventsConfig } from "../config/events.config";
 
 export class SoundController {
 	private soundsDir: string;
@@ -97,9 +98,9 @@ export class SoundController {
 		// 3. Inline files from event definition
 		if (inlineFiles?.length && await this.tryPlayFiles(inlineFiles, inlineVolume ?? 1.0, eventName, priority)) return;
 
-		// 4. Global sounds table
-		const tableEntry = this.config.sounds?.[eventName];
-		if (tableEntry && tableEntry.enabled !== false && await this.tryPlayEntry(tableEntry, eventName, priority)) return;
+		// 4. Game events config (events.config.ts)
+		const gameEntry = gameEventsConfig[eventName]?.sound;
+		if (gameEntry && gameEntry.enabled !== false && await this.tryPlayEntry(gameEntry, eventName, priority)) return;
 
 		// 5. Core sounds for throw names (triple_20 → core/60.wav, double_5 → core/10.wav, etc.)
 		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);

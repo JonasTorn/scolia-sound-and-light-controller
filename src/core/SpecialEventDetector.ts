@@ -1,5 +1,5 @@
 import { Effect, GameThrow, SpecialEventDefinition, ThrowEvent } from "../types/index";
-import { specialEventsConfig } from "../config/specialEvents.config";
+import { specialEventsConfig } from "../config/events.config";
 import { SectorParser } from "../utils/SectorParser";
 
 export class SpecialEventDetector {

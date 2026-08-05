@@ -119,7 +119,7 @@ export interface SoundEntry {
 export interface SoundConfig {
 	enabled: boolean;
 	soundsDir: string;
-	sounds: Record<string, SoundEntry>;
+	sounds?: Record<string, SoundEntry>;
 	players?: Record<string, Record<string, SoundEntry>>;
 }
 
@@ -130,7 +130,6 @@ export interface PlaywrightConfig {
 	pollIntervalMs: number;
 	cookieFile: string;
 	boardName?: string;
-	overlays?: Record<string, { file: string; durationMs: number }>;
 	credentials: {
 		email: string;
 		password: string;
