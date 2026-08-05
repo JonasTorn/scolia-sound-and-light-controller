@@ -129,6 +129,7 @@ export interface PlaywrightConfig {
 	fullscreen: boolean;
 	pollIntervalMs: number;
 	cookieFile: string;
+	boardName?: string;
 	credentials: {
 		email: string;
 		password: string;

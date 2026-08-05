@@ -36,6 +36,8 @@ export class PlaywrightController extends EventEmitter {
 	private players: Map<string, PlayerInfo> = new Map();
 	private currentPlayerId: string | null = null;
 	private lastLegWonAt = 0;
+	private boardJoined = false;
+	private lastBoardCheckAt = 0;
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -256,6 +258,25 @@ export class PlaywrightController extends EventEmitter {
 
 	private async poll(): Promise<void> {
 		if (!this.running || !this.page) return;
+
+		try {
+			const boardName = this.config.boardName;
+			if (boardName && !this.boardJoined && Date.now() - this.lastBoardCheckAt >= 1000) {
+				this.lastBoardCheckAt = Date.now();
+				const found = await this.page.evaluate((name) => {
+					const el = Array.from(document.querySelectorAll('[class*="boardName"]'))
+						.find(e => e.textContent?.includes(name)) as HTMLElement | undefined;
+					if (el) { el.click(); return true; }
+					return false;
+				}, boardName);
+				if (found) {
+					this.boardJoined = true;
+					this.logger.info(`Playwright: Auto-joined board "${boardName}"`);
+				}
+			}
+		} catch (err) {
+			this.logger.debug(`Playwright: Board join check error: ${err}`);
+		}
 
 		try {
 			const state = await this.page.evaluate(() => {
