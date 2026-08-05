@@ -38,6 +38,8 @@ export class PlaywrightController extends EventEmitter {
 	private lastLegWonAt = 0;
 	private boardJoined = false;
 	private lastBoardCheckAt = 0;
+	private lastSnapshotAt = 0;
+	private processedThrowIndices = new Map<string, Set<number>>(); // playerId → Set of throwIndex
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -104,6 +106,7 @@ export class PlaywrightController extends EventEmitter {
 							}
 						} else if (msg.type === "API::COMMON::TAKEOUT_STARTED") {
 							this.logger.debug("Playwright WS: TAKEOUT_STARTED");
+							this.processedThrowIndices.clear();
 							this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_STARTED" }));
 						} else if (msg.type === "API::COMMON::TAKEOUT_FINISHED") {
 							this.logger.debug("Playwright WS: TAKEOUT_FINISHED");
@@ -194,25 +197,26 @@ export class PlaywrightController extends EventEmitter {
 	private extractThrows(payload: any): void {
 		this.extractPlayers(payload);
 
-		const triplets = payload?.state?.game?.lastTriplets;
-		if (!triplets || typeof triplets !== "object") {
-			// Log the game state keys so we can identify the structure for other game modes (e.g. Elimination)
-			const gameKeys = payload?.state?.game ? Object.keys(payload.state.game) : [];
-			if (gameKeys.length) {
-				this.logger.debug(`GAME_STATE_CHANGED — no lastTriplets. game keys: ${gameKeys.join(", ")}`);
-			}
-			return;
-		}
+		const game = payload?.state?.game;
+		if (!game) return;
 
+		const triplets = game.lastTriplets;
+		if (triplets && typeof triplets === "object") {
+			this.extractTripletThrows(triplets);
+		} else if (game.players || game.currentPlayerUserId !== undefined) {
+			this.extractElimModeThrows(game);
+		}
+	}
+
+	// 501 / standard mode: throws arrive in lastTriplets[playerId][dartIndex]
+	private extractTripletThrows(triplets: any): void {
 		for (const playerId of Object.keys(triplets)) {
 			const playerDarts = triplets[playerId];
 			if (!playerDarts || typeof playerDarts !== "object") continue;
 
-			// Check for new dart throws (numeric keys only)
 			const hasNewThrows = Object.keys(playerDarts).some((k) => /^\d+$/.test(k));
 			if (!hasNewThrows) continue;
 
-			// Emit player-change when the active thrower switches
 			if (playerId !== this.currentPlayerId) {
 				this.currentPlayerId = playerId;
 				const name = this.getPlayerName(playerId);
@@ -221,8 +225,6 @@ export class PlaywrightController extends EventEmitter {
 			}
 
 			for (const key of Object.keys(playerDarts)) {
-				// Only process numeric keys (0, 1, 2) — new dart additions
-				// Skip _t, _0, _1, _2 (jsondiffpatch metadata/deletions)
 				if (!/^\d+$/.test(key)) continue;
 
 				const dartArray = playerDarts[key];
@@ -231,22 +233,91 @@ export class PlaywrightController extends EventEmitter {
 				const dart = dartArray[0];
 				if (!dart || typeof dart !== "object" || !dart.sector) continue;
 
-				const throwMsg = JSON.stringify({
+				const name = this.getPlayerName(playerId);
+				this.logger.info(`Playwright: Throw — ${name}: ${dart.sector} = ${dart.score}p (remaining: ${dart.remainingScore})`);
+				this.emit("scoliamessage", JSON.stringify({
 					type: "THROW_DETECTED",
 					sector: dart.sector,
 					coordinates: dart.coordinates || [0, 0],
 					bounceout: dart.bounceout || false,
-				});
-
-				const name = this.getPlayerName(playerId);
-				this.logger.info(`Playwright: Throw — ${name}: ${dart.sector} = ${dart.score}p (remaining: ${dart.remainingScore})`);
-				this.emit("scoliamessage", throwMsg);
+				}));
 
 				if (dart.remainingScore === 0) {
 					this.lastLegWonAt = Date.now();
 					this.logger.info(`🏆 Leg won: ${name} finished on ${dart.sector}!`);
 					this.emit("leg-won");
 				}
+			}
+		}
+	}
+
+	// Elimination (and other non-501) modes: throws in players[playerId].currentRound[dartIndex]
+	private extractElimModeThrows(game: any): void {
+		// Handle active player switch — must run before processing throws
+		const cpuDelta = game.currentPlayerUserId;
+		if (Array.isArray(cpuDelta)) {
+			const newId = cpuDelta.length >= 2 ? cpuDelta[1] : cpuDelta[0];
+			if (typeof newId === "string" && newId !== this.currentPlayerId) {
+				this.currentPlayerId = newId;
+				const name = this.getPlayerName(newId);
+				this.logger.info(`👤 Active player: ${name}`);
+				this.emit("player-change", name);
+			}
+		}
+
+		const playersDiff = game.players;
+		if (!playersDiff || typeof playersDiff !== "object") return;
+
+		for (const playerId of Object.keys(playersDiff)) {
+			const playerDiff = playersDiff[playerId];
+			if (!playerDiff || typeof playerDiff !== "object") continue;
+
+			// Detect elimination via status field change: ["active", "eliminated"] or similar
+			const statusDelta = playerDiff.status;
+			if (Array.isArray(statusDelta)) {
+				const newStatus = statusDelta.length >= 2 ? statusDelta[1] : statusDelta[0];
+				if (typeof newStatus === "string" && newStatus.toLowerCase().includes("eliminat")) {
+					const name = this.getPlayerName(playerId);
+					this.logger.info(`💀 Player eliminated: ${name}`);
+					this.emit("eliminated");
+				}
+			}
+
+			// Extract new darts from currentRound diff
+			const roundDiff = playerDiff.currentRound;
+			if (!roundDiff || typeof roundDiff !== "object") continue;
+
+			// Only emit throws for the currently active player
+			if (playerId !== this.currentPlayerId) continue;
+
+			for (const key of Object.keys(roundDiff)) {
+				if (!/^\d+$/.test(key)) continue; // skip _t, _0, _1 (jsondiffpatch metadata)
+
+				const delta = roundDiff[key];
+				if (!Array.isArray(delta) || delta.length === 0) continue;
+				if (delta.length === 3) continue; // [old, 0, 0] = deletion, skip
+
+				// Unwrap jsondiffpatch delta: [newVal] = added,  [oldVal, newVal] = modified
+				const dart = delta.length === 1 ? delta[0] : delta[1];
+				if (!dart || typeof dart !== "object" || !dart.sector) continue;
+
+				// Skip darts we already emitted in this round (Elimination diffs re-include previous darts)
+				const throwIdx = typeof dart.throwIndex === "number" ? dart.throwIndex : -1;
+				if (throwIdx >= 0) {
+					const seen = this.processedThrowIndices.get(playerId) ?? new Set<number>();
+					if (seen.has(throwIdx)) continue;
+					seen.add(throwIdx);
+					this.processedThrowIndices.set(playerId, seen);
+				}
+
+				const name = this.getPlayerName(playerId);
+				this.logger.info(`Playwright: Throw — ${name}: ${dart.sector} = ${dart.score}p`);
+				this.emit("scoliamessage", JSON.stringify({
+					type: "THROW_DETECTED",
+					sector: dart.sector,
+					coordinates: dart.coordinates || [0, 0],
+					bounceout: dart.bounceout || false,
+				}));
 			}
 		}
 	}
@@ -306,6 +377,12 @@ export class PlaywrightController extends EventEmitter {
 			this.pollErrorLogged = false;
 
 			// Edge detection
+			const stateChanged =
+				state.bustCount !== this.lastState.bustCount ||
+				state.legWon !== this.lastState.legWon ||
+				state.setWon !== this.lastState.setWon ||
+				state.eliminated !== this.lastState.eliminated;
+
 			if (state.bustCount > this.lastState.bustCount) {
 				this.emit("bust");
 				this.logger.info("Bust detected via DOM");
@@ -330,6 +407,14 @@ export class PlaywrightController extends EventEmitter {
 			}
 
 			this.lastState = state;
+
+			// Periodic HTML dump (every 10s) + screenshot on any state change
+			const now = Date.now();
+			const dumpDue = now - this.lastSnapshotAt >= 10000;
+			if (stateChanged || dumpDue) {
+				this.lastSnapshotAt = now;
+				this.saveSnapshot(stateChanged).catch(() => {});
+			}
 		} catch (err) {
 			if (!this.pollErrorLogged) {
 				this.logger.warn(`Playwright poll error: ${err}`);
@@ -339,6 +424,22 @@ export class PlaywrightController extends EventEmitter {
 
 		const pollInterval = this.config.pollIntervalMs || 200;
 		this.pollTimeout = setTimeout(() => this.poll(), pollInterval);
+	}
+
+	private async saveSnapshot(includeScreenshot: boolean): Promise<void> {
+		if (!this.page) return;
+		try {
+			const html = await this.page.content();
+			fs.writeFileSync(path.join(process.cwd(), "dom-snapshot.html"), html);
+			if (includeScreenshot) {
+				await this.page.screenshot({ path: path.join(process.cwd(), "dom-snapshot.png"), fullPage: false });
+				this.logger.debug("Playwright: DOM snapshot + screenshot saved");
+			} else {
+				this.logger.debug("Playwright: DOM snapshot saved");
+			}
+		} catch (err) {
+			this.logger.debug(`Playwright: Snapshot failed: ${err}`);
+		}
 	}
 
 	private async saveCookies(): Promise<void> {
