@@ -8,6 +8,7 @@ import { ConfigManager } from "./core/ConfigManager";
 import { GameState } from "./core/GameState";
 import { EventOrchestrator } from "./core/EventOrchestrator";
 import { SoundController } from "./controllers/SoundController";
+import { PlaywrightController } from "./controllers/PlaywrightController";
 
 const logger = new Logger({ enabled: true, consoleOutput: true });
 
@@ -52,6 +53,12 @@ async function main() {
 	const gameState = new GameState();
 	const soundController = new SoundController(config.sound, logger);
 
+	let playwrightController: PlaywrightController | undefined;
+	if (config.playwright.enabled) {
+		playwrightController = new PlaywrightController(config.playwright, logger);
+		await playwrightController.launch();
+	}
+
 	const orchestrator = new EventOrchestrator(
 		gameState,
 		config,
@@ -59,6 +66,7 @@ async function main() {
 		stubLightShark,
 		soundController,
 		stubKnx,
+		playwrightController,
 	);
 
 	console.log("\n=== Scolia Interactive Simulator ===");
@@ -147,8 +155,9 @@ async function main() {
 		rl.prompt();
 	});
 
-	rl.on("close", () => {
+	rl.on("close", async () => {
 		soundController.close();
+		if (playwrightController) await playwrightController.stop();
 		process.exit(0);
 	});
 }
