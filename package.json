@@ -5,7 +5,7 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "ts-node src/index.ts",
-		"simulate": "ts-node src/simulator.ts",
+		
 		"sim": "ts-node src/interactive-sim.ts",
 		"test": "jest",
 		"test:connection": "ts-node src/test-connection.ts",
