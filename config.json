@@ -211,6 +211,11 @@
     "_comment_pollIntervalMs": "Hur ofta DOM:en pollas (ms)",
     "boardName": "Digiwise HQ",
     "_comment_boardName": "Namn på din Scolia-tavla — appen joinar automatiskt om den är online",
+    "overlays": {
+      "_comment": "GIF/PNG som visas ovanpå Scolia-appen vid events. Lägg filer i overlays/-mappen.",
+      "set_won": { "file": "overlays/set_won.gif", "durationMs": 6000 },
+      "leg_won": { "file": "overlays/leg_won.gif", "durationMs": 4000 }
+    },
     "fullscreen": true,
     "_comment_fullscreen": "true = starta browser i fullscreen/kiosk-läge"
   },

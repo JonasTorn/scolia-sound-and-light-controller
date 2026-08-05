@@ -5,4 +5,5 @@ throw-history.json
 scolia-cookies.json
 config.secrets.json
 sounds/
+overlays/
 .claude/

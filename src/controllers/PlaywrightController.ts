@@ -355,6 +355,64 @@ export class PlaywrightController extends EventEmitter {
 		}
 	}
 
+	async showOverlay(eventName: string): Promise<void> {
+		const cfg = this.config.overlays?.[eventName];
+		if (!cfg || !this.page) return;
+
+		const filePath = path.resolve(process.cwd(), cfg.file);
+		if (!fs.existsSync(filePath)) {
+			this.logger.warn(`Playwright: Overlay file not found: ${filePath}`);
+			return;
+		}
+
+		const ext = path.extname(filePath).slice(1).toLowerCase();
+		const mime = ext === "gif" ? "image/gif" : ext === "png" ? "image/png" : "image/jpeg";
+		const dataUri = `data:${mime};base64,${fs.readFileSync(filePath).toString("base64")}`;
+
+		try {
+			await this.page.evaluate(
+				({ uri, durationMs }: { uri: string; durationMs: number }) => {
+					const existing = document.getElementById("dart-overlay");
+					if (existing) existing.remove();
+
+					const style = document.createElement("style");
+					style.textContent = `
+						@keyframes dartOverlayIn { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: scale(1); } }
+						@keyframes dartOverlayOut { from { opacity: 1; } to { opacity: 0; } }
+					`;
+					document.head.appendChild(style);
+
+					const overlay = document.createElement("div");
+					overlay.id = "dart-overlay";
+					overlay.style.cssText = [
+						"position:fixed", "inset:0", "z-index:2147483647",
+						"background:rgba(0,0,0,0.65)",
+						"display:flex", "align-items:center", "justify-content:center",
+						"animation:dartOverlayIn 0.3s ease-out forwards",
+						"cursor:pointer",
+					].join(";");
+
+					const img = document.createElement("img");
+					img.src = uri;
+					img.style.cssText = "max-width:80vw;max-height:80vh;border-radius:12px;box-shadow:0 0 60px rgba(0,0,0,0.8)";
+					overlay.appendChild(img);
+					document.body.appendChild(overlay);
+
+					const dismiss = () => {
+						overlay.style.animation = "dartOverlayOut 0.3s ease-in forwards";
+						setTimeout(() => overlay.remove(), 300);
+					};
+					overlay.addEventListener("click", dismiss);
+					setTimeout(dismiss, durationMs);
+				},
+				{ uri: dataUri, durationMs: cfg.durationMs },
+			);
+			this.logger.info(`Playwright: Showing overlay for "${eventName}" (${cfg.durationMs}ms)`);
+		} catch (err) {
+			this.logger.warn(`Playwright: Overlay injection failed: ${err}`);
+		}
+	}
+
 	async stop(): Promise<void> {
 		this.running = false;
 

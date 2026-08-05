@@ -250,6 +250,7 @@ export class Application {
 
 	private async handleSetWon(): Promise<void> {
 		await this.eventOrchestrator.handleSetWon();
+		await this.playwrightController.showOverlay("set_won");
 	}
 
 	private async handlePlayerEliminated(): Promise<void> {

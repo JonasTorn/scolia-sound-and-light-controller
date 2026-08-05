@@ -130,6 +130,7 @@ export interface PlaywrightConfig {
 	pollIntervalMs: number;
 	cookieFile: string;
 	boardName?: string;
+	overlays?: Record<string, { file: string; durationMs: number }>;
 	credentials: {
 		email: string;
 		password: string;
