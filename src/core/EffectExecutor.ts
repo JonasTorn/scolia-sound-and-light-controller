@@ -1,4 +1,4 @@
-import { Effect, FullConfig, IKNXController, ILightSharkController, ISoundController, LightSharkExecutor } from "../types/index";
+import { Effect, FullConfig, IKNXController, ILightSharkController, IPlaywrightController, ISoundController, LightSharkExecutor } from "../types/index";
 import { GameState } from "./GameState";
 import { Logger } from "../utils/Logger";
 
@@ -13,6 +13,7 @@ export class EffectExecutor {
 		private knx: IKNXController,
 		private config: FullConfig,
 		private logger: Logger,
+		private playwright?: IPlaywrightController,
 	) {}
 
 	async execute(effects: Effect[]): Promise<void> {
@@ -29,6 +30,9 @@ export class EffectExecutor {
 					break;
 				case "knx":
 					await this.executeKnx(effect);
+					break;
+				case "overlay":
+					await this.playwright?.showOverlay(effect.file, effect.durationMs);
 					break;
 			}
 		}

@@ -27,11 +27,11 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	},
 	leg_won: {
 		sound: { files: ["winner.wav"] },
-		overlay: { file: "overlays/leg_won.gif", durationMs: 4000 },
+		overlay: { file: "overlays/leg_won.gif", durationMs: 5000 },
 	},
 	set_won: {
 		sound: { files: ["simply_the_best.mp3"] },
-		overlay: { file: "overlays/set_won.gif", durationMs: 6000 },
+		overlay: { file: "overlays/set_won.gif", durationMs: 10000 },
 	},
 	eliminated: {
 		sound: { files: ["core/eliminated.wav"] },
@@ -76,7 +76,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 3,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: 180 },
-		// Lights only — the spectacle is the reward
+		sound: { files: ["monsterkill.wav"] },
 		lights: [
 			{ executor: { page: 1, column: 6, row: 2 }, mode: "additive" },
 			{ executor: { page: 1, column: 7, row: 2 }, mode: "additive" },

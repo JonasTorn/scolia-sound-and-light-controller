@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import { Logger } from "../utils/Logger";
 import { PlaywrightConfig } from "../types/index";
-import { gameEventsConfig } from "../config/events.config";
 
 interface EdgeDetectionState {
 	bustCount: number;
@@ -356,11 +355,10 @@ export class PlaywrightController extends EventEmitter {
 		}
 	}
 
-	async showOverlay(eventName: string): Promise<void> {
-		const cfg = gameEventsConfig[eventName]?.overlay;
-		if (!cfg || !this.page) return;
+	async showOverlay(file: string, durationMs: number): Promise<void> {
+		if (!this.page) return;
 
-		const filePath = path.resolve(process.cwd(), cfg.file);
+		const filePath = path.resolve(process.cwd(), file);
 		if (!fs.existsSync(filePath)) {
 			this.logger.warn(`Playwright: Overlay file not found: ${filePath}`);
 			return;
@@ -406,9 +404,9 @@ export class PlaywrightController extends EventEmitter {
 					overlay.addEventListener("click", dismiss);
 					setTimeout(dismiss, durationMs);
 				},
-				{ uri: dataUri, durationMs: cfg.durationMs },
+				{ uri: dataUri, durationMs },
 			);
-			this.logger.info(`Playwright: Showing overlay for "${eventName}" (${cfg.durationMs}ms)`);
+			this.logger.info(`Playwright: Showing overlay "${file}" (${durationMs}ms)`);
 		} catch (err) {
 			this.logger.warn(`Playwright: Overlay injection failed: ${err}`);
 		}

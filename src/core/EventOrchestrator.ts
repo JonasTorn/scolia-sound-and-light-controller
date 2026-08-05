@@ -1,10 +1,11 @@
-import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ThrowEvent, ILightSharkController, ISoundController, IKNXController } from "../types/index";
+import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ThrowEvent, ILightSharkController, ISoundController, IKNXController, IPlaywrightController } from "../types/index";
 import { Logger } from "../utils/Logger";
 import { SectorParser } from "../utils/SectorParser";
 import { GameState } from "./GameState";
 import { ThrowEventResolver } from "./ThrowEventResolver";
 import { SpecialEventDetector } from "./SpecialEventDetector";
 import { EffectExecutor } from "./EffectExecutor";
+import { gameEventsConfig } from "../config/events.config";
 
 export interface IEventOrchestrator {
 	handleThrowDetected(payload: ScoliaThrowPayload): Promise<void>;
@@ -28,6 +29,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 		lightsharkController: ILightSharkController,
 		soundController: ISoundController,
 		knxController: IKNXController,
+		playwrightController?: IPlaywrightController,
 	) {
 		this.throwEventResolver = new ThrowEventResolver(config.lightshark);
 		this.specialEventDetector = new SpecialEventDetector();
@@ -38,6 +40,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			knxController,
 			config,
 			logger,
+			playwrightController,
 		);
 	}
 
@@ -95,7 +98,10 @@ export class EventOrchestrator implements IEventOrchestrator {
 	private async fireGameEvent(name: string, logMsg: string): Promise<void> {
 		try {
 			this.logger.info(logMsg);
-			await this.effectExecutor.execute([{ type: "sound", event: name, priority: 5 }]);
+			const effects: Effect[] = [{ type: "sound", event: name, priority: 5 }];
+			const overlay = gameEventsConfig[name]?.overlay;
+			if (overlay) effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
+			await this.effectExecutor.execute(effects);
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);
 		}

@@ -38,6 +38,9 @@ export class SpecialEventDetector {
 				for (const light of eventDef.lights ?? []) {
 					effects.push({ type: "light", executor: light.executor, mode: light.mode });
 				}
+				if (eventDef.overlay) {
+					effects.push({ type: "overlay", file: eventDef.overlay.file, durationMs: eventDef.overlay.durationMs });
+				}
 				best = { priority, event: { name: eventDef.name, effects } };
 			}
 		}

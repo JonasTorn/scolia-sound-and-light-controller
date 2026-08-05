@@ -40,7 +40,8 @@ export type Effect =
 	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number; playerSounds?: Record<string, SoundEntry> }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
-	| { type: "knx"; action: string };
+	| { type: "knx"; action: string }
+	| { type: "overlay"; file: string; durationMs: number };
 
 export interface ThrowEvent {
 	name: string;
@@ -55,6 +56,7 @@ export interface SpecialEventDefinition {
 	detector: string;
 	params: Record<string, any>;
 	sound?: SoundEntry; // default sound — auto-falls back to core/{name}.wav if omitted
+	overlay?: { file: string; durationMs: number };
 	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
 	playerSounds?: Record<string, SoundEntry>; // per-thrower overrides, keyed by player nickname
 }
@@ -170,6 +172,5 @@ export interface IKNXController {
 }
 
 export interface IPlaywrightController {
-	start(): Promise<void>;
-	stop(): Promise<void>;
+	showOverlay(file: string, durationMs: number): Promise<void>;
 }
