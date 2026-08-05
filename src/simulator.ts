@@ -3,6 +3,7 @@ import { ConfigManager } from "./core/ConfigManager";
 import { GameState } from "./core/GameState";
 import { EventOrchestrator } from "./core/EventOrchestrator";
 import { SoundController } from "./controllers/SoundController";
+import { PlaywrightController } from "./controllers/PlaywrightController";
 import { ScoliaThrowPayload } from "./types/index";
 
 // No-op stubs for hardware controllers
@@ -31,6 +32,8 @@ const sequences: Array<{ name: string; throws: string[] }> = [
 	{ name: "1337",                throws: ["s13", "s3", "s7"] },
 	{ name: "Bust",                throws: ["bust"] },
 	{ name: "Leg won",             throws: ["leg_won"] },
+	{ name: "Set won",             throws: ["set_won"] },
+	{ name: "Eliminated",         throws: ["eliminated"] },
 ];
 
 function makePayload(sector: string): ScoliaThrowPayload {
@@ -56,6 +59,12 @@ async function runSimulator(): Promise<void> {
 		const gameState = new GameState();
 		const soundController = new SoundController(config.sound, logger);
 
+		let playwrightController: PlaywrightController | undefined;
+		if (config.playwright.enabled) {
+			playwrightController = new PlaywrightController(config.playwright, logger);
+			await playwrightController.launch();
+		}
+
 		const orchestrator = new EventOrchestrator(
 			gameState,
 			config,
@@ -63,6 +72,7 @@ async function runSimulator(): Promise<void> {
 			noopLightshark,
 			soundController,
 			noopKnx,
+			playwrightController,
 		);
 
 		for (const seq of sequences) {
@@ -87,9 +97,10 @@ async function runSimulator(): Promise<void> {
 		}
 
 		logger.success("\nSimulator complete ✓");
-		// Give sounds a moment to finish before closing
+		// Give sounds/overlays a moment to finish before closing
 		await delay(1500);
 		soundController.close();
+		if (playwrightController) await playwrightController.stop();
 		logger.close();
 	} catch (err) {
 		console.error("Simulator failed:", err);
