@@ -9,6 +9,7 @@ import { SpecialEventDefinition, SoundEntry } from "../types/index";
 
 export interface GameEventConfig {
 	sound?: SoundEntry;
+	lights?: Array<{ executor: { page: number; column: number; row: number }; mode: "main" | "additive" }>;
 	overlay?: { file: string; durationMs: number };
 }
 
@@ -17,8 +18,12 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		sound: { files: ["BRUH.mp3", "ERROR.mp3"] },
 	},
 	bull25: {
-		sound: { files: ["core/twenty_five.wav"] },
+		sound: { files: ["headshot.wav"] },
 	},
+	bullseye: {
+		sound: { files: ["headshot.wav"] },
+	},
+	
 	takeout: {
 		sound: { files: ["yoshi_tongue.mp3"], volume: 0.70 },
 	},
@@ -27,14 +32,14 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	},
 	leg_won: {
 		sound: { files: ["winner.wav"] },
-		overlay: { file: "overlays/leg_won.gif", durationMs: 5000 },
+		// overlay: { file: "overlays/leg_won.gif", durationMs: 5000 },
 	},
 	set_won: {
 		sound: { files: ["simply_the_best.mp3"] },
-		overlay: { file: "overlays/set_won.gif", durationMs: 10000 },
+		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
 	},
 	eliminated: {
-		sound: { files: ["core/eliminated.wav"] },
+		sound: { files: ["wilhelm_scream.mp3"] },
 	},
 };
 
@@ -89,6 +94,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "concatenatesTo",
 		params: { number: 69 },
 		sound: { files: ["gunther.mp3"] },
+		overlay: { file: "overlays/gunther.gif", durationMs: 5000 },
 	},
 
 	{

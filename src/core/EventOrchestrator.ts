@@ -98,9 +98,12 @@ export class EventOrchestrator implements IEventOrchestrator {
 	private async fireGameEvent(name: string, logMsg: string): Promise<void> {
 		try {
 			this.logger.info(logMsg);
+			const cfg = gameEventsConfig[name];
 			const effects: Effect[] = [{ type: "sound", event: name, priority: 5 }];
-			const overlay = gameEventsConfig[name]?.overlay;
-			if (overlay) effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
+			for (const light of cfg?.lights ?? []) {
+				effects.push({ type: "light", executor: light.executor, mode: light.mode });
+			}
+			if (cfg?.overlay) effects.push({ type: "overlay", file: cfg.overlay.file, durationMs: cfg.overlay.durationMs });
 			await this.effectExecutor.execute(effects);
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);
