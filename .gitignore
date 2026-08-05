@@ -3,6 +3,6 @@ dist/
 *.log
 throw-history.json
 scolia-cookies.json
-config.json
+config.secrets.json
 sounds/
 .claude/

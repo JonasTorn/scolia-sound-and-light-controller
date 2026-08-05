@@ -11,6 +11,19 @@ export class ConfigManager {
 		this.configPath = configPath || path.resolve(process.cwd(), "config.json");
 	}
 
+	private deepMerge(base: any, override: any): any {
+		const result = { ...base };
+		for (const key of Object.keys(override)) {
+			const val = override[key];
+			if (val !== null && typeof val === "object" && !Array.isArray(val)) {
+				result[key] = this.deepMerge(base[key] ?? {}, val);
+			} else {
+				result[key] = val;
+			}
+		}
+		return result;
+	}
+
 	load(): FullConfig {
 		if (this.config) {
 			return this.config;
@@ -22,9 +35,16 @@ export class ConfigManager {
 
 		try {
 			const raw = fs.readFileSync(this.configPath, "utf-8");
-			const parsed: FullConfig = JSON.parse(raw);
+			let parsed = JSON.parse(raw);
+
+			const secretsPath = path.join(path.dirname(this.configPath), "config.secrets.json");
+			if (fs.existsSync(secretsPath)) {
+				const secrets = JSON.parse(fs.readFileSync(secretsPath, "utf-8"));
+				parsed = this.deepMerge(parsed, secrets);
+			}
+
 			TypeValidator.validateFullConfig(parsed);
-			this.config = parsed;
+			this.config = parsed as FullConfig;
 			return this.config;
 		} catch (err) {
 			if (err instanceof Error) {

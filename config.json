@@ -1,0 +1,224 @@
+{
+  "_comment": "Kopiera denna till config.json och redigera med era värden",
+  "scolia": {
+    "serialNumber": "",
+    "_comment_serialNumber": "Ert Scolia darttavla serienummer",
+    "accessToken": "",
+    "_comment_accessToken": "Access token från Scolia (köps separat)",
+    "serverUrl": "wss://game.scoliadarts.com/api/v1/social",
+    "_comment_serverUrl": "Scolia WebSocket server (ändra ej)",
+    "simulationMode": true,
+    "_comment_simulationMode": "true = testa utan darttavla, false = live-läge",
+    "reconnectDelay": 5000
+  },
+  "lightshark": {
+    "enabled": false,
+    "_comment_enabled": "true = använd LightShark, false = inaktivera",
+    "ip": "192.168.1.100",
+    "_comment_ip": "LightShark IP-adress (kolla Settings → Network)",
+    "oscPort": 8000,
+    "_comment_oscPort": "OSC port (standard 8000, aktivera i Settings → Network → OSC)",
+    "throwEffect": {
+      "enabled": true,
+      "_comment_enabled": "true = använd effekter vid kast",
+      "colorMode": {
+        "enabled": true,
+        "_comment_colorMode": "Färgläge - matchar darttavlans röda/gröna färger",
+        "redExecutor": {
+          "page": 1,
+          "column": 2,
+          "row": 1
+        },
+        "_comment_redExecutor": "Executor för röda segment (LED Red)",
+        "greenExecutor": {
+          "page": 1,
+          "column": 2,
+          "row": 2
+        },
+        "_comment_greenExecutor": "Executor för gröna segment (LED Green)",
+        "bullseyeExecutor": {
+          "page": 1,
+          "column": 6,
+          "row": 6
+        },
+        "_comment_bullseyeExecutor": "Executor för bullseye 50p (Moln Ow Strobe)",
+        "redSegments": [
+          20,
+          18,
+          13,
+          10,
+          2,
+          3,
+          7,
+          8,
+          14,
+          12
+        ],
+        "_comment_redSegments": "Segment med röd färg på darttavlan",
+        "greenSegments": [
+          1,
+          4,
+          6,
+          15,
+          17,
+          19,
+          16,
+          11,
+          9,
+          5
+        ],
+        "_comment_greenSegments": "Segment med grön färg på darttavlan",
+        "bull25": "green",
+        "_comment_bull25": "Outer bull (25p) färg: green"
+      },
+      "noScoreExecutor": {
+        "page": 1,
+        "column": 8,
+        "row": 4
+      },
+      "_comment_noScoreExecutor": "Executor vid miss (LED Dim OFF - släcker lampor)",
+      "resetExecutor": {
+        "page": 1,
+        "column": 1,
+        "row": 1
+      },
+      "_comment_resetExecutor": "Bas-belysning (3k 100% - alltid på)"
+    },
+    "randomExecutorMode": {
+      "enabled": false,
+      "_comment_enabled": "true = slumpmässig executor vid varje kast (för test)",
+      "page": 1,
+      "columns": {
+        "min": 1,
+        "max": 8
+      },
+      "rows": {
+        "min": 1,
+        "max": 7
+      }
+    }
+  },
+  "sound": {
+    "enabled": true,
+    "_comment_enabled": "true = spela ljud vid events, false = inaktivera",
+    "soundsDir": "./sounds",
+    "_comment_soundsDir": "Mapp med ljudfiler (relativ till projektrot)",
+    "sounds": {
+      "_comment": "Core game sounds. Special event sounds are defined in src/config/specialEvents.config.ts. Regular throws auto-resolve to core/N.wav — no entry needed here. Override a specific throw by adding its name: 'triple_20', 'double_18', 'single_1', etc.",
+      "miss": {
+        "files": [
+          "BRUH.mp3", 
+          "ERROR.mp3"
+        ]
+      },
+      "bullseye": {
+        "files": [
+          "core/bullseye.wav"
+        ]
+      },
+      "bull25": {
+        "files": [
+          "core/twenty_five.wav"
+        ]
+      },
+      "takeout": {
+        "files": [
+          "yoshi_tongue.mp3"
+        ],
+        "volume": 0.70,
+        "enabled": true
+      },
+      "bust": {
+        "files": [
+          "fahhh.mp3",
+          "vad_fet_du_ar.mp3",
+          "tjockisleif.mp3"
+        ]
+      },
+      "leg_won": {
+        "files": [
+          "winner.wav"
+        ]
+      },
+      "set_won": {
+        "files": [
+          "simply_the_best.mp3"
+        ]
+      },
+      "eliminated": {
+        "files": [
+          "core/eliminated.wav"
+        ]
+      }
+    },
+    "_comment_sounds": "Use 'files' (array) for multiple alternating sounds — one is picked randomly. 'file' (single) still works. Regular throw scores auto-resolve to core/ without any entry here.",
+    "players": {
+      "_comment": "Per-player sound overrides. Key = Scolia nickname (exact match, case-sensitive). Each player section uses the same format as 'sounds' above: any event name → { files, volume, enabled }. Player overrides take priority over everything else.",
+      "_comment_how_to_add": "Example: make Groggen's miss play a custom sound → \"miss\": { \"files\": [\"players/groggen/miss.wav\"] }. Put the file in sounds/players/groggen/ and list it here.",
+      "Groggen": {
+        "_comment": "Add sound overrides for Groggen here. Example: \"bust\": { \"files\": [\"players/groggen/bust.wav\"] }"
+      },
+      "Luca": {
+        "_comment": "Add sound overrides for Luca here."
+      },
+      "Sony": {
+        "_comment": "Add sound overrides for Sony here."
+      },
+      "T10": {
+        "_comment": "Add sound overrides for T10 here."
+      },
+      "Laser": {
+        "_comment": "Add sound overrides for Laser here."
+      }
+    }
+  },
+  "knx": {
+    "enabled": false,
+    "_comment_enabled": "true = styr KNX-belysning via IP-gateway",
+    "gateway": "192.168.1.50",
+    "_comment_gateway": "KNX IP-gateway adress",
+    "port": 3671,
+    "_comment_port": "KNX port (standard 3671)",
+    "actions": {
+      "allOff": [
+        {
+          "ga": "0/0/1",
+          "value": 5
+        }
+      ],
+      "allOn": [
+        {
+          "ga": "0/0/1",
+          "value": 0
+        }
+      ]
+    },
+    "_comment_actions": "Gruppaddresser och värden att skicka vid events. Miss → allOff, nästa poäng → allOn"
+  },
+  "playwright": {
+    "enabled": true,
+    "_comment_enabled": "true = övervaka Scolias webbapp för bust/leg-won/set-won events",
+    "url": "https://game.scoliadarts.com",
+    "_comment_url": "Scolia game URL",
+    "credentials": {
+      "email": "",
+      "password": ""
+    },
+    "_comment_credentials": "Inloggningsuppgifter (logga in manuellt första gången, cookies sparas)",
+    "cookieFile": "./scolia-cookies.json",
+    "_comment_cookieFile": "Fil för att spara inloggningscookies",
+    "pollIntervalMs": 200,
+    "_comment_pollIntervalMs": "Hur ofta DOM:en pollas (ms)",
+    "boardName": "Digiwise HQ",
+    "_comment_boardName": "Namn på din Scolia-tavla — appen joinar automatiskt om den är online",
+    "fullscreen": true,
+    "_comment_fullscreen": "true = starta browser i fullscreen/kiosk-läge"
+  },
+  "logging": {
+    "enabled": true,
+    "logFile": "dart-events.log",
+    "consoleOutput": true
+  },
+  "_comment_executors": "Executors adresseras med page/column/row som motsvarar LightShark-griddet",
+  "_comment_osc": "OSC-adress: /LS/Executor/{page}/{column}/{row} med värde 0.0 (toggle)"
+}
