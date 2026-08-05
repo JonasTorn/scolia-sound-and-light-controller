@@ -408,12 +408,14 @@ export class PlaywrightController extends EventEmitter {
 
 			this.lastState = state;
 
-			// Periodic HTML dump (every 10s) + screenshot on any state change
-			const now = Date.now();
-			const dumpDue = now - this.lastSnapshotAt >= 10000;
-			if (stateChanged || dumpDue) {
-				this.lastSnapshotAt = now;
-				this.saveSnapshot(stateChanged).catch(() => {});
+			// Periodic HTML dump (every 10s) + screenshot on state change — debug only
+			if (process.env.DEBUG) {
+				const now = Date.now();
+				const dumpDue = now - this.lastSnapshotAt >= 10000;
+				if (stateChanged || dumpDue) {
+					this.lastSnapshotAt = now;
+					this.saveSnapshot(stateChanged).catch(() => {});
+				}
 			}
 		} catch (err) {
 			if (!this.pollErrorLogged) {
