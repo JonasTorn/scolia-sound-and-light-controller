@@ -8,3 +8,5 @@ sounds/
 overlays/
 .claude/
 dom-snapshot.*
+.DS_Store
+tests/core/test-state.json
