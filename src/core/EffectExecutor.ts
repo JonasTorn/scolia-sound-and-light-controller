@@ -72,9 +72,9 @@ export class EffectExecutor {
 	private async executeSound(
 		effect: Extract<Effect, { type: "sound" }>,
 	): Promise<void> {
-		if (this.config.sound.enabled) {
-			await this.sound.playSound(effect.event, effect.priority ?? 0, effect.files, effect.volume);
-		}
+		if (!this.config.sound.enabled) return;
+		if (effect.isThrowSound && this.config.sound.throwSoundsEnabled === false) return;
+		await this.sound.playSound(effect.event, effect.priority ?? 0, effect.files, effect.volume);
 	}
 
 	private async executeLight(

@@ -1,0 +1,15 @@
+{
+  "throwHistory": [
+    {
+      "points": 20,
+      "multiplier": 1,
+      "segment": 20,
+      "timestamp": 12345,
+      "playedEvents": {}
+    }
+  ],
+  "lastExecutor": null,
+  "specialExecutors": [],
+  "knxState": "off",
+  "strobeActive": false
+}

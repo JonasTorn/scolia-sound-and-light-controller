@@ -37,7 +37,7 @@ export interface LightSharkExecutor {
 
 // Unified effect system
 export type Effect =
-	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number }
+	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number; isThrowSound?: boolean }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
 	| { type: "knx"; action: string }
@@ -129,6 +129,8 @@ export interface SoundEntry {
 export interface SoundConfig {
 	enabled: boolean;
 	soundsDir: string;
+	throwSoundsEnabled?: boolean;   // default true — set false to silence all base throw sounds
+	takeoutSoundEnabled?: boolean;  // default true — set false to silence the takeout sound
 	sounds?: Record<string, SoundEntry>;
 	players?: Record<string, Record<string, SoundEntry>>;
 }

@@ -1,8 +1,7 @@
-import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ThrowEvent, ILightSharkController, ISoundController, IKNXController, IPlaywrightController } from "../types/index";
+import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ILightSharkController, ISoundController, IKNXController, IPlaywrightController } from "../types/index";
 import { Logger } from "../utils/Logger";
 import { SectorParser } from "../utils/SectorParser";
 import { GameState } from "./GameState";
-import { ThrowEventResolver } from "./ThrowEventResolver";
 import { SpecialEventDetector } from "./SpecialEventDetector";
 import { EffectExecutor } from "./EffectExecutor";
 import { gameEventsConfig } from "../config/events.config";
@@ -18,7 +17,6 @@ export interface IEventOrchestrator {
 }
 
 export class EventOrchestrator implements IEventOrchestrator {
-	private throwEventResolver: ThrowEventResolver;
 	private specialEventDetector: SpecialEventDetector;
 	private effectExecutor: EffectExecutor;
 
@@ -31,7 +29,6 @@ export class EventOrchestrator implements IEventOrchestrator {
 		knxController: IKNXController,
 		playwrightController?: IPlaywrightController,
 	) {
-		this.throwEventResolver = new ThrowEventResolver(config.lightshark);
 		this.specialEventDetector = new SpecialEventDetector();
 		this.effectExecutor = new EffectExecutor(
 			gameState,
@@ -50,26 +47,29 @@ export class EventOrchestrator implements IEventOrchestrator {
 			this.gameState.addThrow(throwData);
 			const throwIndex = this.gameState.getThrowHistory().length - 1;
 
-			const throwEvent = this.throwEventResolver.resolve(throwData);
 			const specialEvent = this.specialEventDetector.detect(
 				this.gameState.getThrowHistory().slice(0, -1),
 				throwData,
 				this.gameState.getCurrentPlayer(),
 			);
 
-			if (
-				specialEvent &&
-				!this.gameState.isEventPlayed(throwIndex, specialEvent.name)
-			) {
+			if (specialEvent && !this.gameState.isEventPlayed(throwIndex, specialEvent.name)) {
 				this.logger.success(`🎉 Special Event: ${specialEvent.name}`);
 				this.gameState.markEventPlayed(throwIndex, specialEvent.name);
 			}
 
-			const effects = this.mergeEffects(throwEvent, specialEvent);
+			// Special event sound replaces base throw sound; special lights/overlays stack on top.
+			const specialHasSound = specialEvent?.effects.some((e) => e.type === "sound") ?? false;
+			const effects: Effect[] = [];
+			if (!specialHasSound) {
+				effects.push({ type: "sound", isThrowSound: true, event: this.resolveThrowSoundName(throwData) });
+			}
+			if (specialEvent) effects.push(...specialEvent.effects);
+
 			await this.effectExecutor.execute(effects);
 
 			this.logger.info(
-				`Throw: ${throwData.segment}${this.multiplierSuffix(throwData.multiplier)} = ${throwData.points}p [${throwEvent.name}]`,
+				`Throw: ${throwData.segment}${this.multiplierSuffix(throwData.multiplier)} = ${throwData.points}p`,
 			);
 		} catch (err) {
 			this.logger.error("Error handling throw:", err);
@@ -79,7 +79,9 @@ export class EventOrchestrator implements IEventOrchestrator {
 	async handleTakeoutFinished(): Promise<void> {
 		try {
 			this.logger.info("Takeout finished");
-			await this.effectExecutor.execute([{ type: "sound", event: "takeout" }]);
+			if (this.config.sound.takeoutSoundEnabled !== false) {
+				await this.effectExecutor.execute([{ type: "sound", event: "takeout" }]);
+			}
 			await this.effectExecutor.cleanup();
 		} catch (err) {
 			this.logger.error("Error handling takeout:", err);
@@ -119,14 +121,14 @@ export class EventOrchestrator implements IEventOrchestrator {
 		}
 	}
 
-	// Special sound replaces throw sound; all other effects stack.
-	private mergeEffects(throwEvent: ThrowEvent, special: ThrowEvent | null): Effect[] {
-		if (!special) return throwEvent.effects;
-		const specialHasSound = special.effects.some((e) => e.type === "sound");
-		const base = specialHasSound
-			? throwEvent.effects.filter((e) => e.type !== "sound")
-			: throwEvent.effects;
-		return [...base, ...special.effects];
+	// Maps a throw to its base sound event name. Special events override this via their own sound.
+	private resolveThrowSoundName(throwData: GameThrow): string {
+		if (throwData.points === 0) return "miss";
+		if (throwData.segment === 50) return "bullseye";
+		if (throwData.segment === 25) return "bull25";
+		if (throwData.multiplier === 3) return `triple_${throwData.segment}`;
+		if (throwData.multiplier === 2) return `double_${throwData.segment}`;
+		return `single_${throwData.segment}`;
 	}
 
 	private parseAndAdjust(payload: ScoliaThrowPayload): GameThrow {
