@@ -39,6 +39,7 @@ export class PlaywrightController extends EventEmitter {
 	private boardJoined = false;
 	private lastBoardCheckAt = 0;
 	private lastSnapshotAt = 0;
+	private lastBackToSetupAt = 0;
 	private processedThrowIndices = new Map<string, Set<number>>(); // playerId → Set of throwIndex
 
 	getPlayerName(id: string): string {
@@ -352,6 +353,26 @@ export class PlaywrightController extends EventEmitter {
 			}
 		} catch (err) {
 			this.logger.debug(`Playwright: Board join check error: ${err}`);
+		}
+
+		// Auto-click "Back to Setup" when results screen appears after a set/match ends.
+		// Check every 2s to avoid spam — the button only exists on the results screen.
+		if (Date.now() - this.lastBackToSetupAt >= 2000) {
+			this.lastBackToSetupAt = Date.now();
+			try {
+				const clicked = await this.page.evaluate(() => {
+					const els = Array.from(document.querySelectorAll('button, [role="button"], a'));
+					const btn = els.find(el => {
+						const text = el.textContent?.trim().toLowerCase() ?? "";
+						return text.includes("back to setup") || text.includes("back to game") || text.includes("new game");
+					}) as HTMLElement | undefined;
+					if (btn) { btn.click(); return true; }
+					return false;
+				});
+				if (clicked) this.logger.info("Playwright: Auto-clicked Back to Setup");
+			} catch (err) {
+				this.logger.debug(`Playwright: Back-to-setup check error: ${err}`);
+			}
 		}
 
 		try {
