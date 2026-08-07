@@ -107,6 +107,8 @@ async function main() {
 		}
 
 		if (input === "takeout") {
+			logger.info("→ TAKEOUT_STARTED");
+			await orchestrator.handleTakeoutStarted();
 			logger.info("→ TAKEOUT_FINISHED");
 			await orchestrator.handleTakeoutFinished();
 			rl.prompt();

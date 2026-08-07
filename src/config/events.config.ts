@@ -300,6 +300,22 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["32_33.mp3"] },
 	},
 	{
+		name: "good_visit",
+		enabled: true,
+		priority: 1,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: ">=100" },
+		sound: { files: ["rrriktigt_bra.mp3"] },
+	},
+	{
+		name: "poor_visit",
+		enabled: true,
+		priority: 1,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "<10" },
+		sound: { files: ["BRUH.mp3"] },
+	},
+	{
 		name: "any_double",
 		enabled: true,
 		priority: 1,

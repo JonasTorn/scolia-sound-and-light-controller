@@ -81,9 +81,18 @@ export class SpecialEventDetector {
 		if (throwHistory.length < n - 1) return false;
 
 		const lastN = throwHistory.slice(-(n - 1));
-		const sum =
-			lastN.reduce((acc, t) => acc + t.points, 0) + currentThrow.points;
-		return sum === targetSum;
+		const sum = lastN.reduce((acc, t) => acc + t.points, 0) + currentThrow.points;
+		return this.evalSumCondition(targetSum, sum);
+	}
+
+	private evalSumCondition(condition: string | number, total: number): boolean {
+		if (typeof condition === "number") return total === condition;
+		const s = String(condition).trim();
+		if (s.startsWith(">=")) return total >= parseInt(s.slice(2), 10);
+		if (s.startsWith("<=")) return total <= parseInt(s.slice(2), 10);
+		if (s.startsWith(">"))  return total >  parseInt(s.slice(1), 10);
+		if (s.startsWith("<"))  return total <  parseInt(s.slice(1), 10);
+		return total === parseInt(s, 10);
 	}
 
 	private consecutivePattern(
