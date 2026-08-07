@@ -621,6 +621,9 @@ Goal: different light/sound setups per Scolia game mode (501, Half It, Eliminati
 - **Playwright scraping** is the practical path: player names, scores, and game mode are visible in the Scolia web app DOM
 - Could save per-player throw history to enable a future scoreboard
 
+### Unified event config (optional refactor)
+Currently `gameEventsConfig` and `specialEventsConfig` are separate objects with slightly different shapes. `gameEventsConfig` handles externally-triggered events (bust, win, takeout — from DOM/WebSocket) while `specialEventsConfig` handles throw-pattern events (180, 69, etc.). The effects they produce are identical. A future refactor could merge them into a single `eventsConfig` with a `trigger` field (`"game:bust"` vs `{ detector: "sumLastN", params: {...} }`), making the whole system one place to look. Low priority — current split works fine.
+
 ### Scoreboard app (future, separate project)
 - This app acts as data collector (sessions, throws per player, scores saved to file/DB)
 - Separate app reads that data and displays a scoreboard

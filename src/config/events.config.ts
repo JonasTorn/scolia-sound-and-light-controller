@@ -24,7 +24,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	bullseye: {
 		sound: { files: ["headshot.wav"] },
 	},
-	
+
 	takeout: {
 		sound: { files: ["yoshi_tongue.mp3"], volume: 0.70 },
 	},
@@ -34,16 +34,16 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	leg_won: {
 		sound: { files: ["winner.wav"] },
 		playerOverwrites: {
-			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 5000 } },
-			"Laser":   { overlay: { file: "overlays/laser_win.gif",   durationMs: 5000 } },
+			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
+			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
 		},
 	},
 	set_won: {
 		sound: { files: ["simply_the_best.mp3"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
 		playerOverwrites: {
-			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 5000 } },
-			"Laser":   { overlay: { file: "overlays/laser_win.gif",   durationMs: 5000 } },
+			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
+			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
 		},
 	},
 	eliminated: {
@@ -65,12 +65,12 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 //
 // Sound: omit the `sound` field to auto-resolve from sounds/core/{name}.wav.
 //
-// Per-player sounds: add a `playerSounds` map keyed by the player's nickname
-// (as shown in the Scolia web app). That player gets their own sound; everyone
-// else gets the default. Example:
+// Per-player overrides: add a `playerOverwrites` map keyed by the player's nickname
+// (as shown in the Scolia web app). That player gets those effects; everyone else
+// gets the defaults. Partial — only specified fields replace the base. Example:
 //
-//   playerSounds: {
-//     "Laser": { files: ["core/laser_180.wav"] },
+//   playerOverwrites: {
+//     "Laser": { sound: { files: ["laser_180.wav"] }, overlay: { file: "overlays/laser.gif", durationMs: 5000 } },
 //   }
 //
 // Adding a new event:
@@ -95,7 +95,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 			{ executor: { page: 1, column: 7, row: 2 }, mode: "additive" },
 		],
 	},
-	
+
 
 	{
 		name: "2xt20",
@@ -220,6 +220,16 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "concatenatesTo",
 		params: { number: 420 },
 		sound: { files: ["smoke_weed_everyday.mp3"] },
+		overlay: { file: "overlays/420.gif", durationMs: 5000 },
+	},
+	{
+		name: "4+20",
+		enabled: true,
+		priority: 1,
+		detector: "consecutivePattern",
+		params: { pattern: [4, 20] },
+		sound: { files: ["smoke_weed_everyday.mp3"] },
+		overlay: { file: "overlays/420.gif", durationMs: 5000 },
 	},
 	{
 		name: "000",
@@ -248,6 +258,37 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { throws: ["50"] },
 		sound: { files: ["headshot.wav"] },
 	},
+
+	{
+		name: "111",
+		enabled: true,
+		priority: 1,
+		detector: "sequentialSegments",
+		params: { throws: ["s1", "s1", "s1"] },
+	},
+	{
+		name: "300",
+		enabled: true,
+		priority: 1,
+		detector: "sequentialSegments",
+		params: { throws: ["s3", "None", "None"] },
+		sound: { files: ["300.wav"] },
+		overlay: { file: "overlays/300_leonidas.gif", durationMs: 5000 },
+	},
+	{
+		name: "99",
+		enabled: true,
+		priority: 1,
+		detector: "consecutivePattern",
+		params: { pattern: [9, 9] },
+	},
+	{
+		name: "sum=99",
+		enabled: true,
+		priority: 1,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "99" },
+	},
 	{
 		name: "69",
 		enabled: true,
@@ -266,42 +307,23 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["gunther.mp3"] },
 		overlay: { file: "overlays/gunther.gif", durationMs: 5000 },
 	},
-	{
-		name: "111",
-		enabled: true,
-		priority: 1,
-		detector: "sequentialSegments",
-		params: { throws: ["s1", "s1", "s1"] },
-	},
-	{
-		name: "300",
-		enabled: true,
-		priority: 1,
-		detector: "sequentialSegments",
-		params: { throws: ["s3", "None", "None"] },
-		sound: { files: ["300.wav"] },
-		overlay: { file: "overlays/300_leonidas.gif", durationMs: 5000 },
-	},
-	{
-		name: "420",
-		enabled: true,
-		priority: 1,
-		detector: "consecutivePattern",
-		params: { pattern: [4, 20] },
-	},
+
 	{
 		name: "67",
 		enabled: true,
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [6, 7] },
+		overlay: { file: "overlays/6-7.gif", durationMs: 5000 },
 	},
 	{
-		name: "99",
+		name: "sum=67",
 		enabled: true,
 		priority: 1,
-		detector: "consecutivePattern",
-		params: { pattern: [9, 9] },
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "67" },
+		//sound: { files: ["6-7.mp3"] },
+		overlay: { file: "overlays/6-7.gif", durationMs: 5000 },
 	},
 	{
 		name: "21",
@@ -311,11 +333,26 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { pattern: [2, 1] },
 	},
 	{
+		name: "sum=21",
+		enabled: true,
+		priority: 1,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "21" },
+	},
+	{
 		name: "33",
 		enabled: true,
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [3, 3] },
+		sound: { files: ["32_33.mp3"] },
+	},
+	{
+		name: "sum=33",
+		enabled: true,
+		priority: 1,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "33" },
 		sound: { files: ["32_33.mp3"] },
 	},
 	// ── Over / Under ────────────────────────────────────────────────────────
