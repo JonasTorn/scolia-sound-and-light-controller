@@ -86,39 +86,44 @@ export class PlaywrightController extends EventEmitter {
 
 			this.page = await this.context.newPage();
 
-			// Intercept WebSocket frames from the Scolia web app
-			this.page.on("websocket", (ws) => {
-				this.logger.debug(`Playwright: WebSocket opened: ${ws.url()}`);
-				ws.on("framereceived", (frame) => {
-					const payload =
-						typeof frame.payload === "string"
-							? frame.payload
-							: frame.payload.toString("utf-8");
-					try {
-						const msg = JSON.parse(payload);
-						if (!msg.type) return;
+			// Intercept WebSocket frames from the Scolia web app.
+			// Set playwright.proxyWebSocket = false in config to disable when using the Scolia API directly.
+			if (this.config.proxyWebSocket !== false) {
+				this.page.on("websocket", (ws) => {
+					this.logger.debug(`Playwright: WebSocket opened: ${ws.url()}`);
+					ws.on("framereceived", (frame) => {
+						const payload =
+							typeof frame.payload === "string"
+								? frame.payload
+								: frame.payload.toString("utf-8");
+						try {
+							const msg = JSON.parse(payload);
+							if (!msg.type) return;
 
-						if (msg.type === "API::COMMON::PLAYER_JOINED") {
-							const p = msg.payload?.player;
-							if (p?._id && p?.nickname) {
-								this.players.set(p._id, { id: p._id, nickname: p.nickname });
-								this.logger.info(`👤 Player joined: ${p.nickname} (${p._id})`);
+							if (msg.type === "API::COMMON::PLAYER_JOINED") {
+								const p = msg.payload?.player;
+								if (p?._id && p?.nickname) {
+									this.players.set(p._id, { id: p._id, nickname: p.nickname });
+									this.logger.info(`👤 Player joined: ${p.nickname} (${p._id})`);
+								}
+							} else if (msg.type === "API::COMMON::TAKEOUT_STARTED") {
+								this.logger.debug("Playwright WS: TAKEOUT_STARTED");
+								this.processedThrowIndices.clear();
+								this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_STARTED" }));
+							} else if (msg.type === "API::COMMON::TAKEOUT_FINISHED") {
+								this.logger.debug("Playwright WS: TAKEOUT_FINISHED");
+								this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_FINISHED" }));
+							} else if (msg.type === "API::GAME::GAME_STATE_CHANGED") {
+								this.extractThrows(msg.payload);
 							}
-						} else if (msg.type === "API::COMMON::TAKEOUT_STARTED") {
-							this.logger.debug("Playwright WS: TAKEOUT_STARTED");
-							this.processedThrowIndices.clear();
-							this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_STARTED" }));
-						} else if (msg.type === "API::COMMON::TAKEOUT_FINISHED") {
-							this.logger.debug("Playwright WS: TAKEOUT_FINISHED");
-							this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_FINISHED" }));
-						} else if (msg.type === "API::GAME::GAME_STATE_CHANGED") {
-							this.extractThrows(msg.payload);
+						} catch {
+							// ignore non-JSON frames
 						}
-					} catch {
-						// ignore non-JSON frames
-					}
+					});
 				});
-			});
+			} else {
+				this.logger.info("Playwright: WS proxy disabled — using direct Scolia API for throw data");
+			}
 
 			const url = this.config.url || "https://game.scoliadarts.com";
 			this.logger.info(`Playwright: Navigating to ${url}/game`);

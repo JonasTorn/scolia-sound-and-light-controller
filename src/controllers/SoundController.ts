@@ -74,7 +74,6 @@ export class SoundController {
 		priority = 0,
 		inlineFiles?: string[],
 		inlineVolume?: number,
-		playerSounds?: Record<string, SoundEntry>,
 	): Promise<void> {
 		if (!this.config.enabled) return;
 
@@ -83,26 +82,20 @@ export class SoundController {
 			return;
 		}
 
-		// 1. Event-level per-player override (from specialEvents.config.ts → playerSounds)
-		if (this.currentPlayer && playerSounds?.[this.currentPlayer]) {
-			const entry = playerSounds[this.currentPlayer];
-			if (entry.enabled !== false && await this.tryPlayEntry(entry, eventName, priority)) return;
-		}
-
-		// 2. Config-level per-player override (from config.json → sound.players, for throw sounds)
+		// 1. Config-level per-player override (from config.json → sound.players, for throw sounds)
 		if (this.currentPlayer) {
 			const entry = this.config.players?.[this.currentPlayer]?.[eventName];
 			if (entry && entry.enabled !== false && await this.tryPlayEntry(entry, eventName, priority)) return;
 		}
 
-		// 3. Inline files from event definition
+		// 2. Inline files from event definition (or playerOverwrites-resolved files)
 		if (inlineFiles?.length && await this.tryPlayFiles(inlineFiles, inlineVolume ?? 1.0, eventName, priority)) return;
 
-		// 4. Game events config (events.config.ts)
+		// 3. Game events config (events.config.ts)
 		const gameEntry = gameEventsConfig[eventName]?.sound;
 		if (gameEntry && gameEntry.enabled !== false && await this.tryPlayEntry(gameEntry, eventName, priority)) return;
 
-		// 5. Core sounds for throw names (triple_20 → core/60.wav, double_5 → core/10.wav, etc.)
+		// 4. Core sounds for throw names (triple_20 → core/60.wav, double_5 → core/10.wav, etc.)
 		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);
 		if (throwMatch) {
 			const multipliers: Record<string, number> = { triple: 3, double: 2, single: 1 };
@@ -111,7 +104,7 @@ export class SoundController {
 			return;
 		}
 
-		// 6. Core sound fallback — core/{eventName}.wav if it exists
+		// 5. Core sound fallback — core/{eventName}.wav if it exists
 		if (!await this.tryPlayFiles([`core/${eventName}.wav`], 1.0, eventName, priority, true)) {
 			this.logger.debug(`No audio configured for: ${eventName}`);
 		}

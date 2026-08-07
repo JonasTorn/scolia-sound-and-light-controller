@@ -1,4 +1,4 @@
-import { Effect, GameThrow, SpecialEventDefinition, ThrowEvent } from "../types/index";
+import { Effect, GameThrow, PlayerOverwrite, SpecialEventDefinition, ThrowEvent } from "../types/index";
 import { specialEventsConfig } from "../config/events.config";
 import { SectorParser } from "../utils/SectorParser";
 
@@ -8,11 +8,15 @@ export class SpecialEventDetector {
 	detect(
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
+		playerName?: string | null,
 	): ThrowEvent | null {
 		let best: { priority: number; event: ThrowEvent } | null = null;
 
 		for (const eventDef of this.eventDefs) {
 			if (!eventDef.enabled) continue;
+
+			// Skip if event is restricted to specific players and current player isn't in the list
+			if (eventDef.players?.length && !eventDef.players.includes(playerName ?? "")) continue;
 
 			const isMatch = this.checkPattern(
 				eventDef.detector,
@@ -24,28 +28,32 @@ export class SpecialEventDetector {
 
 			const priority = eventDef.priority ?? 0;
 			if (best === null || priority > best.priority) {
-				const effects: Effect[] = [];
-				if (eventDef.sound || eventDef.playerSounds) {
-					effects.push({
-						type: "sound",
-						event: eventDef.name,
-						files: eventDef.sound?.files,
-						volume: eventDef.sound?.volume,
-						playerSounds: eventDef.playerSounds,
-						priority,
-					});
-				}
-				for (const light of eventDef.lights ?? []) {
-					effects.push({ type: "light", executor: light.executor, mode: light.mode });
-				}
-				if (eventDef.overlay) {
-					effects.push({ type: "overlay", file: eventDef.overlay.file, durationMs: eventDef.overlay.durationMs });
-				}
-				best = { priority, event: { name: eventDef.name, effects } };
+				best = { priority, event: { name: eventDef.name, effects: this.buildEffects(eventDef, priority, playerName) } };
 			}
 		}
 
 		return best?.event ?? null;
+	}
+
+	private buildEffects(eventDef: SpecialEventDefinition, priority: number, playerName?: string | null): Effect[] {
+		const overwrite: PlayerOverwrite | undefined = playerName ? eventDef.playerOverwrites?.[playerName] : undefined;
+		const effects: Effect[] = [];
+
+		// Always push a sound effect — SoundController falls back to core/{name}.wav if no files set
+		const sound = overwrite?.sound ?? eventDef.sound;
+		effects.push({ type: "sound", event: eventDef.name, files: sound?.files, volume: sound?.volume, priority });
+
+		const lights = overwrite?.lights ?? eventDef.lights ?? [];
+		for (const light of lights) {
+			effects.push({ type: "light", executor: light.executor, mode: light.mode });
+		}
+
+		const overlay = overwrite?.overlay ?? eventDef.overlay;
+		if (overlay) {
+			effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
+		}
+
+		return effects;
 	}
 
 	private checkPattern(

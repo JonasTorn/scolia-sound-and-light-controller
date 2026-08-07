@@ -54,6 +54,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			const specialEvent = this.specialEventDetector.detect(
 				this.gameState.getThrowHistory().slice(0, -1),
 				throwData,
+				this.gameState.getCurrentPlayer(),
 			);
 
 			if (
@@ -99,11 +100,19 @@ export class EventOrchestrator implements IEventOrchestrator {
 		try {
 			this.logger.info(logMsg);
 			const cfg = gameEventsConfig[name];
-			const effects: Effect[] = [{ type: "sound", event: name, priority: 5 }];
-			for (const light of cfg?.lights ?? []) {
+			const player = this.gameState.getCurrentPlayer();
+			const overwrite = player ? cfg?.playerOverwrites?.[player] : undefined;
+
+			const sound = overwrite?.sound ?? cfg?.sound;
+			const effects: Effect[] = [{ type: "sound", event: name, files: sound?.files, volume: sound?.volume, priority: 5 }];
+
+			for (const light of (overwrite?.lights ?? cfg?.lights) ?? []) {
 				effects.push({ type: "light", executor: light.executor, mode: light.mode });
 			}
-			if (cfg?.overlay) effects.push({ type: "overlay", file: cfg.overlay.file, durationMs: cfg.overlay.durationMs });
+
+			const overlay = overwrite?.overlay ?? cfg?.overlay;
+			if (overlay) effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
+
 			await this.effectExecutor.execute(effects);
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);

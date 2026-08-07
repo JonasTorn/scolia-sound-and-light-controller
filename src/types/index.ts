@@ -37,7 +37,7 @@ export interface LightSharkExecutor {
 
 // Unified effect system
 export type Effect =
-	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number; playerSounds?: Record<string, SoundEntry> }
+	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
 	| { type: "knx"; action: string }
@@ -46,6 +46,13 @@ export type Effect =
 export interface ThrowEvent {
 	name: string;
 	effects: Effect[];
+}
+
+// Per-player effect overrides on a special event
+export interface PlayerOverwrite {
+	sound?: SoundEntry;
+	overlay?: { file: string; durationMs: number };
+	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
 }
 
 // Special event detection
@@ -58,7 +65,8 @@ export interface SpecialEventDefinition {
 	sound?: SoundEntry; // default sound — auto-falls back to core/{name}.wav if omitted
 	overlay?: { file: string; durationMs: number };
 	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
-	playerSounds?: Record<string, SoundEntry>; // per-thrower overrides, keyed by player nickname
+	players?: string[]; // if set, event only fires when current player is in this list
+	playerOverwrites?: Record<string, PlayerOverwrite>; // per-player effect overrides, keyed by player nickname
 }
 
 // Config types
@@ -132,6 +140,7 @@ export interface PlaywrightConfig {
 	pollIntervalMs: number;
 	cookieFile: string;
 	boardName?: string;
+	proxyWebSocket?: boolean; // if false, skip WS interception (use direct Scolia API instead)
 	credentials: {
 		email: string;
 		password: string;
@@ -164,7 +173,7 @@ export interface ILightSharkController {
 }
 
 export interface ISoundController {
-	playSound(eventName: string, priority?: number, inlineFiles?: string[], inlineVolume?: number, playerSounds?: Record<string, SoundEntry>): Promise<void>;
+	playSound(eventName: string, priority?: number, inlineFiles?: string[], inlineVolume?: number): Promise<void>;
 }
 
 export interface IKNXController {
