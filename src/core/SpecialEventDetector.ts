@@ -65,6 +65,8 @@ export class SpecialEventDetector {
 				return this.concatenatesTo(throwHistory, currentThrow, params);
 			case "consecutiveMisses":
 				return this.consecutiveMisses(throwHistory, currentThrow, params);
+			case "multiplierIs":
+				return this.multiplierIs(throwHistory, currentThrow, params);
 			default:
 				return false;
 		}
@@ -170,5 +172,13 @@ export class SpecialEventDetector {
 
 		const lastN = throwHistory.slice(-(count - 1));
 		return lastN.every((t) => t.points === 0);
+	}
+
+	private multiplierIs(
+		_throwHistory: GameThrow[],
+		currentThrow: GameThrow,
+		params: Record<string, any>,
+	): boolean {
+		return currentThrow.multiplier === params.multiplier && currentThrow.segment !== 0;
 	}
 }

@@ -299,4 +299,20 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { pattern: [3, 3] },
 		sound: { files: ["32_33.mp3"] },
 	},
+	{
+		name: "any_double",
+		enabled: true,
+		priority: 1,
+		detector: "multiplierIs",
+		params: { multiplier: 2 },
+		sound: { files: ["doublekill.wav"] },
+	},
+	{
+		name: "any_triple",
+		enabled: true,
+		priority: 1,
+		detector: "multiplierIs",
+		params: { multiplier: 3 },
+		sound: { files: ["triplekill.wav"] },
+	},
 ];
