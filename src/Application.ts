@@ -212,7 +212,7 @@ export class Application {
 					break;
 
 				case "THROW_DETECTED":
-					this.eventOrchestrator.handleThrowDetected(msg);
+					this.eventOrchestrator.handleThrowDetected(msg.payload);
 					break;
 
 				case "TAKEOUT_STARTED":
