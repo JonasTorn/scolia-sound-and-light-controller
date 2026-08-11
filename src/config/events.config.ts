@@ -16,7 +16,7 @@ export interface GameEventConfig {
 
 export const gameEventsConfig: Record<string, GameEventConfig> = {
 	miss: {
-		sound: { files: ["BRUH.mp3", "ERROR.mp3"] },
+		sound: { files: ["BRUH\.wav", "ERROR\.wav"] },
 	},
 	bull25: {
 		sound: { files: ["headshot.wav"] },
@@ -26,10 +26,10 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	},
 
 	takeout: {
-		sound: { files: ["yoshi_tongue.mp3"], volume: 0.70 },
+		sound: { files: ["yoshi_tongue\.wav"], volume: 0.70 },
 	},
 	bust: {
-		sound: { files: ["fahhh.mp3", "vad_fet_du_ar.mp3", "tjockisleif.mp3"] },
+		sound: { files: ["fahhh\.wav", "vad_fet_du_ar\.wav", "tjockisleif\.wav"] },
 	},
 	leg_won: {
 		sound: { files: ["winner.wav"] },
@@ -39,7 +39,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		},
 	},
 	set_won: {
-		sound: { files: ["simply_the_best.mp3"] },
+		sound: { files: ["simply_the_best\.wav"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
 		playerOverwrites: {
 			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
@@ -47,7 +47,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		},
 	},
 	eliminated: {
-		sound: { files: ["wilhelm_scream.mp3"] },
+		sound: { files: ["wilhelm_scream\.wav"] },
 	},
 };
 
@@ -114,7 +114,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["None", "None", "s7"] },
-		sound: { files: ["007.mp3"] },
+		sound: { files: ["007\.wav"] },
 	},
 	{
 		name: "123",
@@ -129,7 +129,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s7", "s7", "s7"] },
-		sound: { files: ["jackpot.mp3"] },
+		sound: { files: ["jackpot\.wav"] },
 	},
 	{
 		name: "s1",
@@ -145,7 +145,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["t1"] },
-		sound: { files: ["ohh_baby_a_triple.mp3"] },
+		sound: { files: ["ohh_baby_a_triple\.wav"] },
 	},
 	{
 		name: "t7",
@@ -153,7 +153,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["t7"] },
-		sound: { files: ["jackpot.mp3"] },
+		sound: { files: ["jackpot\.wav"] },
 	},
 	{
 		name: "t20",
@@ -169,7 +169,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "concatenatesTo",
 		params: { number: 1337 }, // 13+3+7 or 1+33(T11)+7
-		sound: { files: ["machoman_1337.mp3"] },
+		sound: { files: ["machoman_1337\.wav"] },
 	},
 	{
 		name: "1904",
@@ -219,7 +219,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "concatenatesTo",
 		params: { number: 420 },
-		sound: { files: ["smoke_weed_everyday.mp3"] },
+		sound: { files: ["smoke_weed_everyday\.wav"] },
 		overlay: { file: "overlays/420.gif", durationMs: 5000 },
 	},
 	{
@@ -228,7 +228,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [4, 20] },
-		sound: { files: ["smoke_weed_everyday.mp3"] },
+		sound: { files: ["smoke_weed_everyday\.wav"] },
 		overlay: { file: "overlays/420.gif", durationMs: 5000 },
 	},
 	{
@@ -245,7 +245,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s20", "s20", "s20"] },
-		sound: { files: ["rrriktigt_bra.mp3"] },
+		sound: { files: ["rrriktigt_bra\.wav"] },
 	},
 
 	// ── Minor fun events ─────────────────────────────────────────────────────
@@ -295,7 +295,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [6, 9] }, // any 6-pt throw → any 9-pt throw
-		sound: { files: ["gunther.mp3"] },
+		sound: { files: ["gunther\.wav"] },
 		overlay: { file: "overlays/gunther.gif", durationMs: 5000 },
 	},
 	{
@@ -304,7 +304,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "69" },
-		sound: { files: ["gunther.mp3"] },
+		sound: { files: ["gunther\.wav"] },
 		overlay: { file: "overlays/gunther.gif", durationMs: 5000 },
 	},
 
@@ -322,7 +322,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "67" },
-		//sound: { files: ["6-7.mp3"] },
+		//sound: { files: ["6-7\.wav"] },
 		overlay: { file: "overlays/6-7.gif", durationMs: 5000 },
 	},
 	{
@@ -345,7 +345,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [3, 3] },
-		sound: { files: ["32_33.mp3"] },
+		sound: { files: ["32_33\.wav"] },
 	},
 	{
 		name: "sum=33",
@@ -353,7 +353,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "33" },
-		sound: { files: ["32_33.mp3"] },
+		sound: { files: ["32_33\.wav"] },
 	},
 	// ── Over / Under ────────────────────────────────────────────────────────
 	{
@@ -362,7 +362,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: ">=100" },
-		sound: { files: ["rrriktigt_bra.mp3"] },
+		sound: { files: ["rrriktigt_bra\.wav"] },
 	},
 	{
 		name: "under_10",
@@ -370,7 +370,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "<10" },
-		sound: { files: ["skogsturken_edit.mp3"] },
+		sound: { files: ["skogsturken_edit\.wav"] },
 	},
 
 	// ── Multiplier ───────────────────────────────────────────────────────
