@@ -25,6 +25,10 @@ export class PlaywrightController extends EventEmitter {
 	private pollTimeout: NodeJS.Timeout | null = null;
 	private lastHealthyAt = 0;
 	private pollErrorLogged = false;
+	private restarting = false;
+	private restartAttempts = 0;
+	private stableTimer: NodeJS.Timeout | null = null;
+	private watchdogTimer: NodeJS.Timeout | null = null;
 
 	private lastState: EdgeDetectionState = {
 		bustCount: 0,
@@ -66,6 +70,12 @@ export class PlaywrightController extends EventEmitter {
 				args: launchArgs,
 			});
 
+			this.browser.on("disconnected", () => {
+				if (!this.running) return;
+				this.logger.warn("Playwright: Browser disconnected — restarting");
+				this.restart();
+			});
+
 			this.context = await this.browser.newContext({
 				viewport: null,
 				locale: "en-US",
@@ -86,6 +96,21 @@ export class PlaywrightController extends EventEmitter {
 			}
 
 			this.page = await this.context.newPage();
+
+			// Suppress Scolia's own audio when our app plays a sound.
+			// Sets window.__scoliaMuted which is checked by the AudioContext override below.
+			await this.context.addInitScript(() => {
+				const OriginalAudioContext = window.AudioContext || (window as any).webkitAudioContext;
+				if (!OriginalAudioContext) return;
+				const origCreateGain = OriginalAudioContext.prototype.createGain;
+				OriginalAudioContext.prototype.createGain = function (this: AudioContext) {
+					const node = origCreateGain.call(this);
+					if ((window as any).__scoliaMuted) {
+						node.gain.value = 0;
+					}
+					return node;
+				};
+			});
 
 			// Intercept WebSocket frames from the Scolia web app.
 			// Set playwright.proxyWebSocket = false in config to disable when using the Scolia API directly.
@@ -330,7 +355,40 @@ export class PlaywrightController extends EventEmitter {
 
 	private startPolling(): void {
 		this.running = true;
+		this.resetWatchdog();
 		this.poll();
+	}
+
+	private resetWatchdog(): void {
+		if (this.watchdogTimer) clearTimeout(this.watchdogTimer);
+		this.watchdogTimer = setTimeout(() => {
+			this.logger.warn("Playwright: Watchdog fired — page unresponsive for 15s, restarting");
+			this.restart();
+		}, 15000);
+	}
+
+	private async restart(): Promise<void> {
+		if (this.restarting) return;
+		this.restarting = true;
+
+		if (this.watchdogTimer) { clearTimeout(this.watchdogTimer); this.watchdogTimer = null; }
+		if (this.stableTimer) { clearTimeout(this.stableTimer); this.stableTimer = null; }
+
+		const delay = Math.min(2000 * Math.pow(2, this.restartAttempts), 60000);
+		this.logger.warn(`Playwright: Restarting in ${delay / 1000}s (attempt ${this.restartAttempts + 1})`);
+		this.restartAttempts++;
+
+		await this.stop();
+		await new Promise(res => setTimeout(res, delay));
+
+		this.restarting = false;
+		try {
+			await this.launch();
+			this.stableTimer = setTimeout(() => { this.restartAttempts = 0; }, 60000);
+		} catch (err) {
+			this.logger.error(`Playwright: Restart failed: ${err}`);
+			this.restart();
+		}
 	}
 
 	private async poll(): Promise<void> {
@@ -401,6 +459,7 @@ export class PlaywrightController extends EventEmitter {
 
 			this.lastHealthyAt = Date.now();
 			this.pollErrorLogged = false;
+			this.resetWatchdog();
 
 			// Edge detection
 			const stateChanged =
@@ -541,12 +600,40 @@ export class PlaywrightController extends EventEmitter {
 		}
 	}
 
+	async muteAudio(): Promise<void> {
+		if (!this.page) return;
+		try {
+			await this.page.evaluate(() => { (window as any).__scoliaMuted = true; });
+		} catch {
+			// Page may not be available — ignore
+		}
+	}
+
+	async unmuteAudio(): Promise<void> {
+		if (!this.page) return;
+		try {
+			await this.page.evaluate(() => { (window as any).__scoliaMuted = false; });
+		} catch {
+			// Page may not be available — ignore
+		}
+	}
+
 	async stop(): Promise<void> {
 		this.running = false;
 
 		if (this.pollTimeout) {
 			clearTimeout(this.pollTimeout);
 			this.pollTimeout = null;
+		}
+
+		if (this.watchdogTimer) {
+			clearTimeout(this.watchdogTimer);
+			this.watchdogTimer = null;
+		}
+
+		if (this.stableTimer) {
+			clearTimeout(this.stableTimer);
+			this.stableTimer = null;
 		}
 
 		if (this.page) {

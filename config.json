@@ -1,20 +1,20 @@
 {
   "_comment": "Kopiera denna till config.json och redigera med era värden",
   "scolia": {
-    "serialNumber": "",
+    "serialNumber": "3BRT-LGSH-AN3X",
     "_comment_serialNumber": "Ert Scolia darttavla serienummer",
-    "accessToken": "",
+    "accessToken": "0f30e6dfd7d8b1ee0fcbe9716966149d",
     "_comment_accessToken": "Access token från Scolia (köps separat)",
     "serverUrl": "wss://game.scoliadarts.com/api/v1/social",
     "_comment_serverUrl": "Scolia WebSocket server (ändra ej)",
-    "simulationMode": true,
+    "simulationMode": false,
     "_comment_simulationMode": "true = testa utan darttavla, false = live-läge",
     "reconnectDelay": 5000
   },
   "lightshark": {
-    "enabled": false,
+    "enabled": true,
     "_comment_enabled": "true = använd LightShark, false = inaktivera",
-    "ip": "192.168.1.100",
+    "ip": "192.168.6.242",
     "_comment_ip": "LightShark IP-adress (kolla Settings → Network)",
     "oscPort": 8000,
     "_comment_oscPort": "OSC port (standard 8000, aktivera i Settings → Network → OSC)",
@@ -69,7 +69,11 @@
         ],
         "_comment_greenSegments": "Segment med grön färg på darttavlan",
         "bull25": "green",
-        "_comment_bull25": "Outer bull (25p) färg: green"
+        "_comment_bull25": "Outer bull (25p) färg: green",
+        "triple20Strobe": {
+          "executor": { "page": 1, "column": 5, "row": 3 },
+          "durationMs": 3000
+        }
       },
       "noScoreExecutor": {
         "page": 1,
@@ -127,7 +131,7 @@
   "knx": {
     "enabled": false,
     "_comment_enabled": "true = styr KNX-belysning via IP-gateway",
-    "gateway": "192.168.1.50",
+    "gateway": "192.168.6.169",
     "_comment_gateway": "KNX IP-gateway adress",
     "port": 3671,
     "_comment_port": "KNX port (standard 3671)",
@@ -153,10 +157,12 @@
     "url": "https://game.scoliadarts.com",
     "_comment_url": "Scolia game URL",
     "credentials": {
-      "email": "",
-      "password": ""
+      "email": "lucas@digiwise.se",
+      "password": "ym!VLV!DS469Bw9i"
     },
     "_comment_credentials": "Inloggningsuppgifter (logga in manuellt första gången, cookies sparas)",
+    "proxyWebSocket": false,
+    "_comment_proxyWebSocket": "false = använd Scolia API direkt för kast (rekommenderat när serialNumber finns)",
     "cookieFile": "./scolia-cookies.json",
     "_comment_cookieFile": "Fil för att spara inloggningscookies",
     "pollIntervalMs": 200,

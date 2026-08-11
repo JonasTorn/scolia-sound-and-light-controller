@@ -89,6 +89,14 @@ export class Application {
 		this.playwrightController.on("scoliamessage", (data: string) => {
 			this.handleScoliaMessage(data);
 		});
+
+		// Mute Scolia's browser audio while the app plays its own sounds
+		this.soundController.on("playing", () => {
+			this.playwrightController.muteAudio().catch(() => {});
+		});
+		this.soundController.on("stopped", () => {
+			this.playwrightController.unmuteAudio().catch(() => {});
+		});
 	}
 
 	async start(): Promise<void> {

@@ -1,11 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import { execFile, spawn, ChildProcess } from "child_process";
+import { EventEmitter } from "events";
 import { Logger } from "../utils/Logger";
 import { SoundConfig, SoundEntry } from "../types/index";
 import { gameEventsConfig } from "../config/events.config";
 
-export class SoundController {
+export class SoundController extends EventEmitter {
 	private soundsDir: string;
 	private psProcess: ChildProcess | null = null;
 	private activeProcess: ChildProcess | null = null;
@@ -18,6 +19,7 @@ export class SoundController {
 		private config: SoundConfig,
 		private logger: Logger,
 	) {
+		super();
 		this.soundsDir = path.resolve(process.cwd(), config.soundsDir || "./sounds");
 
 		if (process.platform === "win32") {
@@ -130,6 +132,19 @@ export class SoundController {
 		return true;
 	}
 
+	private getWavDurationMs(filePath: string): number {
+		try {
+			const buf = fs.readFileSync(filePath);
+			if (buf.length < 44) return 8000;
+			const byteRate = buf.readUInt32LE(28);
+			const dataSize = buf.readUInt32LE(40);
+			if (byteRate === 0) return 8000;
+			return Math.ceil((dataSize / byteRate) * 1000) + 300;
+		} catch {
+			return 8000;
+		}
+	}
+
 	private async playFile(
 		filePath: string,
 		volume: number,
@@ -137,8 +152,10 @@ export class SoundController {
 		priority = 0,
 	): Promise<void> {
 		this.currentSoundPriority = priority;
+		this.emit("playing");
 
 		if (process.platform === "win32") {
+			const durationMs = this.getWavDurationMs(filePath);
 			if (this.psProcess?.stdin?.writable) {
 				this.psProcess.stdin.write(filePath + "\n");
 			} else {
@@ -150,6 +167,7 @@ export class SoundController {
 					(err) => { if (err) this.logger.warn(`Audio error "${eventName}": ${err.message}`); },
 				);
 			}
+			setTimeout(() => this.emit("stopped"), durationMs);
 		} else if (process.platform === "darwin") {
 			if (this.activeProcess) {
 				this.activeProcess.kill();
@@ -167,10 +185,12 @@ export class SoundController {
 					this.activeProcess = null;
 					this.currentSoundPriority = 0;
 				}
+				this.emit("stopped");
 			});
 		} else if (this.linuxPlayer) {
 			this.linuxPlayer.play(filePath, (err: Error | null) => {
 				if (err) this.logger.warn(`Audio error "${eventName}": ${err.message}`);
+				this.emit("stopped");
 			});
 		}
 
