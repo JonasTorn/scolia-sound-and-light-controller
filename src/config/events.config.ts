@@ -26,7 +26,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	},
 
 	takeout: {
-		sound: { files: ["yoshi_tongue\.wav"], volume: 0.70 },
+		sound: { files: ["yoshi_tongue.wav"], volume: 0.70 },
 	},
 	bust: {
 		sound: { files: ["fahhh\.wav", "vad_fet_du_ar\.wav", "tjockisleif\.wav"] },

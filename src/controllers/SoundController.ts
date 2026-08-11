@@ -98,7 +98,8 @@ export class SoundController extends EventEmitter {
 		if (gameEntry && gameEntry.enabled !== false && await this.tryPlayEntry(gameEntry, eventName, priority)) return;
 
 		// 4. Core sounds for throw names (triple_20 → core/60.wav, double_5 → core/10.wav, etc.)
-		const throwMatch = eventName.match(/^(triple|double|single)_(\d+)$/);
+		// Singles intentionally excluded — no auto-resolve to core number TTS files.
+		const throwMatch = eventName.match(/^(triple|double)_(\d+)$/);
 		if (throwMatch) {
 			const multipliers: Record<string, number> = { triple: 3, double: 2, single: 1 };
 			const score = multipliers[throwMatch[1]] * parseInt(throwMatch[2]);
@@ -167,7 +168,10 @@ export class SoundController extends EventEmitter {
 					(err) => { if (err) this.logger.warn(`Audio error "${eventName}": ${err.message}`); },
 				);
 			}
-			setTimeout(() => this.emit("stopped"), durationMs);
+			setTimeout(() => {
+				this.currentSoundPriority = 0;
+				this.emit("stopped");
+			}, durationMs);
 		} else if (process.platform === "darwin") {
 			if (this.activeProcess) {
 				this.activeProcess.kill();
