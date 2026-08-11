@@ -151,21 +151,15 @@ export class Application {
 
 	private connectScolia(): void {
 		try {
-			this.logger.info(`Connecting to Scolia: ${this.config.scolia.serverUrl}`);
+			const { serverUrl, serialNumber, accessToken } = this.config.scolia;
+			const wsUrl = `${serverUrl}?serialNumber=${serialNumber}&accessToken=${accessToken}`;
+			this.logger.info(`Connecting to Scolia: ${serverUrl}`);
 
-			this.ws = new WebSocket.WebSocket(this.config.scolia.serverUrl);
+			this.ws = new WebSocket.WebSocket(wsUrl);
 
 			this.ws.on("open", () => {
 				this.logger.success("✓ Scolia WebSocket connected");
 				this.reconnectTimeout = null;
-
-				// Send initial request
-				const msg = JSON.stringify({
-					type: "GET_SBC_STATUS",
-					serialNumber: this.config.scolia.serialNumber,
-					accessToken: this.config.scolia.accessToken,
-				});
-				this.ws!.send(msg);
 			});
 
 			this.ws.on("message", (data: WebSocket.RawData) => {
@@ -213,7 +207,8 @@ export class Application {
 
 			switch (msg.type) {
 				case "HELLO_CLIENT":
-					this.logger.debug("Received HELLO_CLIENT");
+					this.logger.success("Scolia welcomed us");
+					this.ws?.send(JSON.stringify({ type: "GET_SBC_STATUS" }));
 					break;
 
 				case "THROW_DETECTED":
