@@ -9,7 +9,7 @@ interface EdgeDetectionState {
 	bustCount: number;
 	legWon: boolean;
 	setWon: boolean;
-	eliminated: boolean;
+	eliminatedCount: number;
 }
 
 interface PlayerInfo {
@@ -34,7 +34,7 @@ export class PlaywrightController extends EventEmitter {
 		bustCount: 0,
 		legWon: false,
 		setWon: false,
-		eliminated: false,
+		eliminatedCount: 0,
 	};
 
 	private players: Map<string, PlayerInfo> = new Map();
@@ -451,16 +451,16 @@ export class PlaywrightController extends EventEmitter {
 				// "won the set" = 501 sets; "won the game" = elimination final win
 				const setWon = winnerText.includes("won the set") || winnerText.includes("won the game");
 
-				// Eliminated: CSS class OR the word "eliminated" in a winner/result element
-				const eliminated =
-					!!document.querySelector('[class*="eliminated"], [class*="Eliminated"], [class*="isEliminated"]') ||
-					winnerText.includes("eliminated");
+				// Count of eliminated player rows (increases as players are knocked out)
+				const eliminatedCount = document.querySelectorAll(
+					'[class*="eliminated"], [class*="Eliminated"], [class*="isEliminated"]',
+				).length + (winnerText.includes("eliminated") ? 1 : 0);
 
 				return {
 					bustCount: bustElements.length,
 					legWon,
 					setWon,
-					eliminated,
+					eliminatedCount,
 				};
 			});
 
@@ -473,7 +473,7 @@ export class PlaywrightController extends EventEmitter {
 				state.bustCount !== this.lastState.bustCount ||
 				state.legWon !== this.lastState.legWon ||
 				state.setWon !== this.lastState.setWon ||
-				state.eliminated !== this.lastState.eliminated;
+				state.eliminatedCount !== this.lastState.eliminatedCount;
 
 			if (state.bustCount > this.lastState.bustCount) {
 				this.emit("bust");
@@ -493,16 +493,9 @@ export class PlaywrightController extends EventEmitter {
 				this.logger.info("Set won detected via DOM");
 			}
 
-			if (state.eliminated && !this.lastState.eliminated) {
-				// 5s cooldown guards against DOM flicker during round transitions re-triggering the event
-				const now = Date.now();
-				if (now - this.lastEliminatedAt > 5000) {
-					this.lastEliminatedAt = now;
-					this.emit("eliminated");
-					this.logger.info("Player eliminated detected via DOM");
-				} else {
-					this.logger.debug("Playwright: Eliminated re-fire suppressed (cooldown)");
-				}
+			if (state.eliminatedCount > this.lastState.eliminatedCount) {
+				this.emit("eliminated");
+				this.logger.info("Player eliminated detected via DOM");
 			}
 
 			this.lastState = state;

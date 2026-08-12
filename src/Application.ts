@@ -244,7 +244,8 @@ export class Application {
 					break;
 
 				default:
-					this.logger.debug(`Unknown message type: ${msg.type}`);
+					// Log at info so we can identify elimination/game-state WS messages in production logs
+					this.logger.info(`WS: ${msg.type} ${JSON.stringify(msg).slice(0, 200)}`);
 			}
 		} catch (err) {
 			this.logger.error("Failed to parse Scolia message:", err);
