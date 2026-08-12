@@ -194,6 +194,9 @@ export class PlaywrightController extends EventEmitter {
 				}
 			}
 
+			// Dismiss cookie consent banner if present
+			await this.dismissCookieBanner();
+
 			// Save cookies
 			await this.saveCookies();
 
@@ -526,6 +529,21 @@ export class PlaywrightController extends EventEmitter {
 			}
 		} catch (err) {
 			this.logger.debug(`Playwright: Snapshot failed: ${err}`);
+		}
+	}
+
+	private async dismissCookieBanner(): Promise<void> {
+		if (!this.page) return;
+		try {
+			// Try known class first, then fall back to any visible "Accept"/"Accept all" button
+			const selector = '[class*="acceptButton"], button:has-text("Accept all"), button:has-text("Accept")';
+			const btn = await this.page.$(selector);
+			if (btn) {
+				await btn.click({ timeout: 3000 }).catch(() => {});
+				this.logger.info("Playwright: Cookie banner dismissed");
+			}
+		} catch {
+			this.logger.debug("Playwright: No cookie banner found");
 		}
 	}
 
