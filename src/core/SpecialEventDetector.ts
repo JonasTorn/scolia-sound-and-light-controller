@@ -1,4 +1,4 @@
-import { Effect, GameThrow, PlayerOverwrite, SpecialEventDefinition, ThrowEvent } from "../types/index";
+import { Effect, GameThrow, PlayerOverwrite, RoundConstraint, SpecialEventDefinition, ThrowEvent } from "../types/index";
 import { specialEventsConfig } from "../config/events.config";
 import { SectorParser } from "../utils/SectorParser";
 
@@ -17,6 +17,8 @@ export class SpecialEventDetector {
 
 			// Skip if event is restricted to specific players and current player isn't in the list
 			if (eventDef.players?.length && !eventDef.players.includes(playerName ?? "")) continue;
+
+			if (eventDef.roundConstraint && !this.checkRoundConstraint(eventDef.roundConstraint, throwHistory)) continue;
 
 			const isMatch = this.checkPattern(
 				eventDef.detector,
@@ -176,6 +178,19 @@ export class SpecialEventDetector {
 			}
 		}
 		return results;
+	}
+
+	// throwHistory does not include currentThrow, so length = number of prior throws this round.
+	// throwNumber is 1-indexed: throw #1 → history.length === 0, throw #2 → history.length === 1, etc.
+	private checkRoundConstraint(constraint: RoundConstraint, throwHistory: GameThrow[]): boolean {
+		const throwNumber = throwHistory.length + 1;
+		if (constraint.throwNumber !== undefined) {
+			const allowed = Array.isArray(constraint.throwNumber) ? constraint.throwNumber : [constraint.throwNumber];
+			if (!allowed.includes(throwNumber)) return false;
+		}
+		if (constraint.minThrow !== undefined && throwNumber < constraint.minThrow) return false;
+		if (constraint.maxThrow !== undefined && throwNumber > constraint.maxThrow) return false;
+		return true;
 	}
 
 	private consecutiveMisses(

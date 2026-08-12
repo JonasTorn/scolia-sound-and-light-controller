@@ -55,6 +55,14 @@ export interface PlayerOverwrite {
 	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
 }
 
+// Round position constraint — evaluated before the detector runs.
+// throwHistory.length + 1 = current throw number in the round (history resets on each takeout).
+export interface RoundConstraint {
+	throwNumber?: number | number[]; // exact throw(s) to match (1-indexed)
+	minThrow?: number;               // fire only if throw number >= minThrow
+	maxThrow?: number;               // fire only if throw number <= maxThrow
+}
+
 // Special event detection
 export interface SpecialEventDefinition {
 	name: string;
@@ -62,6 +70,7 @@ export interface SpecialEventDefinition {
 	priority?: number; // higher wins when multiple events match the same throw
 	detector: string;
 	params: Record<string, any>;
+	roundConstraint?: RoundConstraint; // optional positional gate, checked before detector
 	sound?: SoundEntry; // default sound — auto-falls back to core/{name}.wav if omitted
 	overlay?: { file: string; durationMs: number };
 	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;

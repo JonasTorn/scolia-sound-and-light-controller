@@ -248,6 +248,71 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["rrriktigt_bra\.wav"] },
 	},
 
+	{
+		name: "321",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s3", "s2", "s1"] },
+	},
+	{
+		name: "51",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s5", "s1"] },
+	},
+	{
+		name: "15",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s1", "s5"] },
+	},
+	{
+		name: "500",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s5", "None", "None"] },
+	},
+	{
+		name: "201",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s20", "None", "s1"] },
+	},
+	{
+		name: "1998",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s19", "s9", "s8"] },
+	},
+	{
+		name: "1994",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s19", "s9", "s4"] },
+	},
+	{
+		name: "1056",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s10", "s5", "s6"] },
+	},
+	{
+		name: "last_chance",
+		enabled: true,
+		priority: 2,
+		detector: "consecutiveMisses",
+		params: { count: 2 },
+		roundConstraint: { maxThrow: 2 },
+	},
+
 	// ── Minor fun events ─────────────────────────────────────────────────────
 
 	{
