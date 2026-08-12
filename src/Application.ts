@@ -211,9 +211,12 @@ export class Application {
 					this.ws?.send(JSON.stringify({ type: "GET_SBC_STATUS" }));
 					break;
 
-				case "THROW_DETECTED":
-					this.eventOrchestrator.handleThrowDetected(msg.payload);
+				case "THROW_DETECTED": {
+					// Social API wraps data in payload; browser WS (proxyWebSocket:true) sends it flat
+					const throwPayload = msg.payload ?? { sector: msg.sector, coordinates: msg.coordinates, bounceout: msg.bounceout };
+					this.eventOrchestrator.handleThrowDetected(throwPayload);
 					break;
+				}
 
 				case "TAKEOUT_STARTED":
 					this.eventOrchestrator.handleTakeoutStarted();
