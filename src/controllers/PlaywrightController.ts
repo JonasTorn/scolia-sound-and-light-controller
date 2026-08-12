@@ -10,6 +10,7 @@ interface EdgeDetectionState {
 	legWon: boolean;
 	setWon: boolean;
 	eliminatedCount: number;
+	playerNames: string[];
 }
 
 interface PlayerInfo {
@@ -35,6 +36,7 @@ export class PlaywrightController extends EventEmitter {
 		legWon: false,
 		setWon: false,
 		eliminatedCount: 0,
+		playerNames: [],
 	};
 
 	private players: Map<string, PlayerInfo> = new Map();
@@ -314,6 +316,14 @@ export class PlaywrightController extends EventEmitter {
 			const playerDiff = playersDiff[playerId];
 			if (!playerDiff || typeof playerDiff !== "object") continue;
 
+			// Log any status or score changes so we can see what Scolia sends
+			if (playerDiff.status !== undefined) {
+				this.logger.info(`WS player status delta [${this.getPlayerName(playerId)}]: ${JSON.stringify(playerDiff.status)}`);
+			}
+			if (playerDiff.score !== undefined) {
+				this.logger.info(`WS player score delta [${this.getPlayerName(playerId)}]: ${JSON.stringify(playerDiff.score)}`);
+			}
+
 			// Detect elimination via status field change: ["active", "eliminated"] or similar
 			const statusDelta = playerDiff.status;
 			if (Array.isArray(statusDelta)) {
@@ -463,11 +473,17 @@ export class PlaywrightController extends EventEmitter {
 					'[class*="eliminated"], [class*="Eliminated"], [class*="isEliminated"]',
 				).length + (winnerText.includes("eliminated") ? 1 : 0);
 
+				// Player names from scoreboard tabs (visible during throw-for-bull and game)
+				const playerNames = Array.from(
+					document.querySelectorAll('[id^="playerTab-"] [class*="nickname"]'),
+				).map((el) => el.textContent?.trim() ?? "").filter(Boolean);
+
 				return {
 					bustCount: bustElements.length,
 					legWon,
 					setWon,
 					eliminatedCount,
+					playerNames,
 				};
 			});
 
@@ -500,8 +516,26 @@ export class PlaywrightController extends EventEmitter {
 				this.logger.info("Set won detected via DOM");
 			}
 
+			// Eliminated: fire when count rises. Never let it decrease in lastState so
+			// DOM flicker (indicator briefly disappears then reappears) can't re-fire.
+			if (state.eliminatedCount > this.lastState.eliminatedCount) {
+				this.emit("eliminated");
+				this.logger.info("Player eliminated detected via DOM");
+			}
 
-			this.lastState = state;
+			// Players: emit when list changes (from throw-for-bull scoreboard)
+			const namesJoined = state.playerNames.join(",");
+			const lastNamesJoined = this.lastState.playerNames.join(",");
+			if (namesJoined !== lastNamesJoined && state.playerNames.length > 0) {
+				this.logger.info(`👥 Players from DOM (${state.playerNames.length}): ${state.playerNames.join(", ")}`);
+				this.emit("players-updated", state.playerNames);
+			}
+
+			this.lastState = {
+				...state,
+				// Ratchet: keep the higher eliminated count so flicker can't re-fire
+				eliminatedCount: Math.max(state.eliminatedCount, this.lastState.eliminatedCount),
+			};
 
 			// Periodic HTML dump (every 10s) + screenshot on state change — debug only
 			if (process.env.DEBUG) {
