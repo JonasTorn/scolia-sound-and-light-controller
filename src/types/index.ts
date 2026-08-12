@@ -144,6 +144,14 @@ export interface SoundConfig {
 	players?: Record<string, Record<string, SoundEntry>>;
 }
 
+export interface OverlayConfig {
+	objectFit?: "contain" | "cover" | "fill"; // default: "contain"
+	background?: string;                       // default: "rgba(0,0,0,0.65)"
+	defaultDurationMs?: number;                // default: 5000 — per-event durationMs overrides this
+	width?: string;                            // CSS value, default: "100%"
+	height?: string;                           // CSS value, default: "100%"
+}
+
 export interface PlaywrightConfig {
 	enabled: boolean;
 	url: string;
@@ -151,7 +159,8 @@ export interface PlaywrightConfig {
 	pollIntervalMs: number;
 	cookieFile: string;
 	boardName?: string;
-	proxyWebSocket?: boolean; // if false, skip WS interception (use direct Scolia API instead)
+	proxyWebSocket?: boolean;
+	overlay?: OverlayConfig;
 	credentials: {
 		email: string;
 		password: string;

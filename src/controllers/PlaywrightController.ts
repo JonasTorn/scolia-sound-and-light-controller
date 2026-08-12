@@ -631,13 +631,23 @@ export class PlaywrightController extends EventEmitter {
 			return;
 		}
 
+		const overlayCfg = this.config.overlay ?? {};
+		const background = overlayCfg.background ?? "rgba(0,0,0,0.65)";
+		const objectFit  = overlayCfg.objectFit  ?? "contain";
+		const width      = overlayCfg.width       ?? "100%";
+		const height     = overlayCfg.height      ?? "100%";
+		const duration   = durationMs > 0 ? durationMs : (overlayCfg.defaultDurationMs ?? 5000);
+
 		const ext = path.extname(filePath).slice(1).toLowerCase();
 		const mime = ext === "gif" ? "image/gif" : ext === "png" ? "image/png" : "image/jpeg";
 		const dataUri = `data:${mime};base64,${fs.readFileSync(filePath).toString("base64")}`;
 
 		try {
 			await this.page.evaluate(
-				({ uri, durationMs }: { uri: string; durationMs: number }) => {
+				({ uri, duration, background, objectFit, width, height }: {
+					uri: string; duration: number; background: string;
+					objectFit: string; width: string; height: string;
+				}) => {
 					const existing = document.getElementById("dart-overlay");
 					if (existing) existing.remove();
 
@@ -652,7 +662,7 @@ export class PlaywrightController extends EventEmitter {
 					overlay.id = "dart-overlay";
 					overlay.style.cssText = [
 						"position:fixed", "inset:0", "z-index:2147483647",
-						"background:rgba(0,0,0,0.65)",
+						`background:${background}`,
 						"display:flex", "align-items:center", "justify-content:center",
 						"animation:dartOverlayIn 0.3s ease-out forwards",
 						"cursor:pointer",
@@ -660,7 +670,7 @@ export class PlaywrightController extends EventEmitter {
 
 					const img = document.createElement("img");
 					img.src = uri;
-					img.style.cssText = "width:100%;height:100%;object-fit:contain";
+					img.style.cssText = `width:${width};height:${height};object-fit:${objectFit}`;
 					overlay.appendChild(img);
 					document.body.appendChild(overlay);
 
@@ -669,11 +679,11 @@ export class PlaywrightController extends EventEmitter {
 						setTimeout(() => overlay.remove(), 300);
 					};
 					overlay.addEventListener("click", dismiss);
-					setTimeout(dismiss, durationMs);
+					setTimeout(dismiss, duration);
 				},
-				{ uri: dataUri, durationMs },
+				{ uri: dataUri, duration, background, objectFit, width, height },
 			);
-			this.logger.info(`Playwright: Showing overlay "${file}" (${durationMs}ms)`);
+			this.logger.info(`Playwright: Showing overlay "${file}" (${duration}ms)`);
 		} catch (err) {
 			this.logger.warn(`Playwright: Overlay injection failed: ${err}`);
 		}
