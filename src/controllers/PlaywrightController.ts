@@ -441,16 +441,19 @@ export class PlaywrightController extends EventEmitter {
 				const bustElements = document.querySelectorAll(
 					'[class*="statusInfoBusted"], [class*="isBusted"]',
 				);
-				const legWon = !!document
-					.querySelector('[class*="winnerTile"]')
-					?.textContent?.includes("Won the Leg");
-				const setWon = !!document
-					.querySelector('[class*="winnerTile"]')
-					?.textContent?.includes("Won the Set");
 
+				// Scoped to winner/result elements to avoid false positives
+				const winnerEl = document.querySelector('[class*="winnerTile"], [class*="winner"], [class*="gameOver"], [class*="game-over"]');
+				const winnerText = winnerEl?.textContent?.toLowerCase() ?? "";
+
+				const legWon = winnerText.includes("won the leg");
+				// "won the set" = 501 sets; "won the game" = elimination final win
+				const setWon = winnerText.includes("won the set") || winnerText.includes("won the game");
+
+				// Eliminated: CSS class OR the word "eliminated" in a winner/result element
 				const eliminated =
 					!!document.querySelector('[class*="eliminated"], [class*="Eliminated"], [class*="isEliminated"]') ||
-					!!(document.querySelector('[class*="winnerTile"]')?.textContent?.toLowerCase().includes("eliminated"));
+					winnerText.includes("eliminated");
 
 				return {
 					bustCount: bustElements.length,

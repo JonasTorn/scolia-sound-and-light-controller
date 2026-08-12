@@ -130,9 +130,13 @@ export class Application {
 				await this.playwrightController.launch();
 			}
 
-			// 4. Connect to Scolia WebSocket
-			if (!this.config.scolia.simulationMode) {
+			// 4. Connect to Scolia WebSocket (direct API)
+			// Skip when proxyWebSocket:true — throws come from the Playwright browser proxy instead.
+			// Running both simultaneously causes every throw to fire twice.
+			if (!this.config.scolia.simulationMode && !this.config.playwright.proxyWebSocket) {
 				this.connectScolia();
+			} else if (this.config.playwright.proxyWebSocket) {
+				this.logger.info("proxyWebSocket enabled — throw events via Playwright browser proxy");
 			} else {
 				this.logger.info("Simulation mode enabled - no Scolia connection");
 			}
