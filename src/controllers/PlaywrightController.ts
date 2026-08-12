@@ -217,6 +217,7 @@ export class PlaywrightController extends EventEmitter {
 			payload?.players,
 			payload?.state?.game?.players,
 		];
+		let added = false;
 		for (const source of sources) {
 			if (!source) continue;
 			const arr = Array.isArray(source) ? source : Object.values(source);
@@ -224,8 +225,14 @@ export class PlaywrightController extends EventEmitter {
 				if (p?._id && p?.nickname && !this.players.has(p._id)) {
 					this.players.set(p._id, { id: p._id, nickname: p.nickname });
 					this.logger.info(`👤 Player found in game state: ${p.nickname}`);
+					added = true;
 				}
 			}
+		}
+		if (added) {
+			const names = [...this.players.values()].map((p) => p.nickname);
+			this.logger.info(`👥 Current player list (${names.length}): ${names.join(", ")}`);
+			this.emit("players-updated", names);
 		}
 	}
 
@@ -493,10 +500,6 @@ export class PlaywrightController extends EventEmitter {
 				this.logger.info("Set won detected via DOM");
 			}
 
-			if (state.eliminatedCount > this.lastState.eliminatedCount) {
-				this.emit("eliminated");
-				this.logger.info("Player eliminated detected via DOM");
-			}
 
 			this.lastState = state;
 
