@@ -63,7 +63,6 @@ export class PlaywrightController extends EventEmitter {
 	async launch(): Promise<void> {
 		try {
 			const launchArgs = [
-				"--start-maximized",
 				"--disable-features=Translate,TranslateUI",
 				"--lang=en",
 			];
@@ -199,6 +198,11 @@ export class PlaywrightController extends EventEmitter {
 
 			// Dismiss cookie consent banner if present
 			await this.dismissCookieBanner();
+
+			// True fullscreen — hides browser title bar and Windows taskbar
+			if (this.config.fullscreen) {
+				await this.setFullscreen();
+			}
 
 			// Save cookies
 			await this.saveCookies();
@@ -557,6 +561,22 @@ export class PlaywrightController extends EventEmitter {
 		this.pollTimeout = setTimeout(() => this.poll(), pollInterval);
 	}
 
+	private async setFullscreen(): Promise<void> {
+		if (!this.page) return;
+		try {
+			const session = await this.page.context().newCDPSession(this.page);
+			const { windowId } = await session.send("Browser.getWindowForTarget");
+			await session.send("Browser.setWindowBounds", {
+				windowId,
+				bounds: { windowState: "fullscreen" },
+			});
+			await session.detach();
+			this.logger.info("Playwright: Browser set to fullscreen");
+		} catch (err) {
+			this.logger.warn(`Playwright: Fullscreen failed: ${err}`);
+		}
+	}
+
 	private async saveSnapshot(includeScreenshot: boolean): Promise<void> {
 		if (!this.page) return;
 		try {
@@ -640,7 +660,7 @@ export class PlaywrightController extends EventEmitter {
 
 					const img = document.createElement("img");
 					img.src = uri;
-					img.style.cssText = "max-width:80vw;max-height:80vh;border-radius:12px;box-shadow:0 0 60px rgba(0,0,0,0.8)";
+					img.style.cssText = "width:100%;height:100%;object-fit:contain";
 					overlay.appendChild(img);
 					document.body.appendChild(overlay);
 
