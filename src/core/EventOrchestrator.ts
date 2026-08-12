@@ -64,6 +64,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			if (!specialHasSound) {
 				effects.push({ type: "sound", isThrowSound: true, event: this.resolveThrowSoundName(throwData) });
 			}
+			effects.push(...this.resolveThrowLightEffects(throwData));
 			if (specialEvent) effects.push(...specialEvent.effects);
 
 			await this.effectExecutor.execute(effects);
@@ -119,6 +120,55 @@ export class EventOrchestrator implements IEventOrchestrator {
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);
 		}
+	}
+
+	// Maps a throw to LightShark color effects based on colorMode config.
+	// Singles leave lights unchanged (EffectExecutor cleanup on takeout resets state).
+	private resolveThrowLightEffects(throwData: GameThrow): Effect[] {
+		const ls = this.config.lightshark;
+		if (!ls.enabled || !ls.throwEffect.enabled) return [];
+
+		const { colorMode, noScoreExecutor } = ls.throwEffect;
+		const effects: Effect[] = [];
+
+		// Miss → dark
+		if (throwData.points === 0) {
+			effects.push({ type: "light", executor: noScoreExecutor, mode: "main" });
+			if (this.config.knx.enabled) effects.push({ type: "knx", action: "allOff" });
+			return effects;
+		}
+
+		if (!colorMode.enabled) return [];
+
+		// Bullseye 50p → bullseye color + strobe
+		if (throwData.segment === 50) {
+			effects.push({ type: "light", executor: colorMode.bullseyeExecutor, mode: "main" });
+			effects.push({ type: "strobe", executor: colorMode.triple20Strobe.executor, durationMs: colorMode.triple20Strobe.durationMs });
+			return effects;
+		}
+
+		// Bull 25p
+		if (throwData.segment === 25) {
+			const exec = colorMode.bull25 === "red" ? colorMode.redExecutor : colorMode.greenExecutor;
+			effects.push({ type: "light", executor: exec, mode: "main" });
+			return effects;
+		}
+
+		// Doubles and triples on colored segments
+		if (throwData.multiplier >= 2) {
+			const isRed = colorMode.redSegments.includes(throwData.segment);
+			const isGreen = colorMode.greenSegments.includes(throwData.segment);
+			if (isRed) effects.push({ type: "light", executor: colorMode.redExecutor, mode: "main" });
+			else if (isGreen) effects.push({ type: "light", executor: colorMode.greenExecutor, mode: "main" });
+			// T20 also gets strobe on top
+			if (throwData.segment === 20 && throwData.multiplier === 3) {
+				effects.push({ type: "strobe", executor: colorMode.triple20Strobe.executor, durationMs: colorMode.triple20Strobe.durationMs });
+			}
+			return effects;
+		}
+
+		// Singles: no light change — current color holds until next colored throw or takeout
+		return effects;
 	}
 
 	// Maps a throw to its base sound event name. Special events override this via their own sound.
