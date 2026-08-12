@@ -40,6 +40,7 @@ export class PlaywrightController extends EventEmitter {
 	private players: Map<string, PlayerInfo> = new Map();
 	private currentPlayerId: string | null = null;
 	private lastLegWonAt = 0;
+	private lastEliminatedAt = 0;
 	private boardJoined = false;
 	private lastBoardCheckAt = 0;
 	private lastSnapshotAt = 0;
@@ -439,7 +440,7 @@ export class PlaywrightController extends EventEmitter {
 		try {
 			const state = await this.page.evaluate(() => {
 				const bustElements = document.querySelectorAll(
-					'[class*="statusInfoBusted"], [class*="isBusted"]',
+					'[class*="statusInfoBusted"], [class*="isBusted"], [class*="Busted"], [class*="busted"]',
 				);
 
 				// Scoped to winner/result elements to avoid false positives
@@ -493,8 +494,15 @@ export class PlaywrightController extends EventEmitter {
 			}
 
 			if (state.eliminated && !this.lastState.eliminated) {
-				this.emit("eliminated");
-				this.logger.info("Player eliminated detected via DOM");
+				// 5s cooldown guards against DOM flicker during round transitions re-triggering the event
+				const now = Date.now();
+				if (now - this.lastEliminatedAt > 5000) {
+					this.lastEliminatedAt = now;
+					this.emit("eliminated");
+					this.logger.info("Player eliminated detected via DOM");
+				} else {
+					this.logger.debug("Playwright: Eliminated re-fire suppressed (cooldown)");
+				}
 			}
 
 			this.lastState = state;
