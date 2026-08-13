@@ -45,7 +45,6 @@ export class PlaywrightController extends EventEmitter {
 	private lastEliminatedAt = 0;
 	private boardJoined = false;
 	private lastBoardCheckAt = 0;
-	private lastSnapshotAt = 0;
 	private lastBackToSetupAt = 0;
 	private processedThrowIndices = new Map<string, Set<number>>(); // playerId → Set of throwIndex
 
@@ -558,14 +557,9 @@ export class PlaywrightController extends EventEmitter {
 				eliminatedCount: Math.max(state.eliminatedCount, this.lastState.eliminatedCount),
 			};
 
-			// Periodic HTML dump (every 10s) + screenshot on state change — debug only
-			if (process.env.DEBUG) {
-				const now = Date.now();
-				const dumpDue = now - this.lastSnapshotAt >= 10000;
-				if (stateChanged || dumpDue) {
-					this.lastSnapshotAt = now;
-					this.saveSnapshot(stateChanged).catch(() => {});
-				}
+			// Save timestamped snapshot on state change — debug only (never overwrites)
+			if (this.config.debug && stateChanged) {
+				this.saveSnapshot().catch(() => {});
 			}
 		} catch (err) {
 			if (!this.pollErrorLogged) {
@@ -594,17 +588,14 @@ export class PlaywrightController extends EventEmitter {
 		}
 	}
 
-	private async saveSnapshot(includeScreenshot: boolean): Promise<void> {
+	private async saveSnapshot(): Promise<void> {
 		if (!this.page) return;
 		try {
+			const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
 			const html = await this.page.content();
-			fs.writeFileSync(path.join(process.cwd(), "dom-snapshot.html"), html);
-			if (includeScreenshot) {
-				await this.page.screenshot({ path: path.join(process.cwd(), "dom-snapshot.png"), fullPage: false });
-				this.logger.debug("Playwright: DOM snapshot + screenshot saved");
-			} else {
-				this.logger.debug("Playwright: DOM snapshot saved");
-			}
+			fs.writeFileSync(path.join(process.cwd(), `dom-snapshot-${ts}.html`), html);
+			await this.page.screenshot({ path: path.join(process.cwd(), `dom-snapshot-${ts}.png`), fullPage: false });
+			this.logger.debug(`Playwright: Snapshot saved: dom-snapshot-${ts}`);
 		} catch (err) {
 			this.logger.debug(`Playwright: Snapshot failed: ${err}`);
 		}

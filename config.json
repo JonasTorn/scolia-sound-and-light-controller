@@ -174,7 +174,9 @@
     "announcerVolume": 0.6,
     "_comment_announcerVolume": "Scolias webbapp-ljud (0.0 = tyst, 1.0 = full volym)",
     "muteDuringOurSounds": true,
-    "_comment_muteDuringOurSounds": "true = Scolia-ljud tystas medan våra ljud spelas, false = båda spelas samtidigt"
+    "_comment_muteDuringOurSounds": "true = Scolia-ljud tystas medan våra ljud spelas, false = båda spelas samtidigt",
+    "debug": false,
+    "_comment_debug": "true = spara DOM-snapshots var 10:e sekund för felsökning (sätts av i produktion)"
   },
   "logging": {
     "enabled": true,
