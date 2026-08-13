@@ -158,6 +158,8 @@ export class PlaywrightController extends EventEmitter {
 								const names = [...this.players.values()].map((p) => p.nickname);
 								this.logger.info(`🎮 Game started (${names.length} players): ${names.join(", ")}`);
 								this.emit("game-started", names);
+							} else {
+								this.logger.info(`Playwright WS recv: ${msg.type}`);
 							}
 						} catch {
 							// ignore non-JSON frames
