@@ -156,6 +156,17 @@ export class PlaywrightController extends EventEmitter {
 								this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_FINISHED" }));
 							} else if (msg.type === "API::GAME::GAME_STATE_CHANGED") {
 								this.extractThrows(msg.payload);
+							} else if (msg.type === "API::GAME::GAME_CURRENT_STATE") {
+								// Full game state (not a diff) — sent at game start/reconnect.
+								// Read currentPlayerUserId as a plain string to seed currentPlayerId.
+								this.extractPlayers(msg.payload);
+								const cpId = msg.payload?.state?.game?.currentPlayerUserId;
+								if (typeof cpId === "string" && cpId !== this.currentPlayerId) {
+									this.currentPlayerId = cpId;
+									const name = this.getPlayerName(cpId);
+									this.logger.info(`👤 Active player (from full state): ${name}`);
+									this.emit("player-change", name);
+								}
 							} else if (msg.type.endsWith("::GAME_STARTED")) {
 								const names = [...this.players.values()].map((p) => p.nickname);
 								this.logger.info(`🎮 Game started (${names.length} players): ${names.join(", ")}`);
