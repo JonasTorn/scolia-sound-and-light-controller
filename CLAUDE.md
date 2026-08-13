@@ -569,6 +569,36 @@ npm start
 npm run simulate
 ```
 
+## Remote PC (MadrixPC) — viktigt
+
+**Appen körs från kompilerad JS i `dist/`, inte via ts-node.**
+Script path: `C:\users\madrix\scolia-new\dist\index.js`
+
+Detta betyder att `git pull` INTE räcker — du måste alltid bygga om efter pull:
+
+```bash
+git pull
+npm run build
+pm2 restart scolia-new
+```
+
+**Verifiera att allt är rätt efter restart:**
+
+```bash
+# Kontrollera status och att DEBUG inte är satt
+pm2 show scolia-new
+pm2 env 3 | grep DEBUG   # ska vara tomt
+
+# Kolla loggarna — inga "DOM snapshot saved" var 10:e sekund = DEBUG är av
+pm2 logs scolia-new --lines 30
+```
+
+**Ljud-filer** synkas INTE via git (`sounds/` är gitignorerad).
+Kopiera nya ljud manuellt med scp från Mac:
+```bash
+scp sounds/filnamn.wav madrix@100.117.114.10:~/scolia-new/sounds/
+```
+
 ## Filer som rensats bort
 
 - `test-disco-reset.js` - Testfil
