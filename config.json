@@ -111,6 +111,7 @@
     "enabled": true,
     "_comment_enabled": "true = spela ljud vid events, false = inaktivera",
     "soundsDir": "./sounds",
+    "takeoutSoundEnabled": false,
     "_comment_soundsDir": "Mapp med ljudfiler (relativ till projektrot)",
     "_comment_sounds": "Game event sounds (bust, miss, leg_won, etc.) and overlays are configured in src/config/events.config.ts. Regular throw scores auto-resolve to sounds/core/ without any entry needed.",
     "players": {
