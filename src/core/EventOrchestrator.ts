@@ -101,9 +101,9 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	private async fireGameEvent(name: string, logMsg: string): Promise<void> {
 		try {
-			this.logger.info(logMsg);
-			const cfg = gameEventsConfig[name];
 			const player = this.gameState.getCurrentPlayer();
+			this.logger.info(`${logMsg} (player: ${player ?? "unknown"})`);
+			const cfg = gameEventsConfig[name];
 			const overwrite = player ? cfg?.playerOverwrites?.[player] : undefined;
 
 			const sound = overwrite?.sound ?? cfg?.sound;
