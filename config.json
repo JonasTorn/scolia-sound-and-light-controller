@@ -14,8 +14,8 @@
   "lightshark": {
     "enabled": true,
     "_comment_enabled": "true = använd LightShark, false = inaktivera",
-    "ip": "192.168.6.242",
-    "_comment_ip": "LightShark IP-adress (kolla Settings → Network)",
+    "ip": "YOUR-LIGHTSHARK-IP",
+    "_comment_ip": "LightShark IP-adress — sätt i config.secrets.json",
     "oscPort": 8000,
     "_comment_oscPort": "OSC port (standard 8000, aktivera i Settings → Network → OSC)",
     "throwEffect": {
