@@ -99,20 +99,31 @@ export class PlaywrightController extends EventEmitter {
 
 			this.page = await this.context.newPage();
 
-			// Suppress Scolia's own audio when our app plays a sound.
-			// Sets window.__scoliaMuted which is checked by the AudioContext override below.
-			await this.context.addInitScript(() => {
+			// Reduce Scolia's browser audio to announcerVolume and silence it when muted.
+			// __scoliaMuted is set by muteAudio()/unmuteAudio() while our own sounds play.
+			// Intercepts both createGain (volume reduction) and AudioBufferSourceNode.start()
+			// (more reliable muting — fires later in the audio pipeline than createGain).
+			await this.context.addInitScript(({ volume }: { volume: number }) => {
+				(window as any).__scoliaVolume = volume;
+
 				const OriginalAudioContext = window.AudioContext || (window as any).webkitAudioContext;
-				if (!OriginalAudioContext) return;
-				const origCreateGain = OriginalAudioContext.prototype.createGain;
-				OriginalAudioContext.prototype.createGain = function (this: AudioContext) {
-					const node = origCreateGain.call(this);
-					if ((window as any).__scoliaMuted) {
-						node.gain.value = 0;
-					}
-					return node;
+				if (OriginalAudioContext) {
+					const origCreateGain = OriginalAudioContext.prototype.createGain;
+					OriginalAudioContext.prototype.createGain = function (this: AudioContext) {
+						const node = origCreateGain.call(this);
+						node.gain.value = (window as any).__scoliaMuted
+							? 0
+							: ((window as any).__scoliaVolume ?? 1.0);
+						return node;
+					};
+				}
+
+				const origStart = AudioBufferSourceNode.prototype.start;
+				AudioBufferSourceNode.prototype.start = function (this: AudioBufferSourceNode, ...args: any[]) {
+					if ((window as any).__scoliaMuted) return;
+					return (origStart as Function).apply(this, args);
 				};
-			});
+			}, { volume: this.config.announcerVolume ?? 1.0 });
 
 			// Intercept WebSocket frames from the Scolia web app.
 			// Set playwright.proxyWebSocket = false in config to disable when using the Scolia API directly.

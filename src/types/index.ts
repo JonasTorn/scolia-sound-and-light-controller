@@ -161,6 +161,8 @@ export interface PlaywrightConfig {
 	boardName?: string;
 	proxyWebSocket?: boolean;
 	overlay?: OverlayConfig;
+	announcerVolume?: number;      // 0.0–1.0, default 1.0 (full volume)
+	muteDuringOurSounds?: boolean; // default true — false = let Scolia and our sounds overlap
 	credentials: {
 		email: string;
 		password: string;

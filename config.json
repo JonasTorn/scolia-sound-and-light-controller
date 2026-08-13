@@ -170,7 +170,11 @@
     "boardName": "Digiwise HQ",
     "_comment_boardName": "Namn på din Scolia-tavla — appen joinar automatiskt om den är online",
     "fullscreen": true,
-    "_comment_fullscreen": "true = starta browser i fullscreen/kiosk-läge"
+    "_comment_fullscreen": "true = starta browser i fullscreen/kiosk-läge",
+    "announcerVolume": 0.6,
+    "_comment_announcerVolume": "Scolias webbapp-ljud (0.0 = tyst, 1.0 = full volym)",
+    "muteDuringOurSounds": true,
+    "_comment_muteDuringOurSounds": "true = Scolia-ljud tystas medan våra ljud spelas, false = båda spelas samtidigt"
   },
   "logging": {
     "enabled": true,

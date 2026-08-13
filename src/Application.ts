@@ -90,13 +90,16 @@ export class Application {
 			this.handleScoliaMessage(data);
 		});
 
-		// Mute Scolia's browser audio while the app plays its own sounds
-		this.soundController.on("playing", () => {
-			this.playwrightController.muteAudio().catch(() => {});
-		});
-		this.soundController.on("stopped", () => {
-			this.playwrightController.unmuteAudio().catch(() => {});
-		});
+		// Mute Scolia's browser audio while the app plays its own sounds.
+		// Set playwright.muteDuringOurSounds: false in config to let both play simultaneously.
+		if (this.config.playwright.muteDuringOurSounds !== false) {
+			this.soundController.on("playing", () => {
+				this.playwrightController.muteAudio().catch(() => {});
+			});
+			this.soundController.on("stopped", () => {
+				this.playwrightController.unmuteAudio().catch(() => {});
+			});
+		}
 	}
 
 	async start(): Promise<void> {
