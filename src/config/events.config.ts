@@ -264,11 +264,11 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["321.wav"] },
 	},
 	{
-		name: "51",
+		name: "sum=51",
 		enabled: true,
-		priority: 2,
-		detector: "sequentialSegments",
-		params: { throws: ["s5", "s1"] },
+		priority: 1,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "51" },
 		sound: { files: ["51.wav"] },
 	},
 	{
@@ -408,14 +408,6 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { n: 3, targetSum: "67" },
 		sound: { files: ["67.wav"] },
 		overlay: { file: "overlays/6-7.gif", durationMs: 5000 },
-	},
-	{
-		name: "21",
-		enabled: true,
-		priority: 1,
-		detector: "consecutivePattern",
-		params: { pattern: [2, 1] },
-		sound: { files: ["21.wav"] },
 	},
 	{
 		name: "sum=21",
