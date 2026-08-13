@@ -167,9 +167,15 @@ export class PlaywrightController extends EventEmitter {
 									this.logger.info(`👤 Active player (from full state): ${name}`);
 									this.emit("player-change", name);
 								}
-							} else if (msg.type.endsWith("::GAME_STARTED")) {
+								// Emit game-started here — fires in both 501 and elimination modes.
 								const names = [...this.players.values()].map((p) => p.nickname);
 								this.logger.info(`🎮 Game started (${names.length} players): ${names.join(", ")}`);
+								this.emit("game-started", names);
+							} else if (msg.type.endsWith("::GAME_STARTED")) {
+								// Kept as fallback for any mode that sends this but not GAME_CURRENT_STATE.
+								const names = [...this.players.values()].map((p) => p.nickname);
+								if (!names.length) return; // already handled by GAME_CURRENT_STATE
+								this.logger.info(`🎮 Game started via GAME_STARTED (${names.length} players): ${names.join(", ")}`);
 								this.emit("game-started", names);
 							} else {
 								this.logger.info(`Playwright WS recv: ${msg.type}`);
