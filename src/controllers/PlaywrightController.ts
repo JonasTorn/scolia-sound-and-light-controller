@@ -48,6 +48,7 @@ export class PlaywrightController extends EventEmitter {
 	private lastBackToSetupAt = 0;
 	private processedThrowIndices = new Map<string, Set<number>>(); // playerId → Set of throwIndex
 	private inTakeout = false; // true between TAKEOUT_STARTED and TAKEOUT_FINISHED — suppress elimination WS events during this window
+	private domPlayerNames: string[] = []; // latest player names from DOM scoreboard (more reliable than WS PLAYER_JOINED)
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -167,13 +168,17 @@ export class PlaywrightController extends EventEmitter {
 									this.logger.info(`👤 Active player (from full state): ${name}`);
 									this.emit("player-change", name);
 								}
-								// Emit game-started here — fires in both 501 and elimination modes.
-								const names = [...this.players.values()].map((p) => p.nickname);
+								// Emit game-started — prefer DOM names (always complete) over WS player map.
+								const names = this.domPlayerNames.length
+									? this.domPlayerNames
+									: [...this.players.values()].map((p) => p.nickname);
 								this.logger.info(`🎮 Game started (${names.length} players): ${names.join(", ")}`);
 								this.emit("game-started", names);
 							} else if (msg.type.endsWith("::GAME_STARTED")) {
 								// Kept as fallback for any mode that sends this but not GAME_CURRENT_STATE.
-								const names = [...this.players.values()].map((p) => p.nickname);
+								const names = this.domPlayerNames.length
+									? this.domPlayerNames
+									: [...this.players.values()].map((p) => p.nickname);
 								if (!names.length) return; // already handled by GAME_CURRENT_STATE
 								this.logger.info(`🎮 Game started via GAME_STARTED (${names.length} players): ${names.join(", ")}`);
 								this.emit("game-started", names);
@@ -569,6 +574,7 @@ export class PlaywrightController extends EventEmitter {
 			const namesJoined = state.playerNames.join(",");
 			const lastNamesJoined = this.lastState.playerNames.join(",");
 			if (namesJoined !== lastNamesJoined && state.playerNames.length > 0) {
+				this.domPlayerNames = state.playerNames;
 				this.logger.info(`👥 Players from DOM (${state.playerNames.length}): ${state.playerNames.join(", ")}`);
 				this.emit("players-updated", state.playerNames);
 			}
