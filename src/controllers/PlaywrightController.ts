@@ -154,6 +154,10 @@ export class PlaywrightController extends EventEmitter {
 								this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_FINISHED" }));
 							} else if (msg.type === "API::GAME::GAME_STATE_CHANGED") {
 								this.extractThrows(msg.payload);
+							} else if (msg.type.endsWith("::GAME_STARTED")) {
+								const names = [...this.players.values()].map((p) => p.nickname);
+								this.logger.info(`🎮 Game started (${names.length} players): ${names.join(", ")}`);
+								this.emit("game-started", names);
 							}
 						} catch {
 							// ignore non-JSON frames

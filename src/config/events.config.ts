@@ -28,6 +28,9 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	takeout: {
 		sound: { files: ["yoshi_tongue.wav"], volume: 0.70 },
 	},
+	game_started_4plus: {
+		sound: { files: ["good_bad_ugly.wav"] },
+	},
 	bust: {
 		sound: { files: ["fahhh\.wav", "vad_fet_du_ar\.wav", "tjockisleif\.wav"] },
 	},
@@ -415,7 +418,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "21" },
-		sound: { files: ["21.wav"] },
+		sound: { files: ["foppa.wav"] },
 	},
 	{
 		name: "23",

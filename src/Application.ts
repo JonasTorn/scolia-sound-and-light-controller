@@ -90,6 +90,14 @@ export class Application {
 			this.handleScoliaMessage(data);
 		});
 
+		// Play a sound when a game starts based on player count
+		this.playwrightController.on("game-started", (names: string[]) => {
+			this.logger.info(`🎮 Game started with ${names.length} players`);
+			if (names.length >= 4) {
+				this.soundController.playSound("game_started_4plus");
+			}
+		});
+
 		// Mute Scolia's browser audio while the app plays its own sounds.
 		// Set playwright.muteDuringOurSounds: false in config to let both play simultaneously.
 		if (this.config.playwright.muteDuringOurSounds !== false) {
