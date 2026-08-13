@@ -47,6 +47,7 @@ export class PlaywrightController extends EventEmitter {
 	private lastBoardCheckAt = 0;
 	private lastBackToSetupAt = 0;
 	private processedThrowIndices = new Map<string, Set<number>>(); // playerId → Set of throwIndex
+	private inTakeout = false; // true between TAKEOUT_STARTED and TAKEOUT_FINISHED — suppress elimination WS events during this window
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -146,10 +147,12 @@ export class PlaywrightController extends EventEmitter {
 								}
 							} else if (msg.type === "API::COMMON::TAKEOUT_STARTED") {
 								this.logger.debug("Playwright WS: TAKEOUT_STARTED");
+								this.inTakeout = true;
 								this.processedThrowIndices.clear();
 								this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_STARTED" }));
 							} else if (msg.type === "API::COMMON::TAKEOUT_FINISHED") {
 								this.logger.debug("Playwright WS: TAKEOUT_FINISHED");
+								this.inTakeout = false;
 								this.emit("scoliamessage", JSON.stringify({ type: "TAKEOUT_FINISHED" }));
 							} else if (msg.type === "API::GAME::GAME_STATE_CHANGED") {
 								this.extractThrows(msg.payload);
@@ -344,9 +347,11 @@ export class PlaywrightController extends EventEmitter {
 				this.logger.info(`WS player score delta [${this.getPlayerName(playerId)}]: ${JSON.stringify(playerDiff.score)}`);
 			}
 
-			// Detect elimination via status field change: ["active", "eliminated"] or similar
+			// Detect elimination via status field change: ["active", "eliminated"] or similar.
+			// Suppressed during takeout — Scolia sometimes re-sends eliminated status in the
+			// GAME_STATE_CHANGED that arrives around TAKEOUT_FINISHED, causing a false re-fire.
 			const statusDelta = playerDiff.status;
-			if (Array.isArray(statusDelta)) {
+			if (!this.inTakeout && Array.isArray(statusDelta)) {
 				const newStatus = statusDelta.length >= 2 ? statusDelta[1] : statusDelta[0];
 				if (typeof newStatus === "string" && newStatus.toLowerCase().includes("eliminat")) {
 					const name = this.getPlayerName(playerId);
