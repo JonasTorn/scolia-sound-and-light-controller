@@ -1,10 +1,10 @@
 {
   "_comment": "Kopiera denna till config.json och redigera med era värden",
   "scolia": {
-    "serialNumber": "3BRT-LGSH-AN3X",
-    "_comment_serialNumber": "Ert Scolia darttavla serienummer",
-    "accessToken": "0f30e6dfd7d8b1ee0fcbe9716966149d",
-    "_comment_accessToken": "Access token från Scolia (köps separat)",
+    "serialNumber": "YOUR-SERIAL-NUMBER",
+    "_comment_serialNumber": "Ert Scolia darttavla serienummer — sätt i config.secrets.json",
+    "accessToken": "YOUR-ACCESS-TOKEN",
+    "_comment_accessToken": "Access token från Scolia — sätt i config.secrets.json",
     "serverUrl": "wss://game.scoliadarts.com/api/v1/social",
     "_comment_serverUrl": "Scolia WebSocket server (ändra ej)",
     "simulationMode": false,
@@ -157,8 +157,8 @@
     "url": "https://game.scoliadarts.com",
     "_comment_url": "Scolia game URL",
     "credentials": {
-      "email": "lucas@digiwise.se",
-      "password": "ym!VLV!DS469Bw9i"
+      "email": "YOUR-EMAIL",
+      "password": "YOUR-PASSWORD"
     },
     "_comment_credentials": "Inloggningsuppgifter (logga in manuellt första gången, cookies sparas)",
     "proxyWebSocket": true,
