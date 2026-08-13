@@ -7,7 +7,7 @@ config.secrets.json
 sounds/
 overlays/
 .claude/
-dom-snapshot.*
+debug-snapshots/
 .DS_Store
 tests/core/test-state.json
 madrixpc_instruktioner.md

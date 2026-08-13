@@ -592,10 +592,12 @@ export class PlaywrightController extends EventEmitter {
 		if (!this.page) return;
 		try {
 			const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+			const dir = path.join(process.cwd(), "debug-snapshots");
+			if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 			const html = await this.page.content();
-			fs.writeFileSync(path.join(process.cwd(), `dom-snapshot-${ts}.html`), html);
-			await this.page.screenshot({ path: path.join(process.cwd(), `dom-snapshot-${ts}.png`), fullPage: false });
-			this.logger.debug(`Playwright: Snapshot saved: dom-snapshot-${ts}`);
+			fs.writeFileSync(path.join(dir, `dom-snapshot-${ts}.html`), html);
+			await this.page.screenshot({ path: path.join(dir, `dom-snapshot-${ts}.png`), fullPage: false });
+			this.logger.debug(`Playwright: Snapshot saved: debug-snapshots/dom-snapshot-${ts}`);
 		} catch (err) {
 			this.logger.debug(`Playwright: Snapshot failed: ${err}`);
 		}
