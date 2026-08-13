@@ -161,7 +161,7 @@
       "password": "ym!VLV!DS469Bw9i"
     },
     "_comment_credentials": "Inloggningsuppgifter (logga in manuellt första gången, cookies sparas)",
-    "proxyWebSocket": false,
+    "proxyWebSocket": true,
     "_comment_proxyWebSocket": "false = använd Scolia API direkt för kast (rekommenderat när serialNumber finns)",
     "cookieFile": "./scolia-cookies.json",
     "_comment_cookieFile": "Fil för att spara inloggningscookies",
