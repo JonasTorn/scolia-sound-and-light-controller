@@ -1,5 +1,10 @@
 {
-  "_comment": "Kopiera denna till config.json och redigera med era värden",
+  "_setup": "SECRETS: Create a file called config.secrets.json next to this file (it is gitignored). It is deep-merged on top of this file at startup, so any value here can be overridden there. Put all sensitive values in config.secrets.json — never in this file. Minimum required secrets:",
+  "_setup_template": {
+    "scolia": { "serialNumber": "YOUR-SERIAL", "accessToken": "YOUR-TOKEN" },
+    "lightshark": { "ip": "YOUR-LIGHTSHARK-IP" },
+    "playwright": { "credentials": { "email": "YOUR-EMAIL", "password": "YOUR-PASSWORD" } }
+  },
   "scolia": {
     "serialNumber": "YOUR-SERIAL-NUMBER",
     "_comment_serialNumber": "Ert Scolia darttavla serienummer — sätt i config.secrets.json",
