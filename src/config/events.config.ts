@@ -21,15 +21,6 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		sound: { files: ["BRUH.wav", "ERROR.wav"] },
 		lights: [{ executor: "led_dim_off_hold", mode: "main" }],
 	},
-	bull25: {
-		sound: { files: ["headshot.wav"] },
-		lights: [{ executor: "led_green", mode: "main" }],
-	},
-	bullseye: {
-		sound: { files: ["headshot_remix.wav"] },
-		lights: [{ executor: "moln_ow_strobe", mode: "main" }],
-		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
-	},
 	takeout: {
 		sound: { files: ["yoshi_tongue.wav"], volume: 0.50 },
 	},
@@ -91,6 +82,28 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 // ============================================================
 
 export const specialEventsConfig: SpecialEventDefinition[] = [
+	// ── Bullseye / Bull ───────────────────────────────────────────────────────
+
+	{
+		name: "bullseye",
+		enabled: true,
+		priority: 4,
+		detector: "sequentialSegments",
+		params: { throws: ["50"] },
+		sound: { files: ["headshot_remix.wav"] },
+		lights: [{ executor: "moln_ow_strobe", mode: "main" }],
+		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
+	},
+	{
+		name: "bull25",
+		enabled: true,
+		priority: 4,
+		detector: "sequentialSegments",
+		params: { throws: ["25"] },
+		sound: { files: ["headshot.wav"] },
+		lights: [{ executor: "led_green", mode: "main" }],
+	},
+
 	// ── High priority ────────────────────────────────────────────────────────
 
 	{

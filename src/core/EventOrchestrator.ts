@@ -152,17 +152,6 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 		if (!colorMode.enabled) return [];
 
-		// Bullseye 50p and bull 25p — lights + strobe come from gameEventsConfig
-		if (throwData.segment === 50 || throwData.segment === 25) {
-			const key = throwData.segment === 50 ? "bullseye" : "bull25";
-			for (const light of gameEventsConfig[key]?.lights ?? []) {
-				effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode });
-			}
-			const strobe = gameEventsConfig[key]?.strobe;
-			if (strobe) effects.push({ type: "strobe", executor: this.re(strobe.executor), durationMs: strobe.durationMs });
-			return effects;
-		}
-
 		// Doubles and triples on colored segments
 		if (throwData.multiplier >= 2) {
 			const isRed = colorMode.redSegments.includes(throwData.segment);
