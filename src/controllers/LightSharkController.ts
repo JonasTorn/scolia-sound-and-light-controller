@@ -42,11 +42,20 @@ export class LightSharkController {
 	}
 
 	async triggerExecutor(executor: LightSharkExecutor): Promise<boolean> {
+		return this.sendToExecutor(executor, 0.0);
+	}
+
+	// Flash/Push mode only: explicitly start the effect (idempotent)
+	async startExecutor(executor: LightSharkExecutor): Promise<boolean> {
+		return this.sendToExecutor(executor, 1.0);
+	}
+
+	private async sendToExecutor(executor: LightSharkExecutor, value: number): Promise<boolean> {
 		try {
 			const { page, column, row } = executor;
-			const success = await this.send(`/LS/Executor/${page}/${column}/${row}`);
+			const success = await this.send(`/LS/Executor/${page}/${column}/${row}`, value);
 			if (success) {
-				this.logger.debug(`✓ LightShark executor ${page}/${column}/${row} triggered`);
+				this.logger.debug(`✓ LightShark executor ${page}/${column}/${row} ${value === 1.0 ? "started" : "triggered"} (${value})`);
 			}
 			return success;
 		} catch (err) {

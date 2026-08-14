@@ -90,12 +90,17 @@ export class EffectExecutor {
 			const last = this.gameState.getLastExecutor();
 			// Same executor already active — skip to avoid double-toggle (toggle-off would turn it off)
 			if (last && this.executorEquals(last, effect.executor)) return;
-			// Toggle off previous main light
+			// Deactivate previous main light (0.0 = toggle-off for Toggle mode, stop for Flash mode)
 			if (last) {
 				await this.lightshark.triggerExecutor(last);
-				this.logger.debug(`Toggled off previous executor: ${JSON.stringify(last)}`);
+				this.logger.debug(`Deactivated previous executor: ${JSON.stringify(last)}`);
 			}
-			await this.lightshark.triggerExecutor(effect.executor);
+			// Activate: Flash mode sends 1.0 (explicit go), Toggle mode sends 0.0 (toggle on)
+			if (effect.executor.flashMode) {
+				await this.lightshark.startExecutor(effect.executor);
+			} else {
+				await this.lightshark.triggerExecutor(effect.executor);
+			}
 			this.gameState.setLastExecutor(effect.executor);
 		} else {
 			// Additive: trigger and track for cleanup
@@ -117,7 +122,12 @@ export class EffectExecutor {
 		}
 		this.strobeTimerFired = false;
 
-		await this.lightshark.triggerExecutor(effect.executor);
+		// Flash mode: 1.0 to start (idempotent). Toggle mode: 0.0 to toggle on.
+		if (effect.executor.flashMode) {
+			await this.lightshark.startExecutor(effect.executor);
+		} else {
+			await this.lightshark.triggerExecutor(effect.executor);
+		}
 		this.gameState.setStrobeActive(true);
 		this.activeStrobeExecutor = effect.executor;
 

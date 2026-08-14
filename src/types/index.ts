@@ -33,6 +33,7 @@ export interface LightSharkExecutor {
 	page: number;
 	column: number;
 	row: number;
+	flashMode?: boolean; // true = Flash/Push mode: 1.0 to start, 0.0 to stop (idempotent)
 }
 
 // Unified effect system
@@ -192,7 +193,8 @@ export type LogLevel = "INFO" | "SUCCESS" | "WARN" | "ERROR" | "DEBUG";
 
 // Controller interfaces
 export interface ILightSharkController {
-	triggerExecutor(executor: LightSharkExecutor): Promise<boolean>;
+	triggerExecutor(executor: LightSharkExecutor): Promise<boolean>; // sends 0.0 (toggle or Flash stop)
+	startExecutor(executor: LightSharkExecutor): Promise<boolean>;   // sends 1.0 (Flash go — use for flashMode executors)
 }
 
 export interface ISoundController {

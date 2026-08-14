@@ -15,7 +15,11 @@ const logger = new Logger({ enabled: true, consoleOutput: true });
 // Stub controllers that just log instead of sending to hardware
 const stubLightShark = {
 	triggerExecutor: async (executor: { page: number; column: number; row: number }) => {
-		logger.info(`  💡 LightShark → executor ${executor.page}/${executor.column}/${executor.row}`);
+		logger.info(`  💡 LightShark → executor ${executor.page}/${executor.column}/${executor.row} (0.0)`);
+		return true;
+	},
+	startExecutor: async (executor: { page: number; column: number; row: number }) => {
+		logger.info(`  💡 LightShark → executor ${executor.page}/${executor.column}/${executor.row} (1.0 Flash start)`);
 		return true;
 	},
 	testConnection: async () => true,
