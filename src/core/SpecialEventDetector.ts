@@ -45,9 +45,12 @@ export class SpecialEventDetector {
 		const overwrite: PlayerOverwrite | undefined = playerName ? eventDef.playerOverwrites?.[playerName] : undefined;
 		const effects: Effect[] = [];
 
-		// Always push a sound effect — SoundController falls back to core/{name}.wav if no files set
+		// Push sound unless explicitly silenced with files: [] — silence lets base throw sound play through
 		const sound = overwrite?.sound ?? eventDef.sound;
-		effects.push({ type: "sound", event: eventDef.name, files: sound?.files, volume: sound?.volume, priority });
+		const explicitlySilent = sound !== undefined && Array.isArray(sound.files) && sound.files.length === 0;
+		if (!explicitlySilent) {
+			effects.push({ type: "sound", event: eventDef.name, files: sound?.files, volume: sound?.volume, priority });
+		}
 
 		const lights = overwrite?.lights ?? eventDef.lights ?? [];
 		for (const light of lights) {

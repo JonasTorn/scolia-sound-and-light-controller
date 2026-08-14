@@ -141,9 +141,12 @@ export class EventOrchestrator implements IEventOrchestrator {
 		const { colorMode } = ls.throwEffect;
 		const effects: Effect[] = [];
 
-		// Miss → light handled by "miss" event in specialEventsConfig; KNX allOff kept here
+		// Miss → sound + lights come from gameEventsConfig.miss (same entry, no split config)
 		if (throwData.points === 0) {
 			if (this.config.knx.enabled) effects.push({ type: "knx", action: "allOff" });
+			for (const light of gameEventsConfig["miss"]?.lights ?? []) {
+				effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode });
+			}
 			return effects;
 		}
 
