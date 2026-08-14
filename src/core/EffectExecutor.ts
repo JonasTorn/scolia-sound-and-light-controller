@@ -40,13 +40,15 @@ export class EffectExecutor {
 
 	// Toggle off all active lights and strobe, KNX recover. Called on takeout.
 	async cleanup(): Promise<void> {
+		// Cancel timer if still running
 		if (this.strobeTimer) {
 			clearTimeout(this.strobeTimer);
 			this.strobeTimer = null;
-			if (this.config.lightshark.enabled && this.activeStrobeExecutor) {
-				await this.lightshark.triggerExecutor(this.activeStrobeExecutor);
-				this.gameState.setStrobeActive(false);
-			}
+		}
+		// Always toggle off strobe if it was activated (timer may have fired but UDP toggle-off was lost)
+		if (this.config.lightshark.enabled && this.activeStrobeExecutor) {
+			await this.lightshark.triggerExecutor(this.activeStrobeExecutor);
+			this.gameState.setStrobeActive(false);
 			this.activeStrobeExecutor = null;
 		}
 
@@ -115,10 +117,10 @@ export class EffectExecutor {
 		this.activeStrobeExecutor = effect.executor;
 
 		this.strobeTimer = setTimeout(async () => {
+			this.strobeTimer = null;
+			this.activeStrobeExecutor = null; // clear before await so cleanup won't double-toggle
 			await this.lightshark.triggerExecutor(effect.executor);
 			this.gameState.setStrobeActive(false);
-			this.activeStrobeExecutor = null;
-			this.strobeTimer = null;
 			this.logger.debug(`Strobe auto-off after ${effect.durationMs}ms`);
 		}, effect.durationMs);
 	}
