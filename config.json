@@ -64,7 +64,7 @@
         "bull25": "green",
         "_comment_bull25": "Outer bull (25p) färg: green",
         "triple20Strobe": {
-          "executor": "led_strobe_rnd",
+          "executor": "led_strobe_rnd_hold",
           "_comment_executor": "Strobe för T20 och bullseye — sätt flashMode:true i executors om den är i Flash mode",
           "durationMs": 3000
         }
@@ -158,6 +158,7 @@
     "strobe_off":     { "page": 1, "column": 5, "row": 1 },
     "strobe_slow":    { "page": 1, "column": 5, "row": 2 },
     "led_strobe_rnd": { "page": 1, "column": 5, "row": 3 },
+    "led_strobe_rnd_hold": { "page": 1, "column": 5, "row": 4, "flashMode": true },
     "strobe_dart":    { "page": 1, "column": 5, "row": 6, "flashMode": true },
     "ow_rnd_strobe":  { "page": 1, "column": 6, "row": 2 },
     "speed_x4":       { "page": 1, "column": 7, "row": 2 }
