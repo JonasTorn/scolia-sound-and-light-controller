@@ -68,7 +68,7 @@
           "_comment_executor": "Strobe för T20 och bullseye — byt till strobe_dart för Flash mode",
           "durationMs": 3000
         }
-      },
+      }
     },
     "randomExecutorMode": {
       "enabled": false,
