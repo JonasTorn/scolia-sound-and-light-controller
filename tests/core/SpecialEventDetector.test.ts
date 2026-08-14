@@ -340,7 +340,7 @@ describe("SpecialEventDetector", () => {
 	});
 
 	describe("Special Events Config", () => {
-		it("should have 180 enabled with light effects but no sound", () => {
+		it("should have 180 enabled with light effects and no sound files", () => {
 			const history: GameThrow[] = [
 				createThrow(60, 20, 3),
 				createThrow(60, 20, 3),
@@ -351,7 +351,10 @@ describe("SpecialEventDetector", () => {
 
 			expect(result?.name).toBe("180");
 			expect(result?.effects.some((e) => e.type === "light")).toBe(true);
-			expect(result?.effects.some((e) => e.type === "sound")).toBe(false);
+			// Sound effect is always emitted; 180 in testEventDefs has no files (falls back to core/)
+			const soundEffect = result?.effects.find((e) => e.type === "sound") as any;
+			expect(soundEffect).toBeDefined();
+			expect(soundEffect?.files).toBeUndefined();
 		});
 
 		it("should have sound effect configured for special events", () => {
