@@ -296,7 +296,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s20", "None", "s1"] },
-		sound: { files: ["201.wav"] },
+		sound: { files: ["still_dre.wav"] },
 	},
 	{
 		name: "1998",
