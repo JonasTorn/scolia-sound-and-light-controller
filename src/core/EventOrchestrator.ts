@@ -3,7 +3,6 @@ import { Logger } from "../utils/Logger";
 import { SectorParser } from "../utils/SectorParser";
 import { GameState } from "./GameState";
 import { SpecialEventDetector } from "./SpecialEventDetector";
-import { ThrowEventResolver } from "./ThrowEventResolver";
 import { EffectExecutor } from "./EffectExecutor";
 import { gameEventsConfig } from "../config/events.config";
 
@@ -19,7 +18,6 @@ export interface IEventOrchestrator {
 
 export class EventOrchestrator implements IEventOrchestrator {
 	private specialEventDetector: SpecialEventDetector;
-	private throwEventResolver: ThrowEventResolver;
 	private effectExecutor: EffectExecutor;
 
 	constructor(
@@ -32,7 +30,6 @@ export class EventOrchestrator implements IEventOrchestrator {
 		playwrightController?: IPlaywrightController,
 	) {
 		this.specialEventDetector = new SpecialEventDetector();
-		this.throwEventResolver = new ThrowEventResolver(config.lightshark);
 		this.effectExecutor = new EffectExecutor(
 			gameState,
 			lightsharkController,
@@ -62,15 +59,12 @@ export class EventOrchestrator implements IEventOrchestrator {
 			}
 
 			// Special event sound replaces base throw sound; special lights/overlays stack on top.
-			const { effects: baseEffects } = this.throwEventResolver.resolve(throwData);
-			const specialHasSound = specialEvent?.effects.some((e) => e.type === "sound" && e.files?.length) ?? false;
-			const effects: Effect[] = specialHasSound
-				? baseEffects.filter((e) => e.type !== "sound")
-				: baseEffects;
-			// Add KNX on top of resolved light effects
-			if (throwData.points === 0 && this.config.knx.enabled) {
-				effects.push({ type: "knx", action: "allOff" });
+			const specialHasSound = specialEvent?.effects.some((e) => e.type === "sound") ?? false;
+			const effects: Effect[] = [];
+			if (!specialHasSound) {
+				effects.push({ type: "sound", isThrowSound: true, event: this.resolveThrowSoundName(throwData) });
 			}
+			effects.push(...this.resolveThrowLightEffects(throwData));
 			if (specialEvent) effects.push(...specialEvent.effects);
 
 			await this.effectExecutor.execute(effects);
@@ -130,6 +124,65 @@ export class EventOrchestrator implements IEventOrchestrator {
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);
 		}
+	}
+
+	// Maps a throw to LightShark color effects based on colorMode config.
+	// Singles leave lights unchanged (EffectExecutor cleanup on takeout resets state).
+	private resolveThrowLightEffects(throwData: GameThrow): Effect[] {
+		const ls = this.config.lightshark;
+		if (!ls.enabled || !ls.throwEffect.enabled) return [];
+
+		const { colorMode, noScoreExecutor } = ls.throwEffect;
+		const effects: Effect[] = [];
+
+		// Miss → dark
+		if (throwData.points === 0) {
+			effects.push({ type: "light", executor: noScoreExecutor, mode: "main" });
+			if (this.config.knx.enabled) effects.push({ type: "knx", action: "allOff" });
+			return effects;
+		}
+
+		if (!colorMode.enabled) return [];
+
+		// Bullseye 50p → bullseye color + strobe
+		if (throwData.segment === 50) {
+			effects.push({ type: "light", executor: colorMode.bullseyeExecutor, mode: "main" });
+			effects.push({ type: "strobe", executor: colorMode.triple20Strobe.executor, durationMs: colorMode.triple20Strobe.durationMs });
+			return effects;
+		}
+
+		// Bull 25p
+		if (throwData.segment === 25) {
+			const exec = colorMode.bull25 === "red" ? colorMode.redExecutor : colorMode.greenExecutor;
+			effects.push({ type: "light", executor: exec, mode: "main" });
+			return effects;
+		}
+
+		// Doubles and triples on colored segments
+		if (throwData.multiplier >= 2) {
+			const isRed = colorMode.redSegments.includes(throwData.segment);
+			const isGreen = colorMode.greenSegments.includes(throwData.segment);
+			if (isRed) effects.push({ type: "light", executor: colorMode.redExecutor, mode: "main" });
+			else if (isGreen) effects.push({ type: "light", executor: colorMode.greenExecutor, mode: "main" });
+			// T20 also gets strobe on top
+			if (throwData.segment === 20 && throwData.multiplier === 3) {
+				effects.push({ type: "strobe", executor: colorMode.triple20Strobe.executor, durationMs: colorMode.triple20Strobe.durationMs });
+			}
+			return effects;
+		}
+
+		// Singles: no light change — current color holds until next colored throw or takeout
+		return effects;
+	}
+
+	// Maps a throw to its base sound event name. Special events override this via their own sound.
+	private resolveThrowSoundName(throwData: GameThrow): string {
+		if (throwData.points === 0) return "miss";
+		if (throwData.segment === 50) return "bullseye";
+		if (throwData.segment === 25) return "bull25";
+		if (throwData.multiplier === 3) return `triple_${throwData.segment}`;
+		if (throwData.multiplier === 2) return `double_${throwData.segment}`;
+		return `single_${throwData.segment}`;
 	}
 
 	private parseAndAdjust(payload: ScoliaThrowPayload): GameThrow {
