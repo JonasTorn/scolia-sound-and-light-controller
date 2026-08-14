@@ -85,13 +85,7 @@
         "column": 8,
         "row": 4
       },
-      "_comment_noScoreExecutor": "Executor vid miss (LED Dim OFF - släcker lampor)",
-      "resetExecutor": {
-        "page": 1,
-        "column": 1,
-        "row": 1
-      },
-      "_comment_resetExecutor": "Bas-belysning (3k 100% - alltid på)"
+      "_comment_noScoreExecutor": "Executor vid miss (LED Dim OFF - släcker lampor)"
     },
     "randomExecutorMode": {
       "enabled": false,
@@ -113,7 +107,7 @@
     "soundsDir": "./sounds",
     "takeoutSoundEnabled": false,
     "_comment_soundsDir": "Mapp med ljudfiler (relativ till projektrot)",
-    "_comment_sounds": "Game event sounds (bust, miss, leg_won, etc.) and overlays are configured in src/config/events.config.ts. Regular throw scores auto-resolve to sounds/core/ without any entry needed.",
+    "_comment_sounds": "Game event sounds (bust, miss, leg_won, etc.) and overlays are configured in src/config/events.config.ts. Regular throw scores auto-resolve to sounds/core/ without any entry needed."
   },
   "knx": {
     "enabled": false,
@@ -163,7 +157,7 @@
     "muteDuringOurSounds": true,
     "_comment_muteDuringOurSounds": "true = Scolia-ljud tystas medan våra ljud spelas, false = båda spelas samtidigt",
     "debug": false,
-    "_comment_debug": "true = spara DOM-snapshots var 10:e sekund för felsökning (sätts av i produktion)"
+    "_comment_debug": "true = spara DOM-snapshot vid varje tillståndsändring för felsökning (sätts av i produktion)"
   },
   "logging": {
     "enabled": true,
