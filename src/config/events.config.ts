@@ -28,7 +28,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	bullseye: {
 		sound: { files: ["headshot_remix.wav"] },
 		lights: [{ executor: "moln_ow_strobe", mode: "main" }],
-		strobe: { executor: "led_strobe_rnd_hold", durationMs: 3000 },
+		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
 	},
 	takeout: {
 		sound: { files: ["yoshi_tongue.wav"], volume: 0.50 },

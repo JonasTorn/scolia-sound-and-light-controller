@@ -66,7 +66,7 @@
         "triple20Strobe": {
           "executor": "led_strobe_rnd_hold",
           "_comment_executor": "Strobe för T20 och bullseye — sätt flashMode:true i executors om den är i Flash mode",
-          "durationMs": 3000
+          "durationMs": 5000
         }
       }
     },
