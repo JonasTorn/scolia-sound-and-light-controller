@@ -93,7 +93,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "consecutiveMisses",
 		params: { count: 1 },
 		sound: { files: [] }, // silence — base throw sound handles miss audio
-		lights: [{ executor: "led_dim_hold", mode: "main" }],
+		lights: [{ executor: "led_dim_off_hold", mode: "main" }],
 	},
 
 	// ── High priority ────────────────────────────────────────────────────────
