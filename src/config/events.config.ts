@@ -28,7 +28,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	takeout: {
 		sound: { files: ["yoshi_tongue.wav"], volume: 0.70 },
 	},
-	game_started_4plus: {
+	important_round: {
 		sound: { files: ["good_bad_ugly.wav"] },
 	},
 	bust: {

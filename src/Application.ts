@@ -94,7 +94,7 @@ export class Application {
 		this.playwrightController.on("game-started", (names: string[]) => {
 			this.logger.info(`🎮 Game started with ${names.length} players`);
 			if (names.length >= 4) {
-				this.soundController.playSound("game_started_4plus");
+				this.soundController.playSound("important_round");
 			}
 		});
 
