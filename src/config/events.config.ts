@@ -11,6 +11,7 @@ export interface GameEventConfig {
 	fallback?: string;  // if no sound/overlay set, use this event's config instead
 	sound?: SoundEntry;
 	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
+	strobe?: { executor: ExecutorRef; durationMs: number };
 	overlay?: { file: string; durationMs: number };
 	playerOverwrites?: Record<string, PlayerOverwrite>;
 }
@@ -22,9 +23,12 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	},
 	bull25: {
 		sound: { files: ["headshot.wav"] },
+		lights: [{ executor: "led_green", mode: "main" }],
 	},
 	bullseye: {
 		sound: { files: ["headshot_remix.wav"] },
+		lights: [{ executor: "moln_ow_strobe", mode: "main" }],
+		strobe: { executor: "led_strobe_rnd", durationMs: 3000 },
 	},
 	takeout: {
 		sound: { files: ["yoshi_tongue.wav"], volume: 0.50 },
@@ -44,7 +48,10 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
 		playerOverwrites: {
 			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
-			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
+			"Laser": {
+				overlay: { file: "overlays/laser_win.gif", durationMs: 10000 },
+				sound: { files: ["laser_win.wav"] }
+			},
 			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
 
 		},

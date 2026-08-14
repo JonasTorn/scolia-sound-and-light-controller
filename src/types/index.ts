@@ -99,10 +99,10 @@ export interface LightSharkThrowEffect {
 		enabled: boolean;
 		redExecutor: ExecutorRef;
 		greenExecutor: ExecutorRef;
-		bullseyeExecutor: ExecutorRef;
+		bullseyeExecutor?: ExecutorRef; // legacy — light now configured in events.config.ts gameEventsConfig.bullseye
 		redSegments: number[];
 		greenSegments: number[];
-		bull25: "red" | "green";
+		bull25?: "red" | "green";       // legacy — light now configured in events.config.ts gameEventsConfig.bull25
 		triple20Strobe: {
 			executor: ExecutorRef;
 			durationMs: number;
