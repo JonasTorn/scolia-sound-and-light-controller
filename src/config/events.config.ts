@@ -8,6 +8,7 @@ import { SpecialEventDefinition, SoundEntry, PlayerOverwrite } from "../types/in
 // ============================================================
 
 export interface GameEventConfig {
+	fallback?: string;  // if no sound/overlay set, use this event's config instead
 	sound?: SoundEntry;
 	lights?: Array<{ executor: { page: number; column: number; row: number }; mode: "main" | "additive" }>;
 	overlay?: { file: string; durationMs: number };
@@ -16,7 +17,7 @@ export interface GameEventConfig {
 
 export const gameEventsConfig: Record<string, GameEventConfig> = {
 	miss: {
-		sound: { files: ["BRUH\.wav", "ERROR\.wav"] },
+		sound: { files: ["BRUH.wav", "ERROR.wav"] },
 	},
 	bull25: {
 		sound: { files: ["headshot.wav"] },
@@ -32,17 +33,18 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		sound: { files: ["good_bad_ugly.wav"] },
 	},
 	bust: {
-		sound: { files: ["fahhh\.wav", "vad_fet_du_ar\.wav", "tjockisleif\.wav"] },
+		sound: { files: ["fahhh.wav", "vad_fet_du_ar.wav", "tjockisleif.wav"] },
 	},
 	leg_won: {
-		sound: { files: ["winner.wav"] },
+		fallback: "set_won", // no specific leg sound — use set_won effects
 		playerOverwrites: {
 			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
 			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
+			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
 		},
 	},
 	set_won: {
-		sound: { files: ["simply_the_best\.wav"] },
+		sound: { files: ["simply_the_best.wav"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
 		playerOverwrites: {
 			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
@@ -50,7 +52,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		},
 	},
 	eliminated: {
-		sound: { files: ["wilhelm_scream\.wav"] },
+		sound: { files: ["wilhelm_scream.wav"] },
 	},
 };
 

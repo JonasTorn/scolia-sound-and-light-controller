@@ -104,16 +104,20 @@ export class EventOrchestrator implements IEventOrchestrator {
 			const player = this.gameState.getCurrentPlayer();
 			this.logger.info(`${logMsg} (player: ${player ?? "unknown"})`);
 			const cfg = gameEventsConfig[name];
-			const overwrite = player ? cfg?.playerOverwrites?.[player] : undefined;
+			// Fall back to another event's config if this one has no sound/overlay set
+			const baseCfg = (!cfg?.sound && !cfg?.overlay && cfg?.fallback)
+				? (gameEventsConfig[cfg.fallback] ?? cfg)
+				: cfg;
+			const overwrite = player ? (cfg?.playerOverwrites?.[player] ?? baseCfg?.playerOverwrites?.[player]) : undefined;
 
-			const sound = overwrite?.sound ?? cfg?.sound;
+			const sound = overwrite?.sound ?? baseCfg?.sound;
 			const effects: Effect[] = [{ type: "sound", event: name, files: sound?.files, volume: sound?.volume, priority: 5 }];
 
-			for (const light of (overwrite?.lights ?? cfg?.lights) ?? []) {
+			for (const light of (overwrite?.lights ?? baseCfg?.lights) ?? []) {
 				effects.push({ type: "light", executor: light.executor, mode: light.mode });
 			}
 
-			const overlay = overwrite?.overlay ?? cfg?.overlay;
+			const overlay = overwrite?.overlay ?? baseCfg?.overlay;
 			if (overlay) effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
 
 			await this.effectExecutor.execute(effects);
