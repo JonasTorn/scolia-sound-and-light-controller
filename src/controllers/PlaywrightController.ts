@@ -11,6 +11,7 @@ interface EdgeDetectionState {
 	setWon: boolean;
 	eliminatedCount: number;
 	playerNames: string[];
+	playerTabMap: Array<{ id: string; nickname: string }>; // from playerTab-{hexId} DOM elements
 }
 
 interface PlayerInfo {
@@ -37,6 +38,7 @@ export class PlaywrightController extends EventEmitter {
 		setWon: false,
 		eliminatedCount: 0,
 		playerNames: [],
+		playerTabMap: [],
 	};
 
 	private players: Map<string, PlayerInfo> = new Map();
@@ -520,10 +522,15 @@ export class PlaywrightController extends EventEmitter {
 					'[class*="eliminated"], [class*="Eliminated"], [class*="isEliminated"]',
 				).length + (winnerText.includes("eliminated") ? 1 : 0);
 
-				// Player names from scoreboard tabs (visible during throw-for-bull and game)
-				const playerNames = Array.from(
-					document.querySelectorAll('[id^="playerTab-"] [class*="nickname"]'),
-				).map((el) => el.textContent?.trim() ?? "").filter(Boolean);
+				// Player names + IDs from scoreboard tabs (visible during throw-for-bull and game)
+				// Tab elements have id="playerTab-{hexId}" so we get both pieces in one pass.
+				const playerTabMap = Array.from(
+					document.querySelectorAll('[id^="playerTab-"]'),
+				).map((tab) => ({
+					id: tab.id.replace("playerTab-", ""),
+					nickname: tab.querySelector('[class*="nickname"]')?.textContent?.trim() ?? "",
+				})).filter((p) => p.id && p.nickname);
+				const playerNames = playerTabMap.map((p) => p.nickname);
 
 				return {
 					bustCount: bustElements.length,
@@ -531,6 +538,7 @@ export class PlaywrightController extends EventEmitter {
 					setWon,
 					eliminatedCount,
 					playerNames,
+					playerTabMap,
 				};
 			});
 
@@ -570,6 +578,15 @@ export class PlaywrightController extends EventEmitter {
 				this.logger.info("Player eliminated detected via DOM");
 			}
 
+			// Populate players Map from DOM tab IDs — resolves hex IDs to nicknames even when
+			// WS PLAYER_JOINED messages were missed (e.g. app started mid-game).
+			for (const { id, nickname } of state.playerTabMap) {
+				if (!this.players.has(id)) {
+					this.players.set(id, { id, nickname });
+					this.logger.info(`👤 Player from DOM: ${nickname} (${id})`);
+				}
+			}
+
 			// Players: emit when list changes (from throw-for-bull scoreboard)
 			const namesJoined = state.playerNames.join(",");
 			const lastNamesJoined = this.lastState.playerNames.join(",");
@@ -581,7 +598,6 @@ export class PlaywrightController extends EventEmitter {
 
 			this.lastState = {
 				...state,
-				// Ratchet: keep the higher eliminated count so flicker can't re-fire
 				eliminatedCount: Math.max(state.eliminatedCount, this.lastState.eliminatedCount),
 			};
 
