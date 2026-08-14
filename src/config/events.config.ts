@@ -351,15 +351,6 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	// ── Minor fun events ─────────────────────────────────────────────────────
 
 	{
-		name: "bullseye",
-		enabled: true,
-		priority: 2,
-		detector: "sequentialSegments",
-		params: { throws: ["50"] },
-		sound: { files: ["headshot.wav"] },
-	},
-
-	{
 		name: "111",
 		enabled: true,
 		priority: 1,
