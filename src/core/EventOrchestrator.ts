@@ -20,6 +20,7 @@ export interface IEventOrchestrator {
 export class EventOrchestrator implements IEventOrchestrator {
 	private specialEventDetector: SpecialEventDetector;
 	private effectExecutor: EffectExecutor;
+	private takeoutInProgress = false;
 
 	constructor(
 		private gameState: GameState,
@@ -43,6 +44,10 @@ export class EventOrchestrator implements IEventOrchestrator {
 	}
 
 	async handleThrowDetected(payload: ScoliaThrowPayload): Promise<void> {
+		if (this.takeoutInProgress) {
+			this.logger.debug("Ignoring THROW_DETECTED during takeout");
+			return;
+		}
 		try {
 			const throwData = this.parseAndAdjust(payload);
 			this.gameState.addThrow(throwData);
@@ -80,6 +85,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	async handleTakeoutFinished(): Promise<void> {
 		try {
+			this.takeoutInProgress = false;
 			this.logger.info("Takeout finished");
 			if (this.config.sound.takeoutSoundEnabled !== false) {
 				await this.effectExecutor.execute([{ type: "sound", event: "takeout" }]);
@@ -91,6 +97,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	async handleTakeoutStarted(): Promise<void> {
 		this.logger.info("Takeout started - resetting state");
+		this.takeoutInProgress = true;
 		await this.effectExecutor.cleanup(); // release lights before reset clears lastExecutor
 		this.gameState.reset();
 	}
