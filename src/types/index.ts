@@ -107,7 +107,6 @@ export interface LightSharkThrowEffect {
 			durationMs: number;
 		};
 	};
-	noScoreExecutor: ExecutorRef;
 }
 
 export interface LightSharkConfig {

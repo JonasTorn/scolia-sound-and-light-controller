@@ -69,8 +69,6 @@
           "durationMs": 3000
         }
       },
-      "noScoreExecutor": "led_dim_off",
-      "_comment_noScoreExecutor": "Executor vid miss (LED Dim OFF) — definieras i config.executors"
     },
     "randomExecutorMode": {
       "enabled": false,
@@ -156,6 +154,7 @@
     "led_green":      { "page": 1, "column": 2, "row": 2 },
     "moln_ow_strobe": { "page": 1, "column": 6, "row": 6, "flashMode": true },
     "led_dim_off":    { "page": 1, "column": 8, "row": 4 },
+    "led_dim_hold":   { "page": 1, "column": 8, "row": 5, "flashMode": true },
     "strobe_off":     { "page": 1, "column": 5, "row": 1 },
     "strobe_slow":    { "page": 1, "column": 5, "row": 2 },
     "strobe_fast":    { "page": 1, "column": 5, "row": 3 },

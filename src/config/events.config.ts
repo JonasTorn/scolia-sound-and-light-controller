@@ -83,6 +83,19 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 // ============================================================
 
 export const specialEventsConfig: SpecialEventDefinition[] = [
+	// ── Miss ─────────────────────────────────────────────────────────────────
+	// Fires on every miss. Sound comes from base throw ("miss" event in gameEventsConfig).
+	// led_dim_hold is Flash mode — stays dark until next colored throw or takeout.
+	{
+		name: "miss_light",
+		enabled: true,
+		priority: 0,
+		detector: "consecutiveMisses",
+		params: { count: 1 },
+		sound: { files: [] }, // silence — base throw sound handles miss audio
+		lights: [{ executor: "led_dim_hold", mode: "main" }],
+	},
+
 	// ── High priority ────────────────────────────────────────────────────────
 
 	{

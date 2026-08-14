@@ -138,12 +138,11 @@ export class EventOrchestrator implements IEventOrchestrator {
 		const ls = this.config.lightshark;
 		if (!ls.enabled || !ls.throwEffect.enabled) return [];
 
-		const { colorMode, noScoreExecutor } = ls.throwEffect;
+		const { colorMode } = ls.throwEffect;
 		const effects: Effect[] = [];
 
-		// Miss → dark
+		// Miss → light handled by "miss" event in specialEventsConfig; KNX allOff kept here
 		if (throwData.points === 0) {
-			effects.push({ type: "light", executor: this.re(noScoreExecutor), mode: "main" });
 			if (this.config.knx.enabled) effects.push({ type: "knx", action: "allOff" });
 			return effects;
 		}
