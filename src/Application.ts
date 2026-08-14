@@ -66,11 +66,19 @@ export class Application {
 			this.handleBustDetected();
 		});
 
-		this.playwrightController.on("leg-won", () => {
+		this.playwrightController.on("leg-won", (winner?: string) => {
+			if (winner) {
+				this.gameState.setCurrentPlayer(winner);
+				this.soundController.setCurrentPlayer(winner);
+			}
 			this.handleLegWon();
 		});
 
-		this.playwrightController.on("set-won", () => {
+		this.playwrightController.on("set-won", (winner?: string) => {
+			if (winner) {
+				this.gameState.setCurrentPlayer(winner);
+				this.soundController.setCurrentPlayer(winner);
+			}
 			this.handleSetWon();
 		});
 

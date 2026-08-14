@@ -12,6 +12,7 @@ interface EdgeDetectionState {
 	eliminatedCount: number;
 	playerNames: string[];
 	playerTabMap: Array<{ id: string; nickname: string }>; // from playerTab-{hexId} DOM elements
+	winnerName: string; // nickname extracted from winner element text
 }
 
 interface PlayerInfo {
@@ -39,6 +40,7 @@ export class PlaywrightController extends EventEmitter {
 		eliminatedCount: 0,
 		playerNames: [],
 		playerTabMap: [],
+		winnerName: "",
 	};
 
 	private players: Map<string, PlayerInfo> = new Map();
@@ -512,6 +514,7 @@ export class PlaywrightController extends EventEmitter {
 				// Scoped to winner/result elements to avoid false positives
 				const winnerEl = document.querySelector('[class*="winnerTile"], [class*="winner"], [class*="gameOver"], [class*="game-over"]');
 				const winnerText = winnerEl?.textContent?.toLowerCase() ?? "";
+				const winnerTextRaw = winnerEl?.textContent?.trim() ?? "";
 
 				const legWon = winnerText.includes("won the leg");
 				// "won the set" = 501 sets; "won the game" = elimination final win
@@ -532,6 +535,11 @@ export class PlaywrightController extends EventEmitter {
 				})).filter((p) => p.id && p.nickname);
 				const playerNames = playerTabMap.map((p) => p.nickname);
 
+				// Extract winner name: match known player nicknames against winner element text
+				const winnerName = playerTabMap.find(
+					(p) => p.nickname && winnerTextRaw.toLowerCase().includes(p.nickname.toLowerCase()),
+				)?.nickname ?? "";
+
 				return {
 					bustCount: bustElements.length,
 					legWon,
@@ -539,6 +547,7 @@ export class PlaywrightController extends EventEmitter {
 					eliminatedCount,
 					playerNames,
 					playerTabMap,
+					winnerName,
 				};
 			});
 
@@ -561,14 +570,14 @@ export class PlaywrightController extends EventEmitter {
 			if (state.legWon && !this.lastState.legWon) {
 				// Only fire if WebSocket didn't already catch it (within 2s)
 				if (Date.now() - this.lastLegWonAt > 2000) {
-					this.emit("leg-won");
-					this.logger.info("Leg won detected via DOM");
+					this.emit("leg-won", state.winnerName || undefined);
+					this.logger.info(`Leg won detected via DOM${state.winnerName ? ` (${state.winnerName})` : ""}`);
 				}
 			}
 
 			if (state.setWon && !this.lastState.setWon) {
-				this.emit("set-won");
-				this.logger.info("Set won detected via DOM");
+				this.emit("set-won", state.winnerName || undefined);
+				this.logger.info(`Set won detected via DOM${state.winnerName ? ` (${state.winnerName})` : ""}`);
 			}
 
 			// Eliminated: fire when count rises. Never let it decrease in lastState so
@@ -725,7 +734,7 @@ export class PlaywrightController extends EventEmitter {
 
 					const img = document.createElement("img");
 					img.src = uri;
-					img.style.cssText = `width:${width};height:${height};object-fit:${objectFit}`;
+					img.style.cssText = `width:${width};height:${height};object-fit:${objectFit};background:transparent`;
 					overlay.appendChild(img);
 					document.body.appendChild(overlay);
 
