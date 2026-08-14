@@ -218,7 +218,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "911",
 		enabled: true,
-		priority: 2,
+		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["s9", "s1", "s1"] },
 		sound: { files: ["911.wav"] },
@@ -277,7 +277,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "321",
 		enabled: true,
-		priority: 2,
+		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["s3", "s2", "s1"] },
 		sound: { files: ["321.wav"] },
@@ -309,7 +309,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "201",
 		enabled: true,
-		priority: 2,
+		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["s20", "None", "s1"] },
 		sound: { files: ["still_dre.wav"] },
@@ -353,7 +353,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "111",
 		enabled: true,
-		priority: 1,
+		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["s1", "s1", "s1"] },
 		sound: { files: ["111.wav"] },
