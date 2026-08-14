@@ -1,4 +1,4 @@
-import { SpecialEventDefinition, SoundEntry, PlayerOverwrite } from "../types/index";
+import { SpecialEventDefinition, SoundEntry, PlayerOverwrite, ExecutorRef } from "../types/index";
 
 // ============================================================
 // GAME EVENTS
@@ -10,7 +10,7 @@ import { SpecialEventDefinition, SoundEntry, PlayerOverwrite } from "../types/in
 export interface GameEventConfig {
 	fallback?: string;  // if no sound/overlay set, use this event's config instead
 	sound?: SoundEntry;
-	lights?: Array<{ executor: { page: number; column: number; row: number }; mode: "main" | "additive" }>;
+	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
 	overlay?: { file: string; durationMs: number };
 	playerOverwrites?: Record<string, PlayerOverwrite>;
 }
@@ -25,7 +25,6 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	bullseye: {
 		sound: { files: ["headshot_remix.wav"] },
 	},
-
 	takeout: {
 		sound: { files: ["yoshi_tongue.wav"], volume: 0.50 },
 	},
@@ -50,7 +49,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		},
 	},
 	eliminated: {
-		sound: { files: ["wilhelm_scream.wav"] },
+		sound: { files: ["goofy_scream.wav"] },
 	},
 };
 
@@ -94,8 +93,8 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { n: 3, targetSum: 180 },
 		sound: { files: ["monsterkill.wav"] },
 		lights: [
-			{ executor: { page: 1, column: 6, row: 2 }, mode: "additive" },
-			{ executor: { page: 1, column: 7, row: 2 }, mode: "additive" },
+			{ executor: "ow_rnd_strobe", mode: "additive" },
+			{ executor: "speed_x4", mode: "additive" },
 		],
 	},
 

@@ -36,6 +36,9 @@ export interface LightSharkExecutor {
 	flashMode?: boolean; // true = Flash/Push mode: 1.0 to start, 0.0 to stop (idempotent)
 }
 
+// Executor reference — either a name from config.executors or inline coordinates
+export type ExecutorRef = string | LightSharkExecutor;
+
 // Unified effect system
 export type Effect =
 	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number; isThrowSound?: boolean }
@@ -53,7 +56,7 @@ export interface ThrowEvent {
 export interface PlayerOverwrite {
 	sound?: SoundEntry;
 	overlay?: { file: string; durationMs: number };
-	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
+	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
 }
 
 // Round position constraint — evaluated before the detector runs.
@@ -74,7 +77,8 @@ export interface SpecialEventDefinition {
 	roundConstraint?: RoundConstraint; // optional positional gate, checked before detector
 	sound?: SoundEntry; // default sound — auto-falls back to core/{name}.wav if omitted
 	overlay?: { file: string; durationMs: number };
-	lights?: Array<{ executor: LightSharkExecutor; mode: "main" | "additive" }>;
+	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
+	strobe?: { executor: ExecutorRef; durationMs: number }; // timed strobe effect, independent of lights
 	players?: string[]; // if set, event only fires when current player is in this list
 	playerOverwrites?: Record<string, PlayerOverwrite>; // per-player effect overrides, keyed by player nickname
 }
@@ -92,18 +96,18 @@ export interface LightSharkThrowEffect {
 	enabled: boolean;
 	colorMode: {
 		enabled: boolean;
-		redExecutor: LightSharkExecutor;
-		greenExecutor: LightSharkExecutor;
-		bullseyeExecutor: LightSharkExecutor;
+		redExecutor: ExecutorRef;
+		greenExecutor: ExecutorRef;
+		bullseyeExecutor: ExecutorRef;
 		redSegments: number[];
 		greenSegments: number[];
 		bull25: "red" | "green";
 		triple20Strobe: {
-			executor: LightSharkExecutor;
+			executor: ExecutorRef;
 			durationMs: number;
 		};
 	};
-	noScoreExecutor: LightSharkExecutor;
+	noScoreExecutor: ExecutorRef;
 }
 
 export interface LightSharkConfig {
@@ -186,6 +190,7 @@ export interface FullConfig {
 	playwright: PlaywrightConfig;
 	logging: LoggingConfig;
 	players?: Record<string, Record<string, SoundEntry>>; // known players + optional per-player throw-sound overrides
+	executors?: Record<string, LightSharkExecutor>;       // named executor map — reference by name in events and colorMode
 }
 
 // Logger types

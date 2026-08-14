@@ -1,9 +1,13 @@
-import { Effect, GameThrow, PlayerOverwrite, RoundConstraint, SpecialEventDefinition, ThrowEvent } from "../types/index";
+import { Effect, GameThrow, LightSharkExecutor, PlayerOverwrite, RoundConstraint, SpecialEventDefinition, ThrowEvent } from "../types/index";
 import { specialEventsConfig } from "../config/events.config";
 import { SectorParser } from "../utils/SectorParser";
+import { resolveExecutor } from "../utils/ExecutorResolver";
 
 export class SpecialEventDetector {
-	constructor(private eventDefs: SpecialEventDefinition[] = specialEventsConfig) {}
+	constructor(
+		private eventDefs: SpecialEventDefinition[] = specialEventsConfig,
+		private executors: Record<string, LightSharkExecutor> = {},
+	) {}
 
 	detect(
 		throwHistory: GameThrow[],
@@ -47,7 +51,12 @@ export class SpecialEventDetector {
 
 		const lights = overwrite?.lights ?? eventDef.lights ?? [];
 		for (const light of lights) {
-			effects.push({ type: "light", executor: light.executor, mode: light.mode });
+			effects.push({ type: "light", executor: resolveExecutor(light.executor, this.executors), mode: light.mode });
+		}
+
+		const strobe = eventDef.strobe;
+		if (strobe) {
+			effects.push({ type: "strobe", executor: resolveExecutor(strobe.executor, this.executors), durationMs: strobe.durationMs });
 		}
 
 		const overlay = overwrite?.overlay ?? eventDef.overlay;

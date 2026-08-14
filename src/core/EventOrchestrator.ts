@@ -1,9 +1,10 @@
-import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ILightSharkController, ISoundController, IKNXController, IPlaywrightController } from "../types/index";
+import { ScoliaThrowPayload, GameThrow, FullConfig, Effect, ILightSharkController, ISoundController, IKNXController, IPlaywrightController, ExecutorRef, LightSharkExecutor } from "../types/index";
 import { Logger } from "../utils/Logger";
 import { SectorParser } from "../utils/SectorParser";
 import { GameState } from "./GameState";
 import { SpecialEventDetector } from "./SpecialEventDetector";
 import { EffectExecutor } from "./EffectExecutor";
+import { resolveExecutor } from "../utils/ExecutorResolver";
 import { gameEventsConfig } from "../config/events.config";
 
 export interface IEventOrchestrator {
@@ -29,7 +30,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 		knxController: IKNXController,
 		playwrightController?: IPlaywrightController,
 	) {
-		this.specialEventDetector = new SpecialEventDetector();
+		this.specialEventDetector = new SpecialEventDetector(undefined, config.executors ?? {});
 		this.effectExecutor = new EffectExecutor(
 			gameState,
 			lightsharkController,
@@ -114,7 +115,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			const effects: Effect[] = [{ type: "sound", event: name, files: sound?.files, volume: sound?.volume, priority: 5 }];
 
 			for (const light of (overwrite?.lights ?? baseCfg?.lights) ?? []) {
-				effects.push({ type: "light", executor: light.executor, mode: light.mode });
+				effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode });
 			}
 
 			const overlay = overwrite?.overlay ?? baseCfg?.overlay;
@@ -124,6 +125,11 @@ export class EventOrchestrator implements IEventOrchestrator {
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);
 		}
+	}
+
+	// Shorthand: resolve an ExecutorRef using the named executor map from config
+	private re(ref: ExecutorRef): LightSharkExecutor {
+		return resolveExecutor(ref, this.config.executors ?? {});
 	}
 
 	// Maps a throw to LightShark color effects based on colorMode config.
@@ -137,7 +143,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 		// Miss → dark
 		if (throwData.points === 0) {
-			effects.push({ type: "light", executor: noScoreExecutor, mode: "main" });
+			effects.push({ type: "light", executor: this.re(noScoreExecutor), mode: "main" });
 			if (this.config.knx.enabled) effects.push({ type: "knx", action: "allOff" });
 			return effects;
 		}
@@ -146,15 +152,15 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 		// Bullseye 50p → bullseye color + strobe
 		if (throwData.segment === 50) {
-			effects.push({ type: "light", executor: colorMode.bullseyeExecutor, mode: "main" });
-			effects.push({ type: "strobe", executor: colorMode.triple20Strobe.executor, durationMs: colorMode.triple20Strobe.durationMs });
+			effects.push({ type: "light", executor: this.re(colorMode.bullseyeExecutor), mode: "main" });
+			effects.push({ type: "strobe", executor: this.re(colorMode.triple20Strobe.executor), durationMs: colorMode.triple20Strobe.durationMs });
 			return effects;
 		}
 
 		// Bull 25p
 		if (throwData.segment === 25) {
 			const exec = colorMode.bull25 === "red" ? colorMode.redExecutor : colorMode.greenExecutor;
-			effects.push({ type: "light", executor: exec, mode: "main" });
+			effects.push({ type: "light", executor: this.re(exec), mode: "main" });
 			return effects;
 		}
 
@@ -162,11 +168,11 @@ export class EventOrchestrator implements IEventOrchestrator {
 		if (throwData.multiplier >= 2) {
 			const isRed = colorMode.redSegments.includes(throwData.segment);
 			const isGreen = colorMode.greenSegments.includes(throwData.segment);
-			if (isRed) effects.push({ type: "light", executor: colorMode.redExecutor, mode: "main" });
-			else if (isGreen) effects.push({ type: "light", executor: colorMode.greenExecutor, mode: "main" });
+			if (isRed) effects.push({ type: "light", executor: this.re(colorMode.redExecutor), mode: "main" });
+			else if (isGreen) effects.push({ type: "light", executor: this.re(colorMode.greenExecutor), mode: "main" });
 			// T20 also gets strobe on top
 			if (throwData.segment === 20 && throwData.multiplier === 3) {
-				effects.push({ type: "strobe", executor: colorMode.triple20Strobe.executor, durationMs: colorMode.triple20Strobe.durationMs });
+				effects.push({ type: "strobe", executor: this.re(colorMode.triple20Strobe.executor), durationMs: colorMode.triple20Strobe.durationMs });
 			}
 			return effects;
 		}

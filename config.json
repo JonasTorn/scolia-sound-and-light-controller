@@ -29,25 +29,12 @@
       "colorMode": {
         "enabled": true,
         "_comment_colorMode": "Färgläge - matchar darttavlans röda/gröna färger",
-        "redExecutor": {
-          "page": 1,
-          "column": 2,
-          "row": 1
-        },
-        "_comment_redExecutor": "Executor för röda segment (LED Red)",
-        "greenExecutor": {
-          "page": 1,
-          "column": 2,
-          "row": 2
-        },
-        "_comment_greenExecutor": "Executor för gröna segment (LED Green)",
-        "bullseyeExecutor": {
-          "page": 1,
-          "column": 6,
-          "row": 6,
-          "flashMode": true
-        },
-        "_comment_bullseyeExecutor": "Executor för bullseye 50p (Moln Ow Strobe)",
+        "redExecutor": "led_red",
+        "_comment_redExecutor": "Executor för röda segment — definieras i config.executors",
+        "greenExecutor": "led_green",
+        "_comment_greenExecutor": "Executor för gröna segment — definieras i config.executors",
+        "bullseyeExecutor": "moln_ow_strobe",
+        "_comment_bullseyeExecutor": "Executor för bullseye 50p — definieras i config.executors",
         "redSegments": [
           20,
           18,
@@ -77,17 +64,13 @@
         "bull25": "green",
         "_comment_bull25": "Outer bull (25p) färg: green",
         "triple20Strobe": {
-          "executor": { "page": 1, "column": 5, "row": 3 },
-          "_comment_executor": "LED Strobe Fast (1/5/3) — change to flashMode:true after switching in LightShark UI",
+          "executor": "strobe_fast",
+          "_comment_executor": "Strobe för T20 och bullseye — byt till strobe_dart för Flash mode",
           "durationMs": 3000
         }
       },
-      "noScoreExecutor": {
-        "page": 1,
-        "column": 8,
-        "row": 4
-      },
-      "_comment_noScoreExecutor": "Executor vid miss (LED Dim OFF - släcker lampor)"
+      "noScoreExecutor": "led_dim_off",
+      "_comment_noScoreExecutor": "Executor vid miss (LED Dim OFF) — definieras i config.executors"
     },
     "randomExecutorMode": {
       "enabled": false,
@@ -166,8 +149,20 @@
     "logFile": "dart-events.log",
     "consoleOutput": true
   },
-  "_comment_executors": "Executors adresseras med page/column/row som motsvarar LightShark-griddet",
-  "_comment_osc": "OSC-adress: /LS/Executor/{page}/{column}/{row} med värde 0.0 (toggle)",
+  "_comment_executors_section": "Named LightShark executors — reference these by name in colorMode and events.config.ts. flashMode:true = Flash/Push mode (explicit 1.0 on / 0.0 off, no toggle desync).",
+  "_comment_osc": "OSC-adress: /LS/Executor/{page}/{column}/{row}. Toggle mode: 0.0 toggles. Flash mode: 1.0=go, 0.0=release.",
+  "executors": {
+    "led_red":        { "page": 1, "column": 2, "row": 1 },
+    "led_green":      { "page": 1, "column": 2, "row": 2 },
+    "moln_ow_strobe": { "page": 1, "column": 6, "row": 6, "flashMode": true },
+    "led_dim_off":    { "page": 1, "column": 8, "row": 4 },
+    "strobe_off":     { "page": 1, "column": 5, "row": 1 },
+    "strobe_slow":    { "page": 1, "column": 5, "row": 2 },
+    "strobe_fast":    { "page": 1, "column": 5, "row": 3 },
+    "strobe_dart":    { "page": 1, "column": 5, "row": 6, "flashMode": true },
+    "ow_rnd_strobe":  { "page": 1, "column": 6, "row": 2 },
+    "speed_x4":       { "page": 1, "column": 7, "row": 2 }
+  },
   "_comment_players": "Known players — Scolia nickname (exact match, case-sensitive). Used to filter events like important_round. Add per-player throw-sound overrides as { \"miss\": { \"files\": [\"...wav\"] } }. Event-level overrides (bust, set_won, overlays) go in src/config/events.config.ts playerOverwrites.",
   "players": {
     "Groggen": {},
