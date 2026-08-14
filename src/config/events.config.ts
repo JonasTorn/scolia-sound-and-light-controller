@@ -37,11 +37,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	},
 	leg_won: {
 		fallback: "set_won", // no specific leg sound — use set_won effects
-		playerOverwrites: {
-			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
-			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
-			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
-		},
+		playerOverwrites: {},
 	},
 	set_won: {
 		sound: { files: ["simply_the_best.wav"] },
@@ -49,6 +45,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		playerOverwrites: {
 			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
 			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
+			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
 		},
 	},
 	eliminated: {

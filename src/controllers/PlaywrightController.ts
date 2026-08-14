@@ -662,9 +662,10 @@ export class PlaywrightController extends EventEmitter {
 
 	async showOverlay(file: string, durationMs: number): Promise<void> {
 		if (!this.page) return;
+		if (!file) return; // empty file = skip overlay silently
 
 		const filePath = path.resolve(process.cwd(), file);
-		if (!fs.existsSync(filePath)) {
+		if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
 			this.logger.warn(`Playwright: Overlay file not found: ${filePath}`);
 			return;
 		}
