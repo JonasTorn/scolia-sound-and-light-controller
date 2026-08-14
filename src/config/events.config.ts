@@ -133,7 +133,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s7", "s7", "s7"] },
-		sound: { files: ["jackpot.wav"] },
+		sound: { files: ["triple_7.wav"] },
 	},
 	{
 		name: "s1",
@@ -157,7 +157,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["t7"] },
-		sound: { files: ["jackpot.wav"] },
+		sound: { files: ["triple_7.wav"] },
 	},
 	{
 		name: "t20",
@@ -166,6 +166,22 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["t20"] },
 		sound: { files: ["godlike.wav"] },
+	},
+	{
+		name: "t19",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["t19"] },
+		sound: { files: ["dominating.wav"] },
+	},
+	{
+		name: "t18",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["t18"] },
+		sound: { files: ["unstoppable.wav"] },
 	},
 	{
 		name: "1337",
