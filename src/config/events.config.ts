@@ -23,11 +23,11 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		sound: { files: ["headshot.wav"] },
 	},
 	bullseye: {
-		sound: { files: ["headshot.wav"] },
+		sound: { files: ["headshot_remix.wav"] },
 	},
 
 	takeout: {
-		sound: { files: ["yoshi_tongue.wav"], volume: 0.70 },
+		sound: { files: ["yoshi_tongue.wav"], volume: 0.50 },
 	},
 	important_round: {
 		sound: { files: ["good_bad_ugly.wav"] },
@@ -46,6 +46,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
 			"Laser": { overlay: { file: "overlays/laser_win.gif", durationMs: 10000 } },
 			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
+
 		},
 	},
 	eliminated: {
@@ -132,7 +133,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s7", "s7", "s7"] },
-		sound: { files: ["triple_7.wav"] },
+		sound: { files: ["jackpot.wav"] },
 	},
 	{
 		name: "s1",
@@ -156,7 +157,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["t7"] },
-		sound: { files: ["triple_7.wav"] },
+		sound: { files: ["jackpot.wav"] },
 	},
 	{
 		name: "t20",
@@ -270,7 +271,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s20", "s20", "s20"] },
-		sound: { files: ["rrriktigt_bra\.wav"] },
+		sound: { files: ["rrriktigt_bra.wav"] },
 	},
 
 	{
@@ -381,7 +382,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "consecutivePattern",
 		params: { pattern: [9, 9] },
-		sound: { files: ["99.wav"] },
+		sound: { files: [] },
 	},
 	{
 		name: "sum=99",
@@ -389,7 +390,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "99" },
-		sound: { files: ["99.wav"] },
+		sound: { files: [] },
 	},
 	{
 		name: "69",
@@ -441,7 +442,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "sequentialSegments",
 		params: { throws: ["s2", "s3"] },
-		sound: { files: ["23.wav"] },
+		sound: { files: [] },
 	},
 	{
 		name: "33",

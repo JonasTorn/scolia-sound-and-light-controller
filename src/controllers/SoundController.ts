@@ -91,7 +91,11 @@ export class SoundController extends EventEmitter {
 		}
 
 		// 2. Inline files from event definition (or playerOverwrites-resolved files)
-		if (inlineFiles?.length && await this.tryPlayFiles(inlineFiles, inlineVolume ?? 1.0, eventName, priority)) return;
+		// Empty array [] = explicitly silent — skip all fallbacks.
+		if (inlineFiles !== undefined) {
+			if (inlineFiles.length) await this.tryPlayFiles(inlineFiles, inlineVolume ?? 1.0, eventName, priority);
+			return;
+		}
 
 		// 3. Game events config (events.config.ts)
 		const gameEntry = gameEventsConfig[eventName]?.sound;
