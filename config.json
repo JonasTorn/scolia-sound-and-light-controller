@@ -114,24 +114,13 @@
     "takeoutSoundEnabled": false,
     "_comment_soundsDir": "Mapp med ljudfiler (relativ till projektrot)",
     "_comment_sounds": "Game event sounds (bust, miss, leg_won, etc.) and overlays are configured in src/config/events.config.ts. Regular throw scores auto-resolve to sounds/core/ without any entry needed.",
+    "_comment_players": "Known players (Scolia nickname, exact match, case-sensitive). Add per-player throw-sound overrides here: { \"miss\": { \"files\": [\"players/groggen/miss.wav\"] } }. Event-level overrides (bust, set_won, overlays) go in src/config/events.config.ts playerOverwrites instead.",
     "players": {
-      "_comment": "Per-player sound overrides. Key = Scolia nickname (exact match, case-sensitive). Each player section uses the same format as 'sounds' above: any event name → { files, volume, enabled }. Player overrides take priority over everything else.",
-      "_comment_how_to_add": "Example: make Groggen's miss play a custom sound → \"miss\": { \"files\": [\"players/groggen/miss.wav\"] }. Put the file in sounds/players/groggen/ and list it here.",
-      "Groggen": {
-        "_comment": "Add sound overrides for Groggen here. Example: \"bust\": { \"files\": [\"players/groggen/bust.wav\"] }"
-      },
-      "Luca": {
-        "_comment": "Add sound overrides for Luca here."
-      },
-      "Sony": {
-        "_comment": "Add sound overrides for Sony here."
-      },
-      "T10": {
-        "_comment": "Add sound overrides for T10 here."
-      },
-      "Laser": {
-        "_comment": "Add sound overrides for Laser here."
-      }
+      "Groggen": {},
+      "Luca": {},
+      "Sony": {},
+      "T10": {},
+      "Laser": {}
     }
   },
   "knx": {
