@@ -11,7 +11,7 @@
 		"test:connection": "ts-node src/test-connection.ts",
 		"build": "tsc",
 		"dev": "ts-node-dev --respawn src/index.ts",
-		"sync-assets": "rsync -avz --delete sounds/ madrix@100.117.114.10:~/scolia-new/sounds/ && rsync -avz --delete overlays/ madrix@100.117.114.10:~/scolia-new/overlays/"
+		"sync-assets": "rsync -avz --delete sounds/ madrix@100.117.114.10:scolia-new/sounds/ && rsync -avz --delete overlays/ madrix@100.117.114.10:scolia-new/overlays/"
 	},
 	"keywords": [
 		"scolia",
