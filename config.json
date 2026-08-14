@@ -77,8 +77,8 @@
         "bull25": "green",
         "_comment_bull25": "Outer bull (25p) färg: green",
         "triple20Strobe": {
-          "executor": { "page": 1, "column": 5, "row": 6, "flashMode": true },
-          "_comment_executor": "Strobe Dart (1/5/6) — Flash mode, replaces LED Strobe Fast (1/5/3)",
+          "executor": { "page": 1, "column": 5, "row": 3 },
+          "_comment_executor": "LED Strobe Fast (1/5/3) — change to flashMode:true after switching in LightShark UI",
           "durationMs": 3000
         }
       },
