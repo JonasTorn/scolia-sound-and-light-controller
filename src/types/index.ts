@@ -141,7 +141,6 @@ export interface SoundConfig {
 	throwSoundsEnabled?: boolean;   // default true — set false to silence all base throw sounds
 	takeoutSoundEnabled?: boolean;  // default true — set false to silence the takeout sound
 	sounds?: Record<string, SoundEntry>;
-	players?: Record<string, Record<string, SoundEntry>>;
 }
 
 export interface OverlayConfig {
@@ -185,6 +184,7 @@ export interface FullConfig {
 	sound: SoundConfig;
 	playwright: PlaywrightConfig;
 	logging: LoggingConfig;
+	players?: Record<string, Record<string, SoundEntry>>; // known players + optional per-player throw-sound overrides
 }
 
 // Logger types

@@ -51,7 +51,7 @@ async function main() {
 	const config = configMgr.load();
 
 	const gameState = new GameState();
-	const soundController = new SoundController(config.sound, logger);
+	const soundController = new SoundController(config, logger);
 
 	let playwrightController: PlaywrightController | undefined;
 	if (config.playwright.enabled) {

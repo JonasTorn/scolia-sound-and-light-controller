@@ -3,7 +3,7 @@ import * as path from "path";
 import { execFile, spawn, ChildProcess } from "child_process";
 import { EventEmitter } from "events";
 import { Logger } from "../utils/Logger";
-import { SoundConfig, SoundEntry } from "../types/index";
+import { FullConfig, SoundConfig, SoundEntry } from "../types/index";
 import { gameEventsConfig } from "../config/events.config";
 
 export class SoundController extends EventEmitter {
@@ -16,11 +16,11 @@ export class SoundController extends EventEmitter {
 	private currentSoundPriority = 0;
 
 	constructor(
-		private config: SoundConfig,
+		private config: FullConfig,
 		private logger: Logger,
 	) {
 		super();
-		this.soundsDir = path.resolve(process.cwd(), config.soundsDir || "./sounds");
+		this.soundsDir = path.resolve(process.cwd(), config.sound.soundsDir || "./sounds");
 
 		if (process.platform === "win32") {
 			this.spawnPowerShell();
@@ -77,14 +77,14 @@ export class SoundController extends EventEmitter {
 		inlineFiles?: string[],
 		inlineVolume?: number,
 	): Promise<void> {
-		if (!this.config.enabled) return;
+		if (!this.config.sound.enabled) return;
 
 		if (priority < this.currentSoundPriority) {
 			this.logger.debug(`Skipped: ${eventName} (priority ${priority} < active ${this.currentSoundPriority})`);
 			return;
 		}
 
-		// 1. Config-level per-player override (from config.json → sound.players, for throw sounds)
+		// 1. Config-level per-player override (from config.json → players, for throw sounds)
 		if (this.currentPlayer) {
 			const entry = this.config.players?.[this.currentPlayer]?.[eventName];
 			if (entry && entry.enabled !== false && await this.tryPlayEntry(entry, eventName, priority)) return;

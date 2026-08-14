@@ -43,7 +43,7 @@ export class Application {
 			this.config.lightshark,
 			this.logger,
 		);
-		this.soundController = new SoundController(this.config.sound, this.logger);
+		this.soundController = new SoundController(this.config, this.logger);
 		this.knxController = new KNXController(this.config.knx, this.logger);
 		this.playwrightController = new PlaywrightController(
 			this.config.playwright,
