@@ -84,7 +84,6 @@ export class EventOrchestrator implements IEventOrchestrator {
 			if (this.config.sound.takeoutSoundEnabled !== false) {
 				await this.effectExecutor.execute([{ type: "sound", event: "takeout" }]);
 			}
-			await this.effectExecutor.cleanup();
 		} catch (err) {
 			this.logger.error("Error handling takeout:", err);
 		}
@@ -92,6 +91,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	async handleTakeoutStarted(): Promise<void> {
 		this.logger.info("Takeout started - resetting state");
+		await this.effectExecutor.cleanup(); // release lights before reset clears lastExecutor
 		this.gameState.reset();
 	}
 
