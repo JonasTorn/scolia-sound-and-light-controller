@@ -179,7 +179,10 @@ export class EventOrchestrator implements IEventOrchestrator {
 			return effects;
 		}
 
-		// Singles: no light change — current color holds until next colored throw or takeout
+		// Singles: release flash-mode dim if active (e.g. after a miss); color executors hold naturally
+		if (this.gameState.getLastExecutor()?.flashMode) {
+			effects.push({ type: "light", mode: "release" });
+		}
 		return effects;
 	}
 

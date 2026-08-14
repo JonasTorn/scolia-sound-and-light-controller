@@ -86,6 +86,15 @@ export class EffectExecutor {
 	): Promise<void> {
 		if (!this.config.lightshark.enabled) return;
 
+		if (effect.mode === "release") {
+			const last = this.gameState.getLastExecutor();
+			if (last) {
+				await this.lightshark.triggerExecutor(last); // 0.0 = Flash stop or toggle-off
+				this.gameState.setLastExecutor(null);
+			}
+			return;
+		}
+
 		if (effect.mode === "main") {
 			const last = this.gameState.getLastExecutor();
 			// Same executor already active — skip to avoid double-toggle (toggle-off would turn it off)

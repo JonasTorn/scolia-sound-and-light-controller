@@ -43,6 +43,7 @@ export type ExecutorRef = string | LightSharkExecutor;
 export type Effect =
 	| { type: "sound"; event: string; files?: string[]; volume?: number; priority?: number; isThrowSound?: boolean }
 	| { type: "light"; executor: LightSharkExecutor; mode: "main" | "additive" }
+	| { type: "light"; mode: "release" }  // release lastExecutor (e.g. flash-mode dim after a scoring single)
 	| { type: "strobe"; executor: LightSharkExecutor; durationMs: number }
 	| { type: "knx"; action: string }
 	| { type: "overlay"; file: string; durationMs: number };
