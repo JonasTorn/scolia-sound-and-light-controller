@@ -87,7 +87,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "bullseye",
 		enabled: true,
-		priority: 4,
+		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["50"] },
 		sound: { files: ["headshot_remix.wav"] },
@@ -97,7 +97,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "bull25",
 		enabled: true,
-		priority: 4,
+		priority: 3,
 		detector: "sequentialSegments",
 		params: { throws: ["25"] },
 		sound: { files: ["headshot.wav"] },
@@ -109,7 +109,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "180",
 		enabled: true,
-		priority: 3,
+		priority: 5,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: 180 },
 		sound: { files: ["monsterkill.wav"] },
