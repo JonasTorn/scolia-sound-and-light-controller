@@ -5,6 +5,7 @@ import { Logger } from "../utils/Logger";
 export class EffectExecutor {
 	private strobeTimer: NodeJS.Timeout | null = null;
 	private activeStrobeExecutor: LightSharkExecutor | null = null;
+	private strobeTimerFired = false; // true when timer has already sent toggle-off (cleanup skips to avoid double-toggle)
 
 	constructor(
 		private gameState: GameState,
@@ -45,12 +46,13 @@ export class EffectExecutor {
 			clearTimeout(this.strobeTimer);
 			this.strobeTimer = null;
 		}
-		// Always toggle off strobe if it was activated (timer may have fired but UDP toggle-off was lost)
-		if (this.config.lightshark.enabled && this.activeStrobeExecutor) {
+		// Toggle off strobe if active. Skip if timer already fired its toggle-off (to avoid double-toggle).
+		if (this.config.lightshark.enabled && this.activeStrobeExecutor && !this.strobeTimerFired) {
 			await this.lightshark.triggerExecutor(this.activeStrobeExecutor);
 			this.gameState.setStrobeActive(false);
-			this.activeStrobeExecutor = null;
 		}
+		this.activeStrobeExecutor = null;
+		this.strobeTimerFired = false;
 
 		if (this.config.lightshark.enabled) {
 			for (const executor of this.gameState.getSpecialExecutors()) {
@@ -85,9 +87,11 @@ export class EffectExecutor {
 		if (!this.config.lightshark.enabled) return;
 
 		if (effect.mode === "main") {
-			// Toggle off previous main light if different
 			const last = this.gameState.getLastExecutor();
-			if (last && !this.executorEquals(last, effect.executor)) {
+			// Same executor already active — skip to avoid double-toggle (toggle-off would turn it off)
+			if (last && this.executorEquals(last, effect.executor)) return;
+			// Toggle off previous main light
+			if (last) {
 				await this.lightshark.triggerExecutor(last);
 				this.logger.debug(`Toggled off previous executor: ${JSON.stringify(last)}`);
 			}
@@ -111,6 +115,7 @@ export class EffectExecutor {
 			this.strobeTimer = null;
 			await this.lightshark.triggerExecutor(effect.executor); // toggle off
 		}
+		this.strobeTimerFired = false;
 
 		await this.lightshark.triggerExecutor(effect.executor);
 		this.gameState.setStrobeActive(true);
@@ -118,8 +123,9 @@ export class EffectExecutor {
 
 		this.strobeTimer = setTimeout(async () => {
 			this.strobeTimer = null;
-			this.activeStrobeExecutor = null; // clear before await so cleanup won't double-toggle
+			this.strobeTimerFired = true; // tell cleanup the timer already sent toggle-off
 			await this.lightshark.triggerExecutor(effect.executor);
+			this.activeStrobeExecutor = null;
 			this.gameState.setStrobeActive(false);
 			this.logger.debug(`Strobe auto-off after ${effect.durationMs}ms`);
 		}, effect.durationMs);
