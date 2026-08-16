@@ -62,12 +62,7 @@
         ],
         "_comment_greenSegments": "Segment med grön färg på darttavlan",
         "bull25": "green",
-        "_comment_bull25": "Outer bull (25p) färg: green",
-        "triple20Strobe": {
-          "executor": "led_strobe_rnd_hold",
-          "_comment_executor": "Strobe för T20 och bullseye — sätt flashMode:true i executors om den är i Flash mode",
-          "durationMs": 5000
-        }
+        "_comment_bull25": "Outer bull (25p) färg: green"
       }
     },
     "randomExecutorMode": {

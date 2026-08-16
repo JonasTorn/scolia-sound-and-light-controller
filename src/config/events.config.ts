@@ -186,6 +186,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["t20"] },
 		sound: { files: ["godlike.wav"] },
+		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
 	},
 	{
 		name: "t19",

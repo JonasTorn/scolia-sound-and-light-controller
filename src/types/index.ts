@@ -103,10 +103,6 @@ export interface LightSharkThrowEffect {
 		redSegments: number[];
 		greenSegments: number[];
 		bull25?: "red" | "green";       // legacy — light now configured in events.config.ts gameEventsConfig.bull25
-		triple20Strobe: {
-			executor: ExecutorRef;
-			durationMs: number;
-		};
 	};
 }
 

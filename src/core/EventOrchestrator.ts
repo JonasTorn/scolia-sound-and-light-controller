@@ -165,10 +165,6 @@ export class EventOrchestrator implements IEventOrchestrator {
 			const isGreen = colorMode.greenSegments.includes(throwData.segment);
 			if (isRed) effects.push({ type: "light", executor: this.re(colorMode.redExecutor), mode: "main" });
 			else if (isGreen) effects.push({ type: "light", executor: this.re(colorMode.greenExecutor), mode: "main" });
-			// T20 also gets strobe on top
-			if (throwData.segment === 20 && throwData.multiplier === 3) {
-				effects.push({ type: "strobe", executor: this.re(colorMode.triple20Strobe.executor), durationMs: colorMode.triple20Strobe.durationMs });
-			}
 			return effects;
 		}
 
