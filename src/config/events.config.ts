@@ -304,11 +304,12 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["321.wav"] },
 	},
 	{
-		name: "sum=51",
+		// 5 - 1 Tony Rickardsson
+		name: "51",
 		enabled: true,
 		priority: 1,
-		detector: "sumLastN",
-		params: { n: 3, targetSum: "51" },
+		detector: "sequentialSegments",
+		params: { throws: ["s5", "s1"] },
 		sound: { files: ["51.wav"] },
 	},
 	{

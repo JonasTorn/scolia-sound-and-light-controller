@@ -189,6 +189,7 @@ export class PlaywrightController extends EventEmitter {
 								this.emit("game-started", names);
 							} else if (msg.type === "API::BULL_THROW::GAME_CURRENT_STATE") {
 								this.processedBullThrowPlayers.clear();
+								this.players.clear(); // new game — drop stale players from previous game
 								this.extractBullThrowPlayers(msg.payload);
 							} else if (msg.type === "API::BULL_THROW::GAME_STATE_CHANGED") {
 								this.extractBullThrows(msg.payload);
@@ -271,7 +272,10 @@ export class PlaywrightController extends EventEmitter {
 	}
 
 	private extractPlayers(payload: any): void {
-		// GAME_STATE_CHANGED may include full player list — grab names before they throw
+		// GAME_STATE_CHANGED may include full player list — grab names before they throw.
+		// Handles two formats:
+		//   - Array with p._id / p.playerId  (X01 / standard game states)
+		//   - Dict keyed by player ID         (Elimination: state.game.players[id].nickname)
 		const sources = [
 			payload?.state?.players,
 			payload?.players,
@@ -279,12 +283,17 @@ export class PlaywrightController extends EventEmitter {
 		];
 		let added = false;
 		for (const source of sources) {
-			if (!source) continue;
-			const arr = Array.isArray(source) ? source : Object.values(source);
-			for (const p of arr as any[]) {
-				if (p?._id && p?.nickname && !this.players.has(p._id)) {
-					this.players.set(p._id, { id: p._id, nickname: p.nickname });
-					this.logger.info(`👤 Player found in game state: ${p.nickname}`);
+			if (!source || typeof source !== "object") continue;
+			const entries: [string, any][] = Array.isArray(source)
+				? source.map((p: any) => [p?._id ?? p?.playerId ?? "", p])
+				: Object.entries(source);
+			for (const [keyId, p] of entries) {
+				if (!p || typeof p !== "object") continue;
+				const id: string = p._id ?? p.playerId ?? keyId;
+				const { nickname } = p;
+				if (id && nickname && !this.players.has(id)) {
+					this.players.set(id, { id, nickname });
+					this.logger.info(`👤 Player found in game state: ${nickname}`);
 					added = true;
 				}
 			}
@@ -356,6 +365,7 @@ export class PlaywrightController extends EventEmitter {
 	// Bull throw phase: each player throws one dart to determine game order.
 	// Scolia sends a full snapshot each time (all players), so we dedup by playerId.
 	private extractBullThrows(payload: any): void {
+		this.extractBullThrowPlayers(payload); // payload also carries nextGame.players
 		const gameState = payload?.gameState;
 		if (!gameState || gameState.currentGamePhase !== "WaitingForTakeout") return;
 
@@ -647,6 +657,11 @@ export class PlaywrightController extends EventEmitter {
 				if (!this.players.has(id)) {
 					this.players.set(id, { id, nickname });
 					this.logger.info(`👤 Player from DOM: ${nickname} (${id})`);
+					// If the active player was already announced with a raw ID, correct it now.
+					if (id === this.currentPlayerId) {
+						this.logger.info(`🔄 Correcting active player name: ${nickname}`);
+						this.emit("player-change", nickname);
+					}
 				}
 			}
 
