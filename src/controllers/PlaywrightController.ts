@@ -51,6 +51,7 @@ export class PlaywrightController extends EventEmitter {
 	private lastBoardCheckAt = 0;
 	private lastBackToSetupAt = 0;
 	private processedThrowIndices = new Map<string, Set<number>>(); // playerId → Set of throwIndex
+	private processedBullThrowPlayers = new Set<string>(); // dedup: which players' bull throws have been emitted this round
 	private inTakeout = false; // true between TAKEOUT_STARTED and TAKEOUT_FINISHED — suppress elimination WS events during this window
 	private domPlayerNames: string[] = []; // latest player names from DOM scoreboard (more reliable than WS PLAYER_JOINED)
 
@@ -186,8 +187,14 @@ export class PlaywrightController extends EventEmitter {
 								if (!names.length) return; // already handled by GAME_CURRENT_STATE
 								this.logger.info(`🎮 Game started via GAME_STARTED (${names.length} players): ${names.join(", ")}`);
 								this.emit("game-started", names);
-							} else if (msg.type === "API::BULL_THROW::GAME_STATE_CHANGED" || msg.type === "API::BULL_THROW::GAME_CURRENT_STATE") {
-								this.logger.info(`Playwright WS recv: ${msg.type} payload=${JSON.stringify(msg.payload).slice(0, 800)}`);
+							} else if (msg.type === "API::BULL_THROW::GAME_CURRENT_STATE") {
+								this.processedBullThrowPlayers.clear();
+								this.extractBullThrowPlayers(msg.payload);
+							} else if (msg.type === "API::BULL_THROW::GAME_STATE_CHANGED") {
+								this.extractBullThrows(msg.payload);
+							} else if (msg.type === "API::BULL_THROW::GAME_ENDED") {
+								this.processedBullThrowPlayers.clear();
+								this.logger.info("Playwright WS recv: API::BULL_THROW::GAME_ENDED");
 							} else {
 								this.logger.info(`Playwright WS recv: ${msg.type}`);
 							}
@@ -343,6 +350,51 @@ export class PlaywrightController extends EventEmitter {
 					this.emit("leg-won");
 				}
 			}
+		}
+	}
+
+	// Bull throw phase: each player throws one dart to determine game order.
+	// Scolia sends a full snapshot each time (all players), so we dedup by playerId.
+	private extractBullThrows(payload: any): void {
+		const gameState = payload?.gameState;
+		if (!gameState || gameState.currentGamePhase !== "WaitingForTakeout") return;
+
+		const triplets = gameState.lastTriplets;
+		if (!triplets || typeof triplets !== "object") return;
+
+		for (const playerId of Object.keys(triplets)) {
+			const throws = triplets[playerId];
+			if (!Array.isArray(throws) || throws.length === 0) continue;
+			if (this.processedBullThrowPlayers.has(playerId)) continue;
+
+			this.processedBullThrowPlayers.add(playerId);
+			const dart = throws[0];
+			if (!dart?.sector) continue;
+
+			const name = this.getPlayerName(playerId);
+			this.logger.info(`Playwright: Bull throw — ${name}: ${dart.sector}`);
+			this.emit("scoliamessage", JSON.stringify({
+				type: "THROW_DETECTED",
+				sector: dart.sector,
+				coordinates: dart.coordinates || [0, 0],
+				bounceout: dart.bounceout || false,
+			}));
+		}
+	}
+
+	private extractBullThrowPlayers(payload: any): void {
+		const players = payload?.gameState?.configuration?.nextGame?.players;
+		if (!Array.isArray(players)) return;
+		let added = false;
+		for (const p of players) {
+			if (p?.playerId && p?.nickname && !this.players.has(p.playerId)) {
+				this.players.set(p.playerId, { id: p.playerId, nickname: p.nickname });
+				added = true;
+			}
+		}
+		if (added) {
+			const names = [...this.players.values()].map((p) => p.nickname);
+			this.logger.info(`👥 Bull throw players (${names.length}): ${names.join(", ")}`);
 		}
 	}
 

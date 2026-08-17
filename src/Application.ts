@@ -186,7 +186,6 @@ export class Application {
 			});
 
 			this.ws.on("message", (data: WebSocket.RawData) => {
-				this.logger.debug(`RAW WS: ${data.toString()}`);
 				this.handleScoliaMessage(data.toString());
 			});
 
