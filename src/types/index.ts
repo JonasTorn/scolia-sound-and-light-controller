@@ -81,6 +81,7 @@ export interface SpecialEventDefinition {
 	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
 	strobe?: { executor: ExecutorRef; durationMs: number }; // timed strobe effect, independent of lights
 	players?: string[]; // if set, event only fires when current player is in this list
+	gameModes?: string[]; // if set, event only fires in these Scolia game modes (e.g. ["X01", "Elimination"])
 	playerOverwrites?: Record<string, PlayerOverwrite>; // per-player effect overrides, keyed by player nickname
 }
 

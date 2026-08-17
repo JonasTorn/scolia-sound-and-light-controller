@@ -393,7 +393,16 @@ export class PlaywrightController extends EventEmitter {
 	}
 
 	private extractBullThrowPlayers(payload: any): void {
-		const players = payload?.gameState?.configuration?.nextGame?.players;
+		const nextGame = payload?.gameState?.configuration?.nextGame;
+		if (!nextGame) return;
+
+		const gameType: string | undefined = nextGame.gameType;
+		if (gameType) {
+			this.logger.info(`🎮 Game mode: ${gameType}`);
+			this.emit("game-mode", gameType);
+		}
+
+		const players = nextGame.players;
 		if (!Array.isArray(players)) return;
 		let added = false;
 		for (const p of players) {

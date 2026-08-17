@@ -93,6 +93,10 @@ export class Application {
 			this.logger.info(`🎯 Active player: ${name}`);
 		});
 
+		this.playwrightController.on("game-mode", (mode: string) => {
+			this.gameState.setGameMode(mode);
+		});
+
 		// Route Scolia messages intercepted from the web app's WebSocket
 		this.playwrightController.on("scoliamessage", (data: string) => {
 			this.handleScoliaMessage(data);

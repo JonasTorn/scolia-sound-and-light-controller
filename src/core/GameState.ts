@@ -13,6 +13,7 @@ export class GameState {
 	private knxState: "on" | "off" = "on";
 	private strobeActive = false;
 	private currentPlayer: string | null = null; // not persisted — detected at runtime
+	private gameMode: string | null = null;      // not persisted — set from bull throw payload
 	private persistencePath: string;
 	private saveScheduled = false;
 	private readonly MAX_HISTORY = 100;
@@ -121,6 +122,14 @@ export class GameState {
 
 	getCurrentPlayer(): string | null {
 		return this.currentPlayer;
+	}
+
+	setGameMode(mode: string | null): void {
+		this.gameMode = mode;
+	}
+
+	getGameMode(): string | null {
+		return this.gameMode;
 	}
 
 	// Special event tracking (prevent duplicates)

@@ -13,6 +13,7 @@ export class SpecialEventDetector {
 		throwHistory: GameThrow[],
 		currentThrow: GameThrow,
 		playerName?: string | null,
+		gameMode?: string | null,
 	): ThrowEvent | null {
 		let best: { priority: number; event: ThrowEvent } | null = null;
 
@@ -21,6 +22,10 @@ export class SpecialEventDetector {
 
 			// Skip if event is restricted to specific players and current player isn't in the list
 			if (eventDef.players?.length && !eventDef.players.includes(playerName ?? "")) continue;
+
+			// Skip if event is restricted to specific game modes and current mode doesn't match.
+			// If gameMode is unknown (null), the filter is skipped — better to fire than silently suppress.
+			if (eventDef.gameModes?.length && gameMode && !eventDef.gameModes.includes(gameMode)) continue;
 
 			if (eventDef.roundConstraint && !this.checkRoundConstraint(eventDef.roundConstraint, throwHistory)) continue;
 

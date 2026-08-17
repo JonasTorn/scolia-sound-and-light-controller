@@ -57,6 +57,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 				this.gameState.getThrowHistory().slice(0, -1),
 				throwData,
 				this.gameState.getCurrentPlayer(),
+				this.gameState.getGameMode(),
 			);
 
 			if (specialEvent && !this.gameState.isEventPlayed(throwIndex, specialEvent.name)) {
