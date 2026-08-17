@@ -186,6 +186,8 @@ export class PlaywrightController extends EventEmitter {
 								if (!names.length) return; // already handled by GAME_CURRENT_STATE
 								this.logger.info(`🎮 Game started via GAME_STARTED (${names.length} players): ${names.join(", ")}`);
 								this.emit("game-started", names);
+							} else if (msg.type === "API::BULL_THROW::GAME_STATE_CHANGED" || msg.type === "API::BULL_THROW::GAME_CURRENT_STATE") {
+								this.logger.info(`Playwright WS recv: ${msg.type} payload=${JSON.stringify(msg.payload).slice(0, 800)}`);
 							} else {
 								this.logger.info(`Playwright WS recv: ${msg.type}`);
 							}
