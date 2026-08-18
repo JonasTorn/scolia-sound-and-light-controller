@@ -329,7 +329,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["500.wav"] },
 	},
 	{
-		name: "201",
+		name: "2001",
 		enabled: true,
 		priority: 3,
 		detector: "sequentialSegments",
@@ -353,12 +353,22 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["1994.wav"] },
 	},
 	{
+		// Nile city
 		name: "1056",
 		enabled: true,
 		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s10", "s5", "s6"] },
 		sound: { files: ["1056.wav"] },
+	},
+		{
+		// Morsan i linköping
+		name: "013",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["None", "s1", "s3"] },
+		sound: { files: ["britt-marie.wav"] },
 	},
 	{
 		name: "last_chance",
@@ -383,7 +393,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "300",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s3", "None", "None"] },
 		sound: { files: ["this_is_sparta.wav"] },
@@ -392,7 +402,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "99",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [9, 9] },
 		sound: { files: [] },
@@ -400,7 +410,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "sum=99",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "99" },
 		sound: { files: [] },
@@ -408,7 +418,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "69",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [6, 9] }, // any 6-pt throw → any 9-pt throw
 		sound: { files: ["gunther.wav"] },
@@ -417,7 +427,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "sum=69",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "69" },
 		sound: { files: ["gunther.wav"] },
@@ -426,7 +436,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "67",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [6, 7] },
 		sound: { files: ["67.wav"] },
@@ -435,32 +445,35 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "sum=67",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "67" },
 		sound: { files: ["67.wav"] },
 		overlay: { file: "overlays/6-7.gif", durationMs: 5000 },
 	},
 	{
+		// Foppa
 		name: "sum=21",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "21" },
-		sound: { files: ["foppa.wav"] },
+		sound: { files: ["foppa_modorov.wav", "foppa_borje.wav"] },
 	},
 	{
-		name: "23",
+		// Jordan
+		name: "sum=23",
 		enabled: true,
-		priority: 1,
-		detector: "sequentialSegments",
-		params: { throws: ["s2", "s3"] },
-		sound: { files: [] },
+		priority: 2,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "23" },
+		sound: { files: ["jordan.wav"] },
 	},
 	{
+		// Idol - 32-33
 		name: "33",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [3, 3] },
 		sound: { files: ["32_33.wav"] },
@@ -468,7 +481,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "sum=33",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "33" },
 		sound: { files: ["32_33.wav"] },
@@ -477,7 +490,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "over_100",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: ">=100" },
 		sound: { files: ["rrriktigt_bra.wav"] },
@@ -485,7 +498,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "under_10",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "<10" },
 		sound: { files: ["skogsturken_edit.wav"] },
