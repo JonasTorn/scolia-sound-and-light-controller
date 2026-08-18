@@ -229,6 +229,15 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["1888.wav"] },
 	},
 	{
+		// Hassan MC klubben
+		name: "1903",
+		enabled: true,
+		priority: 2,
+		detector: "concatenatesTo",
+		params: { number: 1903 }, // 19+0+3
+		sound: { files: ["mc_klubben.wav"] },
+	},
+	{
 		name: "112",
 		enabled: true,
 		priority: 2,
@@ -361,7 +370,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { throws: ["s10", "s5", "s6"] },
 		sound: { files: ["1056.wav"] },
 	},
-		{
+	{
 		// Morsan i linköping
 		name: "013",
 		enabled: true,
@@ -405,7 +414,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [9, 9] },
-		sound: { files: [] },
+		sound: { files: ["gretzky.wav"] },
 	},
 	{
 		name: "sum=99",
@@ -413,7 +422,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "99" },
-		sound: { files: [] },
+		sound: { files: ["gretzky.wav"] },
 	},
 	{
 		name: "69",
