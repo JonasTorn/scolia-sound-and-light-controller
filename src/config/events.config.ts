@@ -119,7 +119,6 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		],
 	},
 
-
 	{
 		name: "2xt20",
 		enabled: true,
@@ -158,7 +157,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "s1",
 		enabled: true,
-		priority: 2,
+		priority: 1,
 		detector: "sequentialSegments",
 		params: { throws: ["s1"] },
 		sound: { files: ["cd1.wav"] },
@@ -170,6 +169,22 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["t1"] },
 		sound: { files: ["ohh_baby_a_triple.wav"] },
+	},
+	{
+		name: "t6",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["t6"] },
+		sound: { files: ["666.wav"] },
+	},
+	{
+		name: "666",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["s6", "s6", "s6"] },
+		sound: { files: ["666.wav"] },
 	},
 	{
 		name: "t7",
@@ -254,14 +269,6 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["911.wav"] },
 	},
 	{
-		name: "666",
-		enabled: true,
-		priority: 2,
-		detector: "sequentialSegments",
-		params: { throws: ["s6", "s6", "s6"] },
-		sound: { files: ["666.wav"] },
-	},
-	{
 		name: "404",
 		enabled: true,
 		priority: 2,
@@ -316,7 +323,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		// 5 - 1 Tony Rickardsson
 		name: "51",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "sequentialSegments",
 		params: { throws: ["s5", "s1"] },
 		sound: { files: ["51.wav"] },
