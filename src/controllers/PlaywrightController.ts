@@ -455,7 +455,7 @@ export class PlaywrightController extends EventEmitter {
 				if (typeof newStatus === "string" && newStatus.toLowerCase().includes("eliminat")) {
 					const name = this.getPlayerName(playerId);
 					this.logger.info(`💀 Player eliminated: ${name}`);
-					this.emit("eliminated");
+					this.emit("eliminated", name);
 				}
 			}
 

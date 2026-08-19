@@ -82,7 +82,11 @@ export class Application {
 			this.handleSetWon();
 		});
 
-		this.playwrightController.on("eliminated", () => {
+		this.playwrightController.on("eliminated", (name?: string) => {
+			if (name) {
+				this.gameState.setCurrentPlayer(name);
+				this.soundController.setCurrentPlayer(name);
+			}
 			this.handlePlayerEliminated();
 		});
 
