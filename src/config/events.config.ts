@@ -49,7 +49,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		},
 	},
 	eliminated: {
-		sound: { files: ["goofy_scream.wav", "say_hello_to_my_little_friend.wav", "hasta_la_vista_baby.wav"] },
+		sound: { files: ["goofy_scream.wav", "say_hello_to_my_little_friend.wav", "hasta_la_vista_baby.wav"], weights: [0.5, 0.25, 0.25] },
 	},
 };
 
