@@ -118,7 +118,20 @@ export class SoundController extends EventEmitter {
 	}
 
 	private async tryPlayEntry(entry: SoundEntry, eventName: string, priority: number): Promise<boolean> {
-		return this.tryPlayFiles(this.getFiles(entry), entry.volume ?? 1.0, eventName, priority);
+		return this.tryPlayFiles(this.getFiles(entry), entry.volume ?? 1.0, eventName, priority, false, entry.weights);
+	}
+
+	private pickWeighted(files: string[], weights?: number[]): string {
+		if (!weights || weights.length !== files.length) {
+			return files[Math.floor(Math.random() * files.length)];
+		}
+		const total = weights.reduce((s, w) => s + w, 0);
+		let r = Math.random() * total;
+		for (let i = 0; i < files.length; i++) {
+			r -= weights[i];
+			if (r <= 0) return files[i];
+		}
+		return files[files.length - 1];
 	}
 
 	private async tryPlayFiles(
@@ -127,9 +140,10 @@ export class SoundController extends EventEmitter {
 		eventName: string,
 		priority: number,
 		requireExist = false,
+		weights?: number[],
 	): Promise<boolean> {
 		if (!files.length) return false;
-		const file = files[Math.floor(Math.random() * files.length)];
+		const file = this.pickWeighted(files, weights);
 		const filePath = path.resolve(this.soundsDir, file);
 		if (!filePath.startsWith(this.soundsDir)) return false;
 		if (requireExist && !fs.existsSync(filePath)) return false;

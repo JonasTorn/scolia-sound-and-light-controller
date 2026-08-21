@@ -133,6 +133,7 @@ export interface KNXConfig {
 export interface SoundEntry {
 	file?: string; // legacy single-file (backward compat)
 	files?: string[]; // multiple files — one is picked at random on each play
+	weights?: number[]; // parallel to files — relative pick weights (e.g. [10, 45, 45]). Omit for equal probability.
 	volume?: number;
 	enabled?: boolean;
 }
