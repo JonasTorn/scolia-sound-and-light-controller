@@ -180,6 +180,23 @@ export interface LoggingConfig {
 	maxFiles: number;
 }
 
+export interface PlayerStats {
+	nickname: string;
+	gamesPlayed: number;
+	wins: number;
+	winPct: number;        // 0–100
+	eliminations: number;
+	oneEighties?: number;
+}
+
+export interface ScoreboardConfig {
+	enabled: boolean;
+	port?: number;           // HTTP port for scoreboard server (default 3456)
+	idleDelayMs?: number;    // ms after game ends before switching to scoreboard (default 30000)
+	startupDelayMs?: number; // ms after startup before showing scoreboard if no game (default 15000)
+	players?: string[];      // explicit player list — defaults to keys of config.players
+}
+
 export interface FullConfig {
 	scolia: ScoliaConfig;
 	lightshark: LightSharkConfig;
@@ -187,6 +204,7 @@ export interface FullConfig {
 	sound: SoundConfig;
 	playwright: PlaywrightConfig;
 	logging: LoggingConfig;
+	scoreboard?: ScoreboardConfig;
 	players?: Record<string, Record<string, SoundEntry>>; // known players + optional per-player throw-sound overrides
 	executors?: Record<string, LightSharkExecutor>;       // named executor map — reference by name in events and colorMode
 }

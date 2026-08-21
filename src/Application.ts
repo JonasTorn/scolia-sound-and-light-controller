@@ -3,6 +3,8 @@ import { Logger, LoggerConfig } from "./utils/Logger";
 import { ConfigManager } from "./core/ConfigManager";
 import { GameState } from "./core/GameState";
 import { EventOrchestrator } from "./core/EventOrchestrator";
+import { ScoreboardServer } from "./core/ScoreboardServer";
+import { ScoliaHistoryScraper } from "./core/ScoliaHistoryScraper";
 import { LightSharkController } from "./controllers/LightSharkController";
 import { SoundController } from "./controllers/SoundController";
 import { KNXController } from "./controllers/KNXController";
@@ -24,6 +26,9 @@ export class Application {
 	private eventOrchestrator: EventOrchestrator;
 	private ws: WebSocket.WebSocket | null = null;
 	private reconnectTimeout: NodeJS.Timeout | null = null;
+	private idleTimer: NodeJS.Timeout | null = null;
+	private scoreboardServer: ScoreboardServer | null = null;
+	private scoliaHistoryScraper: ScoliaHistoryScraper | null = null;
 	private running = false;
 
 	constructor(private configPath?: string) {
@@ -109,6 +114,10 @@ export class Application {
 		// Play a sound when a game starts based on player count
 		this.playwrightController.on("game-started", (names: string[]) => {
 			this.logger.info(`🎮 Game started with ${names.length} players`);
+			this.cancelIdleTimer();
+			if (this.config.scoreboard?.enabled) {
+				this.playwrightController.showGame().catch(() => {});
+			}
 			if (names.length >= 4) {
 				this.soundController.playSound("important_round");
 			}
@@ -155,6 +164,26 @@ export class Application {
 			// 3. Launch Playwright
 			if (this.config.playwright.enabled) {
 				await this.playwrightController.launch();
+
+				// Start scoreboard server and open the scoreboard page in a background tab
+				const sb = this.config.scoreboard;
+				if (sb?.enabled) {
+					const port = sb.port ?? 3456;
+					const players = sb.players ?? Object.keys(this.config.players ?? {});
+					const baseUrl = this.config.playwright.url ?? "https://game.scoliadarts.com";
+
+					this.scoreboardServer = new ScoreboardServer(this.logger);
+					this.scoreboardServer.start(port);
+
+					this.scoliaHistoryScraper = new ScoliaHistoryScraper(this.logger, baseUrl);
+
+					await this.playwrightController.openScoreboardPage(`http://127.0.0.1:${port}`);
+
+					// Refresh stats immediately, then show scoreboard if no game starts soon
+					await this.refreshScoreboardStats(players);
+					const startupDelay = sb.startupDelayMs ?? 15000;
+					this.startIdleTimer(startupDelay);
+				}
 			}
 
 			// 4. Connect to Scolia WebSocket (direct API)
@@ -289,6 +318,40 @@ export class Application {
 
 	private async handleSetWon(): Promise<void> {
 		await this.eventOrchestrator.handleSetWon();
+		if (this.config.scoreboard?.enabled) {
+			const delay = this.config.scoreboard.idleDelayMs ?? 30000;
+			this.startIdleTimer(delay);
+		}
+	}
+
+	private startIdleTimer(delayMs: number): void {
+		this.cancelIdleTimer();
+		this.idleTimer = setTimeout(async () => {
+			this.idleTimer = null;
+			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
+			await this.refreshScoreboardStats(players);
+			await this.playwrightController.showScoreboard();
+		}, delayMs);
+	}
+
+	private cancelIdleTimer(): void {
+		if (this.idleTimer) {
+			clearTimeout(this.idleTimer);
+			this.idleTimer = null;
+		}
+	}
+
+	private async refreshScoreboardStats(players: string[]): Promise<void> {
+		if (!this.scoreboardServer || !this.scoliaHistoryScraper) return;
+		try {
+			const stats = await this.scoliaHistoryScraper.scrape(
+				() => this.playwrightController.createTemporaryPage(),
+				players,
+			);
+			this.scoreboardServer.updateStats(stats);
+		} catch (err) {
+			this.logger.warn(`Scoreboard: Failed to refresh stats: ${err}`);
+		}
 	}
 
 	private async handlePlayerEliminated(): Promise<void> {
@@ -298,6 +361,8 @@ export class Application {
 	async shutdown(): Promise<void> {
 		this.logger.info("Shutting down...");
 		this.running = false;
+
+		this.cancelIdleTimer();
 
 		if (this.reconnectTimeout) {
 			clearTimeout(this.reconnectTimeout);
@@ -316,6 +381,7 @@ export class Application {
 			await this.playwrightController.stop();
 		}
 
+		this.scoreboardServer?.stop();
 		this.lightsharkController.close();
 		this.soundController.close();
 		this.logger.info("Shutdown complete");

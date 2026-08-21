@@ -24,6 +24,8 @@ export class PlaywrightController extends EventEmitter {
 	private browser: Browser | null = null;
 	private context: BrowserContext | null = null;
 	private page: Page | null = null;
+	private scoreboardPage: Page | null = null;
+	private scoreboardUrl: string | null = null;
 	private running = false;
 	private pollTimeout: NodeJS.Timeout | null = null;
 	private lastHealthyAt = 0;
@@ -261,6 +263,11 @@ export class PlaywrightController extends EventEmitter {
 
 			// Save cookies
 			await this.saveCookies();
+
+			// Re-open scoreboard page if it was open before (handles restarts)
+			if (this.scoreboardUrl) {
+				await this.openScoreboardPage(this.scoreboardUrl);
+			}
 
 			// Start polling for game events
 			this.startPolling();
@@ -763,6 +770,51 @@ export class PlaywrightController extends EventEmitter {
 		}
 	}
 
+	async openScoreboardPage(url: string): Promise<void> {
+		if (!this.context) return;
+		this.scoreboardUrl = url;
+		try {
+			this.scoreboardPage = await this.context.newPage();
+			await this.scoreboardPage.goto(url, { waitUntil: "domcontentloaded", timeout: 10000 });
+			this.logger.info(`Playwright: Scoreboard page ready at ${url}`);
+		} catch (err) {
+			this.logger.warn(`Playwright: Failed to open scoreboard page: ${err}`);
+			this.scoreboardPage = null;
+		}
+	}
+
+	async showScoreboard(): Promise<void> {
+		if (!this.scoreboardPage) return;
+		try {
+			await this.scoreboardPage.reload({ waitUntil: "domcontentloaded", timeout: 5000 }).catch(() => {});
+			await this.scoreboardPage.bringToFront();
+			this.logger.info("Playwright: Scoreboard shown");
+		} catch (err) {
+			this.logger.warn(`Playwright: Could not show scoreboard: ${err}`);
+		}
+	}
+
+	async showGame(): Promise<void> {
+		if (!this.page) return;
+		try {
+			await this.page.bringToFront();
+			this.logger.info("Playwright: Game page shown");
+		} catch (err) {
+			this.logger.warn(`Playwright: Could not show game page: ${err}`);
+		}
+	}
+
+	// Returns a new temporary page in the same browser context (shared cookies).
+	// Caller is responsible for closing the page when done.
+	async createTemporaryPage(): Promise<Page | null> {
+		if (!this.context) return null;
+		try {
+			return await this.context.newPage();
+		} catch {
+			return null;
+		}
+	}
+
 	async showOverlay(file: string, durationMs: number): Promise<void> {
 		if (!this.page) return;
 		if (!file) return; // empty file = skip overlay silently
@@ -865,6 +917,11 @@ export class PlaywrightController extends EventEmitter {
 		if (this.stableTimer) {
 			clearTimeout(this.stableTimer);
 			this.stableTimer = null;
+		}
+
+		if (this.scoreboardPage) {
+			await this.scoreboardPage.close().catch(() => {});
+			this.scoreboardPage = null;
 		}
 
 		if (this.page) {

@@ -137,6 +137,16 @@
     "debug": false,
     "_comment_debug": "true = spara DOM-snapshot vid varje tillståndsändring för felsökning (sätts av i produktion)"
   },
+  "scoreboard": {
+    "enabled": true,
+    "_comment_enabled": "true = show scoreboard when no game is active",
+    "port": 3456,
+    "_comment_port": "Local HTTP port for the scoreboard page",
+    "idleDelayMs": 30000,
+    "_comment_idleDelayMs": "ms after a game ends before switching to scoreboard (default 30s)",
+    "startupDelayMs": 15000,
+    "_comment_startupDelayMs": "ms after app starts before showing scoreboard if no game detected"
+  },
   "logging": {
     "enabled": true,
     "logFile": "dart-events.log",
