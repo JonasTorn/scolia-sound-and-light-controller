@@ -33,12 +33,14 @@ export class ConfigManager {
 			throw new Error(`Config file not found at ${this.configPath}`);
 		}
 
+		let activeFile = this.configPath;
 		try {
 			const raw = fs.readFileSync(this.configPath, "utf-8");
 			let parsed = JSON.parse(raw);
 
 			const secretsPath = path.join(path.dirname(this.configPath), "config.secrets.json");
 			if (fs.existsSync(secretsPath)) {
+				activeFile = secretsPath;
 				const secrets = JSON.parse(fs.readFileSync(secretsPath, "utf-8"));
 				parsed = this.deepMerge(parsed, secrets);
 			}
@@ -47,10 +49,25 @@ export class ConfigManager {
 			this.config = parsed as FullConfig;
 			return this.config;
 		} catch (err) {
-			if (err instanceof Error) {
-				throw new Error(`Failed to load config: ${err.message}`);
+			// Emit detailed diagnostics so the next failure is easy to diagnose.
+			const msg = err instanceof Error ? err.message : String(err);
+			try {
+				const raw = fs.readFileSync(activeFile, "utf-8");
+				// Extract ~200 chars around the error position if it's a parse error
+				const posMatch = msg.match(/position (\d+)/);
+				if (posMatch) {
+					const pos = parseInt(posMatch[1], 10);
+					const snippet = raw.slice(Math.max(0, pos - 80), pos + 80).replace(/\r/g, "");
+					console.error(`[ConfigManager] Parse failed in: ${activeFile}`);
+					console.error(`[ConfigManager] File size: ${raw.length} bytes, cwd: ${process.cwd()}`);
+					console.error(`[ConfigManager] Content around position ${pos}:\n---\n${snippet}\n---`);
+				} else {
+					console.error(`[ConfigManager] Error in: ${activeFile} (cwd: ${process.cwd()})`);
+				}
+			} catch {
+				console.error(`[ConfigManager] Could not read ${activeFile} for diagnostics`);
 			}
-			throw err;
+			throw new Error(`Failed to load config: ${msg}`);
 		}
 	}
 
