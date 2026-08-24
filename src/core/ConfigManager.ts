@@ -8,7 +8,9 @@ export class ConfigManager {
 	private configPath: string;
 
 	constructor(configPath?: string) {
-		this.configPath = configPath || path.resolve(process.cwd(), "config.json");
+		// __dirname is always the directory of the compiled file (dist/).
+		// config.json lives one level up in the project root, regardless of CWD.
+		this.configPath = configPath || path.resolve(__dirname, "..", "config.json");
 	}
 
 	private deepMerge(base: any, override: any): any {
