@@ -29,6 +29,7 @@ export class Application {
 	private idleTimer: NodeJS.Timeout | null = null;
 	private scoreboardServer: ScoreboardServer | null = null;
 	private scoliaHistoryScraper: ScoliaHistoryScraper | null = null;
+	private scoreboardShowing = false;
 	private running = false;
 
 	constructor(private configPath?: string) {
@@ -104,6 +105,14 @@ export class Application {
 
 		this.playwrightController.on("game-mode", (mode: string) => {
 			this.gameState.setGameMode(mode);
+			// Bull-throw phase started — cancel scoreboard timer and return to game view
+			if (this.config.scoreboard?.enabled) {
+				this.cancelIdleTimer();
+				if (this.scoreboardShowing) {
+					this.scoreboardShowing = false;
+					this.playwrightController.showGame().catch(() => {});
+				}
+			}
 		});
 
 		// Route Scolia messages intercepted from the web app's WebSocket
@@ -116,6 +125,7 @@ export class Application {
 			this.logger.info(`🎮 Game started with ${names.length} players`);
 			this.cancelIdleTimer();
 			if (this.config.scoreboard?.enabled) {
+				this.scoreboardShowing = false;
 				this.playwrightController.showGame().catch(() => {});
 			}
 			if (names.length >= 4) {
@@ -178,6 +188,9 @@ export class Application {
 					this.scoliaHistoryScraper = new ScoliaHistoryScraper(this.logger, baseUrl);
 
 					await this.playwrightController.openScoreboardPage(`http://127.0.0.1:${port}`);
+					// Opening a new tab steals browser focus — return focus to Scolia immediately.
+					// The idle timer will switch to scoreboard if no game starts within startupDelay.
+					await this.playwrightController.showGame();
 
 					// Refresh stats immediately, then show scoreboard if no game starts soon
 					await this.refreshScoreboardStats(players);
@@ -272,6 +285,14 @@ export class Application {
 					break;
 
 				case "THROW_DETECTED": {
+					// Any throw means game activity is happening — cancel scoreboard idle timer
+					if (this.config.scoreboard?.enabled) {
+						this.cancelIdleTimer();
+						if (this.scoreboardShowing) {
+							this.scoreboardShowing = false;
+							this.playwrightController.showGame().catch(() => {});
+						}
+					}
 					// Social API wraps data in payload; browser WS (proxyWebSocket:true) sends it flat
 					const throwPayload = msg.payload ?? { sector: msg.sector, coordinates: msg.coordinates, bounceout: msg.bounceout };
 					this.eventOrchestrator.handleThrowDetected(throwPayload);
@@ -330,6 +351,7 @@ export class Application {
 			this.idleTimer = null;
 			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
 			await this.refreshScoreboardStats(players);
+			this.scoreboardShowing = true;
 			await this.playwrightController.showScoreboard();
 		}, delayMs);
 	}
