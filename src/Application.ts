@@ -197,9 +197,8 @@ export class Application {
 					// The idle timer will switch to scoreboard if no game starts within startupDelay.
 					await this.playwrightController.showGame();
 
-					// Refresh stats immediately, then show scoreboard if no game starts soon
-					await this.refreshScoreboardStats(players);
-					const startupDelay = sb.startupDelayMs ?? 15000;
+					// Start idle timer — scrape runs inside the timer callback once auth is ready
+					const startupDelay = sb.startupDelayMs ?? 90000;
 					this.startIdleTimer(startupDelay);
 				}
 			}
