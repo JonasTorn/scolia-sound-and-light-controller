@@ -3,11 +3,6 @@ import { PlayerStats } from "../types/index";
 
 export type NewPageFn = () => Promise<import("playwright").Page | null>;
 
-interface CapturedResponse {
-	url: string;
-	body: unknown;
-}
-
 export class ScoliaHistoryScraper {
 	constructor(
 		private logger: Logger,
@@ -23,95 +18,82 @@ export class ScoliaHistoryScraper {
 			return this.emptyStats(vipPlayers);
 		}
 
-		const captured: CapturedResponse[] = [];
-
-		page.on("response", async (response) => {
-			const ct = response.headers()["content-type"] ?? "";
-			if (!ct.includes("json")) return;
-			const url = response.url();
-			// Skip Next.js build manifests and static assets
-			if (url.includes("/_next/") || url.includes("/static/") || url.includes("/_buildManifest")) return;
-			try {
-				const body = await response.json();
-				const size = JSON.stringify(body).length;
-				if (this.discoverMode) {
-					this.logger.info(`Scoreboard: [discovery] ${url} — ${size} bytes`);
-					this.logger.info(`Scoreboard: [discovery] body: ${JSON.stringify(body).slice(0, 800)}`);
-				} else {
-					this.logger.debug(`Scoreboard: [history] ${url} — ${size} bytes`);
-				}
-				captured.push({ url, body });
-			} catch { /* ignore */ }
-		});
-
+		const allGames: unknown[] = [];
 		try {
+			// Navigate to /history to activate auth cookies for same-origin API calls
 			await page.goto(`${this.baseUrl}/history`, {
-				waitUntil: "networkidle",
-				timeout: 30000,
+				waitUntil: "domcontentloaded",
+				timeout: 20000,
+			}).catch((err: unknown) => {
+				this.logger.warn(`Scoreboard: /history navigation: ${err}`);
 			});
+
+			// Fetch all finished games via direct API call — no date filter = all-time stats
+			const LIMIT = 50;
+			let offset = 0;
+			let totalCount = Infinity;
+
+			while (offset < Math.min(totalCount, 500)) {
+				const qs = [
+					...Array.from({ length: 8 }, (_, i) => `numberOfPlayers[${i}]=${i + 1}`),
+					`offset=${offset}`,
+					`limit=${LIMIT}`,
+					`outcome=Finished`,
+				].join("&");
+
+				const result = await page.evaluate(async (apiUrl: string) => {
+					try {
+						const res = await fetch(apiUrl, { credentials: "include" });
+						if (!res.ok) return null;
+						return res.json();
+					} catch {
+						return null;
+					}
+				}, `/api/games?${qs}`) as Record<string, unknown> | null;
+
+				if (!result) {
+					this.logger.warn(`Scoreboard: /api/games returned null at offset ${offset}`);
+					break;
+				}
+
+				const batch = Array.isArray(result["data"]) ? (result["data"] as unknown[]) : [];
+				if (batch.length === 0) break;
+
+				if (!isFinite(totalCount)) {
+					totalCount = Number(result["count"] ?? 0) || Infinity;
+					this.logger.info(`Scoreboard: API reports ${totalCount} total finished games`);
+				}
+
+				if (this.discoverMode && offset === 0) {
+					this.logger.info(
+						`Scoreboard: [discovery] first game object: ${JSON.stringify(batch[0]).slice(0, 4000)}`,
+					);
+				}
+
+				allGames.push(...batch);
+				offset += batch.length;
+			}
 		} catch (err) {
-			this.logger.warn(`Scoreboard: History page load failed: ${err}`);
+			this.logger.warn(`Scoreboard: API fetch error: ${err}`);
 		} finally {
 			await page.close().catch(() => {});
 		}
 
-		if (captured.length === 0) {
-			this.logger.warn("Scoreboard: No JSON API responses captured from /history — page may require interaction or login");
+		if (allGames.length === 0) {
+			this.logger.warn("Scoreboard: No games returned from /api/games");
 			return this.emptyStats(vipPlayers);
 		}
 
-		this.logger.info(`Scoreboard: Captured ${captured.length} JSON responses from /history`);
-		return this.parseResponses(captured, vipPlayers);
-	}
-
-	private parseResponses(captured: CapturedResponse[], vipPlayers: string[]): PlayerStats[] {
-		// Try each response to find one that looks like a games list
-		for (const { url, body } of captured) {
-			const games = this.extractGamesArray(body);
-			if (games && games.length > 0) {
-				this.logger.info(`Scoreboard: Found ${games.length} game records in ${url}`);
-				return this.aggregateStats(games, vipPlayers);
-			}
-		}
-
-		this.logger.warn(
-			"Scoreboard: Could not parse game records from /history responses. " +
-			"Enable scoreboard.discoverStats in config to log full response bodies.",
-		);
-		return this.emptyStats(vipPlayers);
-	}
-
-	private extractGamesArray(body: unknown): unknown[] | null {
-		if (!body || typeof body !== "object") return null;
-
-		// Top-level array
-		if (Array.isArray(body) && body.length > 0) return body;
-
-		const obj = body as Record<string, unknown>;
-
-		// Common API wrapper keys
-		for (const key of ["games", "matches", "history", "results", "data", "items", "records", "sessions"]) {
-			if (Array.isArray(obj[key]) && (obj[key] as unknown[]).length > 0) {
-				return obj[key] as unknown[];
-			}
-		}
-
-		// One level deeper: { data: { games: [...] } }
-		if (obj["data"] && typeof obj["data"] === "object" && !Array.isArray(obj["data"])) {
-			return this.extractGamesArray(obj["data"]);
-		}
-
-		return null;
+		this.logger.info(`Scoreboard: Fetched ${allGames.length} total finished games`);
+		return this.aggregateStats(allGames, vipPlayers);
 	}
 
 	private aggregateStats(games: unknown[], vipPlayers: string[]): PlayerStats[] {
 		const validModes = ["x01", "elimination"];
 
-		// Filter by game mode and VIP player count
 		const filtered = (games as Record<string, unknown>[]).filter((game) => {
-			const mode = String(
-				game["gameType"] ?? game["mode"] ?? game["type"] ?? game["gameMode"] ?? "",
-			).toLowerCase();
+			// Scolia uses game.type = "X01" | "Elimination" | etc.
+			const mode = String(game["type"] ?? game["gameType"] ?? game["mode"] ?? "").toLowerCase();
 			if (!validModes.some((m) => mode.includes(m))) return false;
 
 			const gamePlayers = this.getPlayerList(game);
@@ -124,7 +106,6 @@ export class ScoliaHistoryScraper {
 			`(≥${this.vipMinPlayers} VIP players, X01/Elimination)`,
 		);
 
-		// Build per-player accumulators
 		const acc = new Map<string, PlayerStats>();
 		for (const nick of vipPlayers) {
 			acc.set(nick, {
@@ -139,31 +120,62 @@ export class ScoliaHistoryScraper {
 			});
 		}
 
+		let discoveryLogged = false;
+
 		for (const game of filtered as Record<string, unknown>[]) {
-			const players = (game["players"] ?? game["participants"] ?? game["playerResults"] ?? []) as Record<string, unknown>[];
+			const players = (
+				game["players"] ?? game["participants"] ?? game["playerResults"] ?? []
+			) as Record<string, unknown>[];
+
 			for (const p of players) {
-				const nick = String(p["nickname"] ?? p["name"] ?? p["username"] ?? p["playerName"] ?? "");
+				const nick = String(
+					p["nickname"] ?? p["name"] ?? p["username"] ?? p["playerName"] ?? "",
+				);
 				if (!nick || !acc.has(nick)) continue;
+
+				// Log first matching player object to reveal actual field names
+				if (this.discoverMode && !discoveryLogged) {
+					this.logger.info(
+						`Scoreboard: [discovery] player object for "${nick}": ${JSON.stringify(p)}`,
+					);
+					discoveryLogged = true;
+				}
+
 				const s = acc.get(nick)!;
 				s.gamesPlayed++;
 
-				// Win detection — try multiple field shapes
+				// Win detection — try common Scolia field shapes
 				const won = p["won"] ?? p["winner"] ?? p["isWinner"] ?? p["win"];
-				if (won === true || won === 1 || won === "true") s.wins++;
+				if (won === true || won === 1 || won === "true" || won === "won") s.wins++;
 
-				// Stat counters — try multiple field names Scolia might use
-				s.eliminations += Number(p["eliminations"] ?? p["eliminationCount"] ?? p["timesEliminated"] ?? 0);
-				s.oneEighties  += Number(p["oneEighties"] ?? p["180s"] ?? p["oneEighty"] ?? p["scores180"] ?? 0);
-				s.busts        += Number(p["busts"] ?? p["bustCount"] ?? p["bust"] ?? 0);
+				// Stats — check both flat fields and statistics/stats sub-object
+				const sub = (
+					typeof p["statistics"] === "object" && p["statistics"] !== null ? p["statistics"]
+					: typeof p["stats"] === "object" && p["stats"] !== null ? p["stats"]
+					: {}
+				) as Record<string, unknown>;
 
+				s.oneEighties += Number(
+					p["oneEighties"] ?? p["180s"] ?? p["oneEighty"] ?? p["scores180"] ??
+					sub["oneEighties"] ?? sub["180s"] ?? sub["oneEighty"] ?? sub["scores180"] ?? 0,
+				);
+				s.eliminations += Number(
+					p["eliminations"] ?? p["eliminationCount"] ?? p["timesEliminated"] ??
+					sub["eliminations"] ?? sub["eliminationCount"] ?? sub["timesEliminated"] ?? 0,
+				);
+				s.busts += Number(
+					p["busts"] ?? p["bustCount"] ?? p["bust"] ??
+					sub["busts"] ?? sub["bustCount"] ?? sub["bust"] ?? 0,
+				);
 				const checkout = Number(
-					p["highestCheckout"] ?? p["checkout"] ?? p["bestCheckout"] ?? p["highCheckout"] ?? 0,
+					p["highestCheckout"] ?? p["checkout"] ?? p["bestCheckout"] ?? p["highCheckout"] ??
+					sub["highestCheckout"] ?? sub["checkout"] ?? sub["bestCheckout"] ??
+					sub["highFinish"] ?? sub["highCheckout"] ?? 0,
 				);
 				if (checkout > s.highestCheckout) s.highestCheckout = checkout;
 			}
 		}
 
-		// Compute win percentages
 		for (const s of acc.values()) {
 			s.winPct = s.gamesPlayed > 0 ? Math.round((s.wins / s.gamesPlayed) * 100) : 0;
 		}
@@ -179,9 +191,10 @@ export class ScoliaHistoryScraper {
 		return result;
 	}
 
-	// Extract player nicknames from a game object (handles different array shapes)
 	private getPlayerList(game: Record<string, unknown>): string[] {
-		const players = (game["players"] ?? game["participants"] ?? game["playerResults"] ?? []) as Record<string, unknown>[];
+		const players = (
+			game["players"] ?? game["participants"] ?? game["playerResults"] ?? []
+		) as Record<string, unknown>[];
 		return players
 			.map((p) => String(p["nickname"] ?? p["name"] ?? p["username"] ?? p["playerName"] ?? ""))
 			.filter(Boolean);
