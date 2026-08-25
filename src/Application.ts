@@ -354,7 +354,17 @@ export class Application {
 		this.idleTimer = setTimeout(async () => {
 			this.idleTimer = null;
 			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
-			await this.refreshScoreboardStats(players);
+			const hasData = await this.refreshScoreboardStats(players);
+			if (!hasData) {
+				// API returned empty — auth token may be stale. Retry once in 30s.
+				this.logger.info("Scoreboard: No data on first attempt, retrying in 30s");
+				setTimeout(async () => {
+					await this.refreshScoreboardStats(players);
+					this.scoreboardShowing = true;
+					await this.playwrightController.showScoreboard();
+				}, 30000);
+				return;
+			}
 			this.scoreboardShowing = true;
 			await this.playwrightController.showScoreboard();
 		}, delayMs);
@@ -367,16 +377,20 @@ export class Application {
 		}
 	}
 
-	private async refreshScoreboardStats(players: string[]): Promise<void> {
-		if (!this.scoreboardServer || !this.scoliaHistoryScraper) return;
+	// Returns true if stats were fetched (even if all zeros), false if API was unreachable.
+	private async refreshScoreboardStats(players: string[]): Promise<boolean> {
+		if (!this.scoreboardServer || !this.scoliaHistoryScraper) return false;
 		try {
 			const stats = await this.scoliaHistoryScraper.scrape(
 				() => this.playwrightController.createTemporaryPage(),
 				players,
 			);
+			if (!stats) return false;
 			this.scoreboardServer.updateStats(stats);
+			return true;
 		} catch (err) {
 			this.logger.warn(`Scoreboard: Failed to refresh stats: ${err}`);
+			return false;
 		}
 	}
 

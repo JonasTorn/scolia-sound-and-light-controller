@@ -11,11 +11,11 @@ export class ScoliaHistoryScraper {
 		private discoverMode: boolean = false,
 	) {}
 
-	async scrape(newPage: NewPageFn, vipPlayers: string[]): Promise<PlayerStats[]> {
+	async scrape(newPage: NewPageFn, vipPlayers: string[]): Promise<PlayerStats[] | null> {
 		const page = await newPage();
 		if (!page) {
 			this.logger.warn("Scoreboard: Could not open page for history scraping");
-			return this.emptyStats(vipPlayers);
+			return null;
 		}
 
 		const allGames: unknown[] = [];
@@ -96,8 +96,8 @@ export class ScoliaHistoryScraper {
 		}
 
 		if (allGames.length === 0) {
-			this.logger.warn("Scoreboard: No games returned from /api/games");
-			return this.emptyStats(vipPlayers);
+			this.logger.warn("Scoreboard: No games returned from /api/games — returning null for retry");
+			return null;
 		}
 
 		this.logger.info(`Scoreboard: Fetched ${allGames.length} total finished games`);
