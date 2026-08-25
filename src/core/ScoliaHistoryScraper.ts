@@ -20,10 +20,11 @@ export class ScoliaHistoryScraper {
 
 		const allGames: unknown[] = [];
 		try {
-			// Navigate to /history to activate auth cookies for same-origin API calls
+			// Navigate to /history and wait for network idle so the SPA has time to
+			// silently refresh the auth token before we make our API calls.
 			await page.goto(`${this.baseUrl}/history`, {
-				waitUntil: "domcontentloaded",
-				timeout: 20000,
+				waitUntil: "networkidle",
+				timeout: 30000,
 			}).catch((err: unknown) => {
 				this.logger.warn(`Scoreboard: /history navigation: ${err}`);
 			});
