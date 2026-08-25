@@ -185,7 +185,12 @@ export class Application {
 					this.scoreboardServer = new ScoreboardServer(this.logger);
 					this.scoreboardServer.start(port);
 
-					this.scoliaHistoryScraper = new ScoliaHistoryScraper(this.logger, baseUrl);
+					this.scoliaHistoryScraper = new ScoliaHistoryScraper(
+						this.logger,
+						baseUrl,
+						sb.vipMinPlayers ?? 3,
+						sb.discoverStats ?? false,
+					);
 
 					await this.playwrightController.openScoreboardPage(`http://127.0.0.1:${port}`);
 					// Opening a new tab steals browser focus — return focus to Scolia immediately.

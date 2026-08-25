@@ -184,9 +184,11 @@ export interface PlayerStats {
 	nickname: string;
 	gamesPlayed: number;
 	wins: number;
-	winPct: number;        // 0–100
+	winPct: number;          // 0–100
 	eliminations: number;
-	oneEighties?: number;
+	oneEighties: number;
+	busts: number;
+	highestCheckout: number; // points of the winning dart (0 = no checkout recorded)
 }
 
 export interface ScoreboardConfig {
@@ -195,6 +197,8 @@ export interface ScoreboardConfig {
 	idleDelayMs?: number;    // ms after game ends before switching to scoreboard (default 30000)
 	startupDelayMs?: number; // ms after startup before showing scoreboard if no game (default 15000)
 	players?: string[];      // explicit player list — defaults to keys of config.players
+	vipMinPlayers?: number;  // min VIP players required in a game for it to count (default 3)
+	discoverStats?: boolean; // log all /history API responses for endpoint discovery
 }
 
 export interface FullConfig {
