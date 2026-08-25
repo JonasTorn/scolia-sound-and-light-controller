@@ -198,6 +198,9 @@ export class PlaywrightController extends EventEmitter {
 							} else if (msg.type === "API::BULL_THROW::GAME_ENDED") {
 								this.processedBullThrowPlayers.clear();
 								this.logger.info("Playwright WS recv: API::BULL_THROW::GAME_ENDED");
+							} else if (msg.type === "API::COMMON::REFRESH_CLIENT_TOKEN") {
+								this.logger.info("Playwright WS recv: API::COMMON::REFRESH_CLIENT_TOKEN");
+								this.emit("token-refresh");
 							} else {
 								this.logger.info(`Playwright WS recv: ${msg.type}`);
 							}

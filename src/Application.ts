@@ -30,6 +30,7 @@ export class Application {
 	private scoreboardServer: ScoreboardServer | null = null;
 	private scoliaHistoryScraper: ScoliaHistoryScraper | null = null;
 	private scoreboardShowing = false;
+	private scoreboardHasData = false;
 	private running = false;
 
 	constructor(private configPath?: string) {
@@ -115,6 +116,11 @@ export class Application {
 			}
 		});
 
+		// Scolia periodically refreshes the auth JWT — good moment to populate scoreboard stats
+		this.playwrightController.on("token-refresh", () => {
+			this.onTokenRefreshed();
+		});
+
 		// Route Scolia messages intercepted from the web app's WebSocket
 		this.playwrightController.on("scoliamessage", (data: string) => {
 			this.handleScoliaMessage(data);
@@ -197,9 +203,10 @@ export class Application {
 					// The idle timer will switch to scoreboard if no game starts within startupDelay.
 					await this.playwrightController.showGame();
 
-					// Start idle timer — scrape runs inside the timer callback once auth is ready
-					const startupDelay = sb.startupDelayMs ?? 90000;
-					this.startIdleTimer(startupDelay);
+					// Show scoreboard after startup delay if no game starts.
+					// Stats are populated by onTokenRefreshed() when Scolia refreshes auth (~70s in).
+					const startupDelay = sb.startupDelayMs ?? 30000;
+					this.startIdleTimer(startupDelay, false);
 				}
 			}
 
@@ -349,25 +356,30 @@ export class Application {
 		}
 	}
 
-	private startIdleTimer(delayMs: number): void {
+	// refreshBeforeShow: true = scrape fresh stats before showing (post-game); false = just show (startup)
+	private startIdleTimer(delayMs: number, refreshBeforeShow = true): void {
 		this.cancelIdleTimer();
 		this.idleTimer = setTimeout(async () => {
 			this.idleTimer = null;
-			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
-			const hasData = await this.refreshScoreboardStats(players);
-			if (!hasData) {
-				// API returned empty — auth token may be stale. Retry once in 30s.
-				this.logger.info("Scoreboard: No data on first attempt, retrying in 30s");
-				setTimeout(async () => {
-					await this.refreshScoreboardStats(players);
-					this.scoreboardShowing = true;
-					await this.playwrightController.showScoreboard();
-				}, 30000);
-				return;
+			if (refreshBeforeShow) {
+				const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
+				await this.refreshScoreboardStats(players);
 			}
 			this.scoreboardShowing = true;
 			await this.playwrightController.showScoreboard();
 		}, delayMs);
+	}
+
+	// Called when Scolia sends REFRESH_CLIENT_TOKEN — auth cookies are about to be fresh.
+	// Wait 2s then scrape stats. This handles the startup case where the initial timer fires
+	// before auth is ready.
+	private onTokenRefreshed(): void {
+		if (!this.config.scoreboard?.enabled || !this.scoreboardServer) return;
+		setTimeout(async () => {
+			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
+			const ok = await this.refreshScoreboardStats(players);
+			if (ok) this.scoreboardHasData = true;
+		}, 2000);
 	}
 
 	private cancelIdleTimer(): void {
@@ -377,7 +389,7 @@ export class Application {
 		}
 	}
 
-	// Returns true if stats were fetched (even if all zeros), false if API was unreachable.
+	// Returns true if stats were fetched successfully, false if API was unreachable.
 	private async refreshScoreboardStats(players: string[]): Promise<boolean> {
 		if (!this.scoreboardServer || !this.scoliaHistoryScraper) return false;
 		try {
@@ -387,6 +399,7 @@ export class Application {
 			);
 			if (!stats) return false;
 			this.scoreboardServer.updateStats(stats);
+			this.scoreboardHasData = true;
 			return true;
 		} catch (err) {
 			this.logger.warn(`Scoreboard: Failed to refresh stats: ${err}`);
