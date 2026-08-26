@@ -94,9 +94,13 @@ export class GameLog {
 
 	// Returns aggregated stats for the given VIP players.
 	// Only games with >= vipMinPlayers VIP participants count.
-	getPlayerStats(vipPlayers: string[], vipMinPlayers: number): PlayerStats[] {
+	// afterMs: if > 0, only count games that started AFTER this timestamp (to avoid
+	// double-counting with HistoryStore when a history export has been loaded).
+	getPlayerStats(vipPlayers: string[], vipMinPlayers: number, afterMs = 0): PlayerStats[] {
 		const qualifying = this.records.filter(
-			(r) => r.players.filter((p) => vipPlayers.includes(p)).length >= vipMinPlayers,
+			(r) =>
+				r.players.filter((p) => vipPlayers.includes(p)).length >= vipMinPlayers &&
+				(afterMs === 0 || r.timestamp > afterMs),
 		);
 		return vipPlayers.map((nick) => {
 			const myGames = qualifying.filter((r) => r.players.includes(nick));

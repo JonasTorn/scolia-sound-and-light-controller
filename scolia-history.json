@@ -1,0 +1,1579 @@
+{
+  "fetchedAt": "2026-08-26T10:58:03.764Z",
+  "boardId": "67a322937482b642fa656d8a",
+  "boardName": "Digiwise HQ",
+  "games": [
+    {
+      "_id": "6a8dca60351af2423fc6059e",
+      "type": "Elimination",
+      "startTime": "2026-08-25T17:01:20.614Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8dc6c2351af2423fc5cf7f",
+      "type": "X01",
+      "startTime": "2026-08-25T16:45:54.631Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 7
+        }
+      }
+    },
+    {
+      "_id": "6a8dc5fd351af2423fc5bf8e",
+      "type": "Elimination",
+      "startTime": "2026-08-25T16:42:37.758Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8dc4cf351af2423fc5aea3",
+      "type": "Elimination",
+      "startTime": "2026-08-25T16:37:35.094Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8dc417351af2423fc5a066",
+      "type": "Elimination",
+      "startTime": "2026-08-25T16:34:31.950Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8d7840f5cfc0287891ecfe",
+      "type": "Elimination",
+      "startTime": "2026-08-25T11:10:56.078Z",
+      "players": [
+        "T10",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8d76edf5cfc0287891e641",
+      "type": "Elimination",
+      "startTime": "2026-08-25T11:05:17.860Z",
+      "players": [
+        "T10",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8d7522f5cfc0287891dd40",
+      "type": "Elimination",
+      "startTime": "2026-08-25T10:57:38.003Z",
+      "players": [
+        "T10",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8c20f1cf91830ddd2bdc20",
+      "type": "Elimination",
+      "startTime": "2026-08-24T10:46:09.065Z",
+      "players": [
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8c2075cf91830ddd2bda39",
+      "type": "Elimination",
+      "startTime": "2026-08-24T10:44:05.559Z",
+      "players": [
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8c1fc0cf91830ddd2bd71d",
+      "type": "Elimination",
+      "startTime": "2026-08-24T10:41:04.417Z",
+      "players": [
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8c1f2dcf91830ddd2bd379",
+      "type": "Elimination",
+      "startTime": "2026-08-24T10:38:37.832Z",
+      "players": [
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8c1e2fcf91830ddd2bcbfe",
+      "type": "Elimination",
+      "startTime": "2026-08-24T10:34:23.332Z",
+      "players": [
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a884ef0cf91830ddd1232b1",
+      "type": "Elimination",
+      "startTime": "2026-08-21T13:13:20.400Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a884df0cf91830ddd122ae9",
+      "type": "Elimination",
+      "startTime": "2026-08-21T13:09:04.036Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a884c71cf91830ddd121f98",
+      "type": "Elimination",
+      "startTime": "2026-08-21T13:02:41.414Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a882d9b74508e48190d5169",
+      "type": "Elimination",
+      "startTime": "2026-08-21T10:51:07.224Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a882bf674508e48190d482b",
+      "type": "Elimination",
+      "startTime": "2026-08-21T10:44:06.357Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a882a0974508e48190d3bc6",
+      "type": "Elimination",
+      "startTime": "2026-08-21T10:35:53.519Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a86ddff74508e4819042bbb",
+      "type": "Elimination",
+      "startTime": "2026-08-20T10:59:11.825Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a86dbe374508e4819042416",
+      "type": "Elimination",
+      "startTime": "2026-08-20T10:50:11.513Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a85ae55c3cabd4d173996e1",
+      "type": "Elimination",
+      "startTime": "2026-08-19T13:23:33.570Z",
+      "players": [
+        "T10",
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a85ad4cc3cabd4d17398e88",
+      "type": "Elimination",
+      "startTime": "2026-08-19T13:19:08.336Z",
+      "players": [
+        "T10",
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a858aaa0b872aed380d2d6b",
+      "type": "Elimination",
+      "startTime": "2026-08-19T10:51:22.623Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8588d00b872aed380d1c98",
+      "type": "Elimination",
+      "startTime": "2026-08-19T10:43:28.178Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Luca",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a82eb81b54163b924d38c7a",
+      "type": "Elimination",
+      "startTime": "2026-08-17T11:07:45.725Z",
+      "players": [
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a82e8ecb54163b924d37fd6",
+      "type": "Elimination",
+      "startTime": "2026-08-17T10:56:44.530Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a82e754b54163b924d375ff",
+      "type": "Elimination",
+      "startTime": "2026-08-17T10:49:56.302Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f43cd5eb0ec2fea094341",
+      "type": "X01",
+      "startTime": "2026-08-14T16:35:25.673Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f42265eb0ec2fea092f6b",
+      "type": "Elimination",
+      "startTime": "2026-08-14T16:28:22.813Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f36445eb0ec2fea08a05b",
+      "type": "Elimination",
+      "startTime": "2026-08-14T15:37:40.866Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f1acf5eb0ec2fea07b7c0",
+      "type": "Elimination",
+      "startTime": "2026-08-14T13:40:31.543Z",
+      "players": [
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f19c45eb0ec2fea07aedf",
+      "type": "Elimination",
+      "startTime": "2026-08-14T13:36:04.994Z",
+      "players": [
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f18d55eb0ec2fea07a8c2",
+      "type": "Elimination",
+      "startTime": "2026-08-14T13:32:05.707Z",
+      "players": [
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f17c75eb0ec2fea079f76",
+      "type": "X01",
+      "startTime": "2026-08-14T13:27:35.961Z",
+      "players": [
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 17
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7f17355eb0ec2fea079d44",
+      "type": "X01",
+      "startTime": "2026-08-14T13:25:09.492Z",
+      "players": [
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 63
+        }
+      }
+    },
+    {
+      "_id": "6a7ef2cc5eb0ec2fea06a66f",
+      "type": "Elimination",
+      "startTime": "2026-08-14T10:49:48.945Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7ef1765eb0ec2fea06a03c",
+      "type": "Elimination",
+      "startTime": "2026-08-14T10:44:06.590Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7ef02b5eb0ec2fea0698ac",
+      "type": "Elimination",
+      "startTime": "2026-08-14T10:38:35.077Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7de3026d017eb4709bf7dc",
+      "type": "Elimination",
+      "startTime": "2026-08-13T15:30:10.109Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7de1e96d017eb4709be949",
+      "type": "X01",
+      "startTime": "2026-08-13T15:25:29.980Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7de0586d017eb4709bddd2",
+      "type": "Elimination",
+      "startTime": "2026-08-13T15:18:48.915Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7ddf896d017eb4709bd7ad",
+      "type": "Elimination",
+      "startTime": "2026-08-13T15:15:21.109Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7da6d911b872c981500241",
+      "type": "Elimination",
+      "startTime": "2026-08-13T11:13:29.105Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7da4a711b872c9814ffa8e",
+      "type": "Elimination",
+      "startTime": "2026-08-13T11:04:07.613Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7cac1111b872c9814bc98b",
+      "type": "Elimination",
+      "startTime": "2026-08-12T17:23:29.883Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7cab8911b872c9814bc1f4",
+      "type": "X01",
+      "startTime": "2026-08-12T17:21:13.492Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 17
+        },
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7ca68111b872c9814b7bd9",
+      "type": "Elimination",
+      "startTime": "2026-08-12T16:59:45.904Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7ca01311b872c9814b2ed7",
+      "type": "X01",
+      "startTime": "2026-08-12T16:32:19.638Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 16
+        }
+      }
+    },
+    {
+      "_id": "6a7c9d1c11b872c9814b0ffe",
+      "type": "Elimination",
+      "startTime": "2026-08-12T16:19:40.758Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c9c3f11b872c9814b0551",
+      "type": "X01",
+      "startTime": "2026-08-12T16:15:59.080Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 13
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c954711b872c9814ab77d",
+      "type": "Elimination",
+      "startTime": "2026-08-12T15:46:15.826Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c946811b872c9814aaefa",
+      "type": "X01",
+      "startTime": "2026-08-12T15:42:32.724Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 21
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c8db611b872c9814a6363",
+      "type": "Elimination",
+      "startTime": "2026-08-12T15:13:58.929Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c8c2911b872c9814a5423",
+      "type": "X01",
+      "startTime": "2026-08-12T15:07:21.067Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 11
+        },
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c507c09b3fe528eb7bbac",
+      "type": "Elimination",
+      "startTime": "2026-08-12T10:52:44.421Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c4f7e09b3fe528eb7b6e4",
+      "type": "Elimination",
+      "startTime": "2026-08-12T10:48:30.956Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c4e2409b3fe528eb7b03e",
+      "type": "Elimination",
+      "startTime": "2026-08-12T10:42:44.804Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7b56f7d332c55f5b01044c",
+      "type": "X01",
+      "startTime": "2026-08-11T17:08:07.195Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 6
+        },
+        "Digiwise": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7b4bcfd332c55f5b00721c",
+      "type": "X01",
+      "startTime": "2026-08-11T16:20:31.497Z",
+      "players": [
+        "Digiwise",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Digiwise": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 29
+        }
+      }
+    },
+    {
+      "_id": "6a79b64b20bb87ef8ebc0b6b",
+      "type": "Elimination",
+      "startTime": "2026-08-10T11:30:19.278Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    },
+    {
+      "_id": "6a79b44620bb87ef8ebc00a8",
+      "type": "Elimination",
+      "startTime": "2026-08-10T11:21:42.821Z",
+      "players": [
+        "T10",
+        "Sony",
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "T10": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0
+        }
+      }
+    }
+  ]
+}

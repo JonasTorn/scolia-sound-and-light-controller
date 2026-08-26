@@ -5,6 +5,7 @@ import { GameState } from "./core/GameState";
 import { EventOrchestrator } from "./core/EventOrchestrator";
 import { ScoreboardServer } from "./core/ScoreboardServer";
 import { GameLog } from "./core/GameLog";
+import { HistoryStore } from "./core/HistoryStore";
 import { LightSharkController } from "./controllers/LightSharkController";
 import { SoundController } from "./controllers/SoundController";
 import { KNXController } from "./controllers/KNXController";
@@ -29,6 +30,7 @@ export class Application {
 	private idleTimer: NodeJS.Timeout | null = null;
 	private scoreboardServer: ScoreboardServer | null = null;
 	private gameLog: GameLog | null = null;
+	private historyStore: HistoryStore | null = null;
 	private scoreboardShowing = false;
 	private running = false;
 
@@ -67,8 +69,10 @@ export class Application {
 			this.playwrightController,
 		);
 
-		// GameLog — persistent local stats tracker (primary scoreboard data source)
+		// GameLog — persistent local stats tracker for games played while app is running
 		this.gameLog = new GameLog(this.logger);
+		// HistoryStore — one-time Scolia history export (scolia-history.json in project root)
+		this.historyStore = new HistoryStore(this.logger);
 		this.eventOrchestrator.onSpecialEvent = (name, player) => {
 			if (name === "180" && player) this.gameLog?.recordOneEighty(player);
 		};
@@ -374,7 +378,33 @@ export class Application {
 		const sb = this.config.scoreboard;
 		const players = sb?.players ?? Object.keys(this.config.players ?? {});
 		const vipMin = sb?.vipMinPlayers ?? 3;
-		const stats = this.gameLog.getPlayerStats(players, vipMin);
+		const seasonStart = sb?.seasonStartDate ?? "2020-01-01";
+
+		let stats;
+		if (this.historyStore?.available) {
+			const historical = this.historyStore.getPlayerStats(players, vipMin, seasonStart);
+			// Only count GameLog games AFTER the history export to avoid double-counting
+			const live = this.gameLog.getPlayerStats(players, vipMin, this.historyStore.fetchedAtMs);
+			stats = players.map((nick) => {
+				const h = historical.find((s) => s.nickname === nick)!;
+				const l = live.find((s) => s.nickname === nick)!;
+				const gamesPlayed = h.gamesPlayed + l.gamesPlayed;
+				const wins = h.wins + l.wins;
+				return {
+					nickname: nick,
+					gamesPlayed,
+					wins,
+					winPct: gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0,
+					eliminations: l.eliminations,
+					oneEighties: h.oneEighties + l.oneEighties,
+					busts: l.busts,
+					highestCheckout: Math.max(h.highestCheckout, l.highestCheckout),
+				};
+			});
+		} else {
+			stats = this.gameLog.getPlayerStats(players, vipMin);
+		}
+
 		this.scoreboardServer.updateStats(stats);
 	}
 
