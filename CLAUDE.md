@@ -22,14 +22,17 @@ Detta dokument innehåller all kontext som behövs för att göra ändringar i p
 ```
 src/Application.ts (Main bootstrap)
   ├─ src/core/ConfigManager.ts (Config loader)
-  ├─ src/core/GameState.ts (State management + persistence)
+  ├─ src/core/GameState.ts (State management + persistence → data/throw-history.json)
   ├─ src/core/EventOrchestrator.ts (10-step throw orchestrator)
   │  ├─ src/core/EffectResolver.ts (Throw → effect mapping)
   │  └─ src/core/SpecialEventDetector.ts (20 data-driven events)
+  ├─ src/core/GameLog.ts (Live stats tracker → data/game-log.json)
+  ├─ src/core/HistoryStore.ts (One-time Scolia export reader → data/scolia-history.json)
+  ├─ src/core/ScoreboardServer.ts (HTTP server for scoreboard UI on port 3456)
   ├─ src/controllers/LightSharkController.ts (OSC UDP)
   ├─ src/controllers/SoundController.ts (Cross-platform audio)
   ├─ src/controllers/KNXController.ts (KNX/IP gateway)
-  └─ src/controllers/PlaywrightController.ts (Browser + DOM polling)
+  └─ src/controllers/PlaywrightController.ts (Browser + DOM polling → data/scolia-cookies.json)
 
 Data Flow:
 Scolia WebSocket → Application.handleScoliaMessage()
@@ -86,8 +89,29 @@ KNX IP-gateway ──extern länk──→ LightShark (KNX allOff/allOn påverka
 
 - Encapsulates ALL mutable state (throw history, executor tracking, KNX state)
 - Tracks special event fired (prevents duplicates)
-- Saves/loads state to `throw-history.json`
+- Saves/loads state to `data/throw-history.json`
 - Max 100 throws in history (bounded memory)
+
+### src/core/GameLog.ts (Live stats tracker)
+
+- Records every game played while the app is running
+- Tracks per-player: wins, 180s, busts, eliminations
+- Persists to `data/game-log.json` after every game (survives restarts)
+- `getPlayerStats(vipPlayers, vipMin, afterMs?)` — afterMs filters out games before history export date to avoid double-counting with HistoryStore
+- Fed by: `game-started` → `startGame()`, `set-won` → `endGame()`, special event "180" → `recordOneEighty()`, `bust` → `recordBust()`, `eliminated` → `recordElimination()`
+
+### src/core/HistoryStore.ts (Historical Scolia data)
+
+- Reads `data/scolia-history.json` (one-time export from Scolia API)
+- Filters by `seasonStartDate` and `vipMinPlayers`
+- Provides `PlayerStats[]` for games before the export date
+- Optional — app falls back to GameLog-only if file not present
+
+### src/core/ScoreboardServer.ts (Scoreboard HTTP server)
+
+- Serves scoreboard HTML + `/api/stats` JSON on port 3456 (configurable)
+- Stats are merged from HistoryStore (historical) + GameLog (live, after export date)
+- Scoreboard auto-refreshes every 30s, rotates between leaderboard and Hall of Fame views
 
 ### src/core/EffectResolver.ts (Effect mapping)
 
@@ -546,8 +570,11 @@ Segment-specifika ljud har prioritet via `playSoundWithFallback()`:
 - Old `lib/` files (lightshark.js, sound.js, knx.js, playwright.js) moved to `src/controllers/` (converted to TS)
 - Old `index.js` functionality now in `src/Application.ts` + `src/index.ts`
 - `config.json` structure unchanged (still required for startup)
-- `scolia-cookies.json` still generated automatically
-- `throw-history.json` NEW: persisted game state (survives crashes)
+- All runtime data files now live in `data/` folder:
+  - `data/scolia-cookies.json` — generated automatically (Playwright login cookies)
+  - `data/throw-history.json` — persisted throw state (survives crashes)
+  - `data/game-log.json` — live game stats (grows after each game)
+  - `data/scolia-history.json` — committed to git, one-time Scolia history export
 
 ### Running
 
@@ -654,7 +681,11 @@ Goal: different light/sound setups per Scolia game mode (501, Half It, Eliminati
 ### Unified event config (optional refactor)
 Currently `gameEventsConfig` and `specialEventsConfig` are separate objects with slightly different shapes. `gameEventsConfig` handles externally-triggered events (bust, win, takeout — from DOM/WebSocket) while `specialEventsConfig` handles throw-pattern events (180, 69, etc.). The effects they produce are identical. A future refactor could merge them into a single `eventsConfig` with a `trigger` field (`"game:bust"` vs `{ detector: "sumLastN", params: {...} }`), making the whole system one place to look. Low priority — current split works fine.
 
-### Scoreboard app (future, separate project)
-- This app acts as data collector (sessions, throws per player, scores saved to file/DB)
-- Separate app reads that data and displays a scoreboard
-- SQLite or JSON files would be sufficient as the data layer
+### Scoreboard (DONE — built into this app)
+
+- **HistoryStore** reads `data/scolia-history.json` — a one-time export from Scolia's API via `scripts/export-scolia-history.js` (browser console paste-in script, run while logged into game.scoliadarts.com as Laser)
+- **GameLog** tracks all future games live from WebSocket/DOM events
+- Scoreboard merges both sources — HistoryStore for historical wins/180s, GameLog for live eliminations/busts and new games after export date
+- Re-run the export script at the start of each new season and drop the new `scolia-history.json` into `data/`
+- Scolia REST API (`/api/games`, `/api/games/{id}`) only returns the logged-in user's games — not board-wide. Use Laser's account (plays every game) for the export.
+- `GET /api/games` caps at 10 results per page. `startDate` param is an upper bound, not lower bound — don't use it for season filtering; filter in HistoryStore instead.
