@@ -193,12 +193,13 @@ export interface PlayerStats {
 
 export interface ScoreboardConfig {
 	enabled: boolean;
-	port?: number;           // HTTP port for scoreboard server (default 3456)
-	idleDelayMs?: number;    // ms after game ends before switching to scoreboard (default 30000)
-	startupDelayMs?: number; // ms after startup before showing scoreboard if no game (default 15000)
-	players?: string[];      // explicit player list — defaults to keys of config.players
-	vipMinPlayers?: number;  // min VIP players required in a game for it to count (default 3)
-	discoverStats?: boolean; // log all /history API responses for endpoint discovery
+	port?: number;            // HTTP port for scoreboard server (default 3456)
+	idleDelayMs?: number;     // ms after game ends before switching to scoreboard (default 30000)
+	startupDelayMs?: number;  // ms after startup before showing scoreboard if no game (default 5000)
+	players?: string[];       // explicit player list — defaults to keys of config.players
+	vipMinPlayers?: number;   // min VIP players required in a game for it to count (default 3)
+	seasonStartDate?: string; // only count games on or after this date (ISO, e.g. "2026-08-10")
+	discoverStats?: boolean;  // log /history API responses for endpoint discovery
 }
 
 export interface FullConfig {

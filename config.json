@@ -146,8 +146,10 @@
     "_comment_idleDelayMs": "ms after a game ends before switching to scoreboard (default 30s)",
     "startupDelayMs": 5000,
     "_comment_startupDelayMs": "ms after app starts before showing scoreboard if no game detected",
-    "vipMinPlayers": 1,
+    "vipMinPlayers": 3,
     "_comment_vipMinPlayers": "Min number of registered players required in a game for it to count in stats",
+    "seasonStartDate": "2026-08-10",
+    "_comment_seasonStartDate": "Only count games on or after this date (ISO format). Update each season.",
     "discoverStats": true,
     "_comment_discoverStats": "Log all /history API responses at info level — enable once to discover Scolia field names, then remove"
   },

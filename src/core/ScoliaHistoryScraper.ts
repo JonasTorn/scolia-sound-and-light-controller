@@ -9,6 +9,7 @@ export class ScoliaHistoryScraper {
 		private baseUrl: string,
 		private vipMinPlayers: number = 3,
 		private discoverMode: boolean = false,
+		private seasonStartDate: string = "2020-01-01",
 	) {}
 
 	async scrape(newPage: NewPageFn, vipPlayers: string[]): Promise<PlayerStats[] | null> {
@@ -41,7 +42,7 @@ export class ScoliaHistoryScraper {
 					`offset=${offset}`,
 					`limit=${LIMIT}`,
 					`outcome=Finished`,
-					`startDate=2020-01-01`,
+					`startDate=${this.seasonStartDate}`,
 				].join("&");
 
 				const result = await page.evaluate(async (apiUrl: string) => {

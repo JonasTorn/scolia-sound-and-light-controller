@@ -31,6 +31,7 @@ export class Application {
 	private scoliaHistoryScraper: ScoliaHistoryScraper | null = null;
 	private scoreboardShowing = false;
 	private scoreboardHasData = false;
+	private currentGameIsImportant = false;
 	private running = false;
 
 	constructor(private configPath?: string) {
@@ -133,6 +134,13 @@ export class Application {
 			if (this.config.scoreboard?.enabled) {
 				this.scoreboardShowing = false;
 				this.playwrightController.showGame().catch(() => {});
+				const vipPlayers = this.config.scoreboard.players ?? Object.keys(this.config.players ?? {});
+				const vipMin = this.config.scoreboard.vipMinPlayers ?? 3;
+				const vipCount = names.filter((n) => vipPlayers.includes(n)).length;
+				this.currentGameIsImportant = vipCount >= vipMin;
+				if (this.currentGameIsImportant) {
+					this.logger.info(`Scoreboard: game counts (${vipCount}/${vipMin} VIP players)`);
+				}
 			}
 			if (names.length >= 4) {
 				this.soundController.playSound("important_round");
@@ -196,6 +204,7 @@ export class Application {
 						baseUrl,
 						sb.vipMinPlayers ?? 3,
 						sb.discoverStats ?? false,
+						sb.seasonStartDate ?? "2020-01-01",
 					);
 
 					await this.playwrightController.openScoreboardPage(`http://127.0.0.1:${port}`);
@@ -352,7 +361,8 @@ export class Application {
 		await this.eventOrchestrator.handleSetWon();
 		if (this.config.scoreboard?.enabled) {
 			const delay = this.config.scoreboard.idleDelayMs ?? 30000;
-			this.startIdleTimer(delay);
+			// Only re-scrape stats if this was an important game (≥ vipMinPlayers VIP players)
+			this.startIdleTimer(delay, this.currentGameIsImportant);
 		}
 	}
 
@@ -370,15 +380,15 @@ export class Application {
 		}, delayMs);
 	}
 
-	// Called when Scolia sends REFRESH_CLIENT_TOKEN — auth cookies are about to be fresh.
-	// Wait 2s then scrape stats. This handles the startup case where the initial timer fires
-	// before auth is ready.
+	// Called when Scolia sends REFRESH_CLIENT_TOKEN — auth cookies are now fresh.
+	// Only used for the initial data load at startup. Once we have data, stats are only
+	// refreshed explicitly after important games via startIdleTimer(delay, true).
 	private onTokenRefreshed(): void {
-		if (!this.config.scoreboard?.enabled || !this.scoreboardServer) return;
+		if (!this.config.scoreboard?.enabled || !this.scoreboardServer || this.scoreboardHasData) return;
+		this.logger.info("Scoreboard: auth token fresh — fetching season history");
 		setTimeout(async () => {
 			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
-			const ok = await this.refreshScoreboardStats(players);
-			if (ok) this.scoreboardHasData = true;
+			await this.refreshScoreboardStats(players);
 		}, 2000);
 	}
 
