@@ -97,7 +97,7 @@ export class Application {
 				this.gameState.setCurrentPlayer(winner);
 				this.soundController.setCurrentPlayer(winner);
 			}
-			this.gameLog?.endGame(winner ?? null);
+			this.gameLog?.endGame(winner ?? this.gameState.getCurrentPlayer());
 			this.handleSetWon();
 		});
 
