@@ -144,7 +144,7 @@
     "_comment_port": "Local HTTP port for the scoreboard page",
     "idleDelayMs": 30000,
     "_comment_idleDelayMs": "ms after a game ends before switching to scoreboard (default 30s)",
-    "startupDelayMs": 30000,
+    "startupDelayMs": 5000,
     "_comment_startupDelayMs": "ms after app starts before showing scoreboard if no game detected",
     "vipMinPlayers": 1,
     "_comment_vipMinPlayers": "Min number of registered players required in a game for it to count in stats",
