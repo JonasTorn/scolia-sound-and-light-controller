@@ -71,7 +71,7 @@ export class Application {
 
 		// GameLog — persistent local stats tracker for games played while app is running
 		this.gameLog = new GameLog(this.logger);
-		// HistoryStore — one-time Scolia history export (scolia-history.json in project root)
+		// HistoryStore — one-time Scolia history export (data/scolia-history.json)
 		this.historyStore = new HistoryStore(this.logger);
 		this.eventOrchestrator.onSpecialEvent = (name, player) => {
 			if (name === "180" && player) this.gameLog?.recordOneEighty(player);

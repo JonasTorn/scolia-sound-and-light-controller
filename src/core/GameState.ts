@@ -20,7 +20,7 @@ export class GameState {
 
 	constructor(persistencePath?: string) {
 		this.persistencePath =
-			persistencePath || path.resolve(process.cwd(), "throw-history.json");
+			persistencePath || path.resolve(process.cwd(), "data", "throw-history.json");
 		this.loadFromDisk();
 	}
 

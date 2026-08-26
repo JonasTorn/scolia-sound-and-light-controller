@@ -28,7 +28,7 @@ interface ActiveGame {
 }
 
 const MAX_RECORDS = 1000;
-const SAVE_PATH = path.resolve(__dirname, "..", "..", "game-log.json");
+const SAVE_PATH = path.resolve(__dirname, "..", "..", "data", "game-log.json");
 
 export class GameLog {
 	private records: GameRecord[] = [];

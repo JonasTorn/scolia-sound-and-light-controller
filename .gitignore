@@ -1,8 +1,9 @@
 node_modules/
 dist/
 *.log
-throw-history.json
-scolia-cookies.json
+data/throw-history.json
+data/game-log.json
+data/scolia-cookies.json
 config.secrets.json
 sounds/
 overlays/

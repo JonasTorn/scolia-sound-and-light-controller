@@ -24,7 +24,7 @@ interface HistoryFile {
 	games: HistoryGame[];
 }
 
-const HISTORY_PATH = path.resolve(__dirname, "..", "..", "scolia-history.json");
+const HISTORY_PATH = path.resolve(__dirname, "..", "..", "data", "scolia-history.json");
 
 export class HistoryStore {
 	private data: HistoryFile | null = null;
@@ -95,7 +95,7 @@ export class HistoryStore {
 					`HistoryStore: loaded ${raw.games.length} games (exported ${raw.fetchedAt})`,
 				);
 			} else {
-				this.logger.info("HistoryStore: no scolia-history.json found — historical stats unavailable");
+				this.logger.info("HistoryStore: no data/scolia-history.json found — historical stats unavailable");
 			}
 		} catch (err) {
 			this.logger.warn(`HistoryStore: failed to load: ${err}`);

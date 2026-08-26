@@ -94,7 +94,7 @@ export class PlaywrightController extends EventEmitter {
 			// Load saved cookies if available
 			const cookieFile =
 				this.config.cookieFile ||
-				path.join(process.cwd(), "scolia-cookies.json");
+				path.join(process.cwd(), "data", "scolia-cookies.json");
 			if (fs.existsSync(cookieFile)) {
 				try {
 					const cookies = JSON.parse(fs.readFileSync(cookieFile, "utf-8"));
@@ -765,7 +765,7 @@ export class PlaywrightController extends EventEmitter {
 			const cookies = await this.context.cookies();
 			const cookieFile =
 				this.config.cookieFile ||
-				path.join(process.cwd(), "scolia-cookies.json");
+				path.join(process.cwd(), "data", "scolia-cookies.json");
 			fs.writeFileSync(cookieFile, JSON.stringify(cookies, null, 2));
 			this.logger.debug("Playwright: Cookies saved");
 		} catch (err) {
