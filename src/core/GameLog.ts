@@ -99,6 +99,7 @@ export class GameLog {
 	getPlayerStats(vipPlayers: string[], vipMinPlayers: number, afterMs = 0): PlayerStats[] {
 		const qualifying = this.records.filter(
 			(r) =>
+				r.winner !== null &&
 				r.players.filter((p) => vipPlayers.includes(p)).length >= vipMinPlayers &&
 				(afterMs === 0 || r.timestamp > afterMs),
 		);
