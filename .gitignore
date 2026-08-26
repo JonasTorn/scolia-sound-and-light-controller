@@ -4,6 +4,8 @@ dist/
 data/throw-history.json
 data/game-log.json
 data/scolia-cookies.json
+scolia-cookies.json
+throw-history.json
 config.secrets.json
 sounds/
 overlays/
