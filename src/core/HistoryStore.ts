@@ -50,7 +50,10 @@ export class HistoryStore {
 
 		const qualifying = this.data.games.filter((g) => {
 			if (new Date(g.startTime).getTime() < seasonStart) return false;
-			return g.players.filter((p) => vipPlayers.includes(p)).length >= vipMinPlayers;
+			return (
+				g.players.every((p) => vipPlayers.includes(p)) &&
+				g.players.length >= vipMinPlayers
+			);
 		});
 
 		this.logger.info(

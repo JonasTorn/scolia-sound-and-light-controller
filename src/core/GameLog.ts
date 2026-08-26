@@ -100,7 +100,8 @@ export class GameLog {
 		const qualifying = this.records.filter(
 			(r) =>
 				r.winner !== null &&
-				r.players.filter((p) => vipPlayers.includes(p)).length >= vipMinPlayers &&
+				r.players.every((p) => vipPlayers.includes(p)) &&
+				r.players.length >= vipMinPlayers &&
 				(afterMs === 0 || r.timestamp > afterMs),
 		);
 		return vipPlayers.map((nick) => {
