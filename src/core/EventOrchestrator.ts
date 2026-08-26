@@ -22,6 +22,9 @@ export class EventOrchestrator implements IEventOrchestrator {
 	private effectExecutor: EffectExecutor;
 	private takeoutInProgress = false;
 
+	// Optional hook — called once per deduplicated special event (after markEventPlayed guard)
+	public onSpecialEvent?: (name: string, player: string | null) => void;
+
 	constructor(
 		private gameState: GameState,
 		private config: FullConfig,
@@ -63,6 +66,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			if (specialEvent && !this.gameState.isEventPlayed(throwIndex, specialEvent.name)) {
 				this.logger.success(`🎉 Special Event: ${specialEvent.name}`);
 				this.gameState.markEventPlayed(throwIndex, specialEvent.name);
+				this.onSpecialEvent?.(specialEvent.name, this.gameState.getCurrentPlayer());
 			}
 
 			// Special event sound replaces base throw sound; special lights/overlays stack on top.

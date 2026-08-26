@@ -4,7 +4,7 @@ import { ConfigManager } from "./core/ConfigManager";
 import { GameState } from "./core/GameState";
 import { EventOrchestrator } from "./core/EventOrchestrator";
 import { ScoreboardServer } from "./core/ScoreboardServer";
-import { ScoliaHistoryScraper } from "./core/ScoliaHistoryScraper";
+import { GameLog } from "./core/GameLog";
 import { LightSharkController } from "./controllers/LightSharkController";
 import { SoundController } from "./controllers/SoundController";
 import { KNXController } from "./controllers/KNXController";
@@ -28,10 +28,8 @@ export class Application {
 	private reconnectTimeout: NodeJS.Timeout | null = null;
 	private idleTimer: NodeJS.Timeout | null = null;
 	private scoreboardServer: ScoreboardServer | null = null;
-	private scoliaHistoryScraper: ScoliaHistoryScraper | null = null;
+	private gameLog: GameLog | null = null;
 	private scoreboardShowing = false;
-	private scoreboardHasData = false;
-	private currentGameIsImportant = false;
 	private running = false;
 
 	constructor(private configPath?: string) {
@@ -69,8 +67,16 @@ export class Application {
 			this.playwrightController,
 		);
 
+		// GameLog — persistent local stats tracker (primary scoreboard data source)
+		this.gameLog = new GameLog(this.logger);
+		this.eventOrchestrator.onSpecialEvent = (name, player) => {
+			if (name === "180" && player) this.gameLog?.recordOneEighty(player);
+		};
+
 		// Attach Playwright event listeners for bust/leg-won/set-won
 		this.playwrightController.on("bust", () => {
+			const player = this.gameState.getCurrentPlayer();
+			if (player) this.gameLog?.recordBust(player);
 			this.handleBustDetected();
 		});
 
@@ -87,6 +93,7 @@ export class Application {
 				this.gameState.setCurrentPlayer(winner);
 				this.soundController.setCurrentPlayer(winner);
 			}
+			this.gameLog?.endGame(winner ?? null);
 			this.handleSetWon();
 		});
 
@@ -94,6 +101,7 @@ export class Application {
 			if (name) {
 				this.gameState.setCurrentPlayer(name);
 				this.soundController.setCurrentPlayer(name);
+				this.gameLog?.recordElimination(name);
 			}
 			this.handlePlayerEliminated();
 		});
@@ -117,11 +125,6 @@ export class Application {
 			}
 		});
 
-		// Scolia periodically refreshes the auth JWT — good moment to populate scoreboard stats
-		this.playwrightController.on("token-refresh", () => {
-			this.onTokenRefreshed();
-		});
-
 		// Route Scolia messages intercepted from the web app's WebSocket
 		this.playwrightController.on("scoliamessage", (data: string) => {
 			this.handleScoliaMessage(data);
@@ -134,14 +137,8 @@ export class Application {
 			if (this.config.scoreboard?.enabled) {
 				this.scoreboardShowing = false;
 				this.playwrightController.showGame().catch(() => {});
-				const vipPlayers = this.config.scoreboard.players ?? Object.keys(this.config.players ?? {});
-				const vipMin = this.config.scoreboard.vipMinPlayers ?? 3;
-				const vipCount = names.filter((n) => vipPlayers.includes(n)).length;
-				this.currentGameIsImportant = vipCount >= vipMin;
-				if (this.currentGameIsImportant) {
-					this.logger.info(`Scoreboard: game counts (${vipCount}/${vipMin} VIP players)`);
-				}
 			}
+			this.gameLog?.startGame(names, this.gameState.getGameMode());
 			if (names.length >= 4) {
 				this.soundController.playSound("important_round");
 			}
@@ -193,29 +190,18 @@ export class Application {
 				const sb = this.config.scoreboard;
 				if (sb?.enabled) {
 					const port = sb.port ?? 3456;
-					const players = sb.players ?? Object.keys(this.config.players ?? {});
-					const baseUrl = this.config.playwright.url ?? "https://game.scoliadarts.com";
 
 					this.scoreboardServer = new ScoreboardServer(this.logger);
 					this.scoreboardServer.start(port);
-
-					this.scoliaHistoryScraper = new ScoliaHistoryScraper(
-						this.logger,
-						baseUrl,
-						sb.vipMinPlayers ?? 3,
-						sb.discoverStats ?? false,
-						sb.seasonStartDate ?? "2020-01-01",
-					);
+					// Push initial stats from GameLog immediately (instant, no network)
+					this.pushStatsToScoreboard();
 
 					await this.playwrightController.openScoreboardPage(`http://127.0.0.1:${port}`);
 					// Opening a new tab steals browser focus — return focus to Scolia immediately.
-					// The idle timer will switch to scoreboard if no game starts within startupDelay.
 					await this.playwrightController.showGame();
 
-					// Show scoreboard after startup delay if no game starts.
-					// Stats are populated by onTokenRefreshed() when Scolia refreshes auth (~70s in).
-					const startupDelay = sb.startupDelayMs ?? 30000;
-					this.startIdleTimer(startupDelay, false);
+					const startupDelay = sb.startupDelayMs ?? 5000;
+					this.startIdleTimer(startupDelay);
 				}
 			}
 
@@ -360,36 +346,20 @@ export class Application {
 	private async handleSetWon(): Promise<void> {
 		await this.eventOrchestrator.handleSetWon();
 		if (this.config.scoreboard?.enabled) {
+			// Push updated stats (GameLog already has the completed game) then show scoreboard
+			this.pushStatsToScoreboard();
 			const delay = this.config.scoreboard.idleDelayMs ?? 30000;
-			// Only re-scrape stats if this was an important game (≥ vipMinPlayers VIP players)
-			this.startIdleTimer(delay, this.currentGameIsImportant);
+			this.startIdleTimer(delay);
 		}
 	}
 
-	// refreshBeforeShow: true = scrape fresh stats before showing (post-game); false = just show (startup)
-	private startIdleTimer(delayMs: number, refreshBeforeShow = true): void {
+	private startIdleTimer(delayMs: number): void {
 		this.cancelIdleTimer();
 		this.idleTimer = setTimeout(async () => {
 			this.idleTimer = null;
-			if (refreshBeforeShow) {
-				const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
-				await this.refreshScoreboardStats(players);
-			}
 			this.scoreboardShowing = true;
 			await this.playwrightController.showScoreboard();
 		}, delayMs);
-	}
-
-	// Called when Scolia sends REFRESH_CLIENT_TOKEN — auth cookies are now fresh.
-	// Only used for the initial data load at startup. Once we have data, stats are only
-	// refreshed explicitly after important games via startIdleTimer(delay, true).
-	private onTokenRefreshed(): void {
-		if (!this.config.scoreboard?.enabled || !this.scoreboardServer || this.scoreboardHasData) return;
-		this.logger.info("Scoreboard: auth token fresh — fetching season history");
-		setTimeout(async () => {
-			const players = this.config.scoreboard?.players ?? Object.keys(this.config.players ?? {});
-			await this.refreshScoreboardStats(players);
-		}, 2000);
 	}
 
 	private cancelIdleTimer(): void {
@@ -399,22 +369,13 @@ export class Application {
 		}
 	}
 
-	// Returns true if stats were fetched successfully, false if API was unreachable.
-	private async refreshScoreboardStats(players: string[]): Promise<boolean> {
-		if (!this.scoreboardServer || !this.scoliaHistoryScraper) return false;
-		try {
-			const stats = await this.scoliaHistoryScraper.scrape(
-				() => this.playwrightController.createTemporaryPage(),
-				players,
-			);
-			if (!stats) return false;
-			this.scoreboardServer.updateStats(stats);
-			this.scoreboardHasData = true;
-			return true;
-		} catch (err) {
-			this.logger.warn(`Scoreboard: Failed to refresh stats: ${err}`);
-			return false;
-		}
+	private pushStatsToScoreboard(): void {
+		if (!this.scoreboardServer || !this.gameLog) return;
+		const sb = this.config.scoreboard;
+		const players = sb?.players ?? Object.keys(this.config.players ?? {});
+		const vipMin = sb?.vipMinPlayers ?? 3;
+		const stats = this.gameLog.getPlayerStats(players, vipMin);
+		this.scoreboardServer.updateStats(stats);
 	}
 
 	private async handlePlayerEliminated(): Promise<void> {
