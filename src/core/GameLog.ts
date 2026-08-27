@@ -39,7 +39,18 @@ export class GameLog {
 	}
 
 	startGame(players: string[], gameMode: string | null): void {
-		if (this.active) this.endGame(null); // abandon any in-progress game
+		// Deduplicate: two game-started events sometimes fire <1s apart for the same game
+		if (this.active) {
+			const sameGame =
+				Date.now() - this.active.timestamp < 1000 &&
+				players.length === this.active.players.length &&
+				players.every((p) => this.active!.players.includes(p));
+			if (sameGame) {
+				this.logger.debug("GameLog: duplicate game-started ignored");
+				return;
+			}
+			this.endGame(null); // abandon any in-progress game
+		}
 		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
 		this.active = {
 			id,
