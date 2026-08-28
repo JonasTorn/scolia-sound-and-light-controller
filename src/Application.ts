@@ -103,9 +103,10 @@ export class Application {
 
 		this.playwrightController.on("eliminated", (name?: string) => {
 			if (name) {
+				const eliminator = this.gameState.getCurrentPlayer();
 				this.gameState.setCurrentPlayer(name);
 				this.soundController.setCurrentPlayer(name);
-				this.gameLog?.recordElimination(name);
+				this.gameLog?.recordElimination(name, eliminator ?? undefined);
 			}
 			this.handlePlayerEliminated();
 		});

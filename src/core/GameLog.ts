@@ -75,11 +75,14 @@ export class GameLog {
 		this.active.perPlayer[player].busts++;
 	}
 
-	recordElimination(player: string): void {
+	recordElimination(player: string, eliminator?: string): void {
 		const pp = this.active?.perPlayer[player];
 		if (!pp || pp.eliminatedThisGame) return;
 		pp.eliminated++;
 		pp.eliminatedThisGame = true;
+		if (eliminator && eliminator !== player && this.active?.perPlayer[eliminator]) {
+			this.active.perPlayer[eliminator].eliminations++;
+		}
 	}
 
 	endGame(winner: string | null): void {
