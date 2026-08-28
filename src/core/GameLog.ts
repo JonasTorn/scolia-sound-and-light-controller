@@ -109,6 +109,7 @@ export class GameLog {
 
 	endGame(winner: string | null): void {
 		if (!this.active) return;
+		this.finalizeRound(); // commit any in-progress round before saving
 		const record: GameRecord = {
 			id: this.active.id,
 			timestamp: this.active.timestamp,
