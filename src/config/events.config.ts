@@ -44,7 +44,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 				sound: { files: ["laser_win.wav"] }
 			},
 			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
-			"Sonny": { overlay: { file: "overlays/sonny_win.gif", durationMs: 10000 } },
+			"Sony": { overlay: { file: "overlays/sonny_win.gif", durationMs: 10000 } },
 
 		},
 	},
@@ -172,7 +172,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "t1",
 		enabled: true,
-		priority: 2,
+		priority: 1,
 		detector: "sequentialSegments",
 		params: { throws: ["t1"] },
 		sound: { files: ["ohh_baby_a_triple.wav"] },
@@ -286,7 +286,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "420",
 		enabled: true,
-		priority: 2,
+		priority: 3,
 		detector: "concatenatesTo",
 		params: { number: 420 },
 		sound: { files: ["smoke_weed_everyday.wav"] },
@@ -295,7 +295,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 	{
 		name: "4+20",
 		enabled: true,
-		priority: 1,
+		priority: 2,
 		detector: "consecutivePattern",
 		params: { pattern: [4, 20] },
 		sound: { files: ["smoke_weed_everyday.wav"] },
