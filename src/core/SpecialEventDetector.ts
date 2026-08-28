@@ -94,6 +94,8 @@ export class SpecialEventDetector {
 				return this.consecutiveMisses(throwHistory, currentThrow, params);
 			case "multiplierIs":
 				return this.multiplierIs(throwHistory, currentThrow, params);
+			case "threeOfAKind":
+				return this.threeOfAKind(throwHistory, currentThrow, params);
 			default:
 				return false;
 		}
@@ -229,5 +231,24 @@ export class SpecialEventDetector {
 		params: Record<string, any>,
 	): boolean {
 		return currentThrow.multiplier === params.multiplier && currentThrow.segment !== 0;
+	}
+
+	// Fires when the last 3 throws all hit the same segment (any multiplier).
+	// Excludes misses (segment 0) and bull (segment 25/50).
+	// Use excludeSegments in params to skip segments already covered by specific events.
+	private threeOfAKind(
+		throwHistory: GameThrow[],
+		currentThrow: GameThrow,
+		params: Record<string, any>,
+	): boolean {
+		if (currentThrow.segment === 0) return false; // miss
+		if (currentThrow.segment === 25) return false; // bull
+		if (throwHistory.length < 2) return false;
+
+		const exclude: number[] = params.excludeSegments ?? [];
+		if (exclude.includes(currentThrow.segment)) return false;
+
+		const last2 = throwHistory.slice(-2);
+		return last2.every((t) => t.segment === currentThrow.segment);
 	}
 }

@@ -546,4 +546,15 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { multiplier: 3 },
 		sound: { files: ["triplekill.wav"] },
 	},
+	{
+		// Fires when the same segment is hit 3 times in a row (any multiplier).
+		// Priority 1 so specific events like 777, 666, 123 etc. take precedence.
+		// excludeSegments: skip segments already covered by dedicated events.
+		name: "three_of_a_kind",
+		enabled: true,
+		priority: 1,
+		detector: "threeOfAKind",
+		params: { excludeSegments: [6, 7] }, // 666 and 777 have their own events
+		sound: { files: ["three_of_a_kind.wav"] },
+	},
 ];
