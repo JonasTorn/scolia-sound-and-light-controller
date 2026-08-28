@@ -596,6 +596,19 @@ npm start
 npm run simulate
 ```
 
+## Scoreboard (viewing from Mac)
+
+The scoreboard runs on the remote PC at port 3456. To view it on your Mac:
+
+1. Open a terminal on Mac (not the one SSH'd into remote) and run:
+   ```bash
+   ssh -L 3456:127.0.0.1:3456 madrix@100.117.114.10
+   ```
+2. Open `http://127.0.0.1:3456` in your browser (keep the terminal open)
+3. Raw stats JSON: `http://127.0.0.1:3456/api/stats`
+
+The `-L` flag sets up port forwarding — your local port 3456 tunnels through SSH to port 3456 on the remote. The server never needs to be exposed to the internet.
+
 ## Remote PC (MadrixPC) — viktigt
 
 **Appen körs från kompilerad JS i `dist/`, inte via ts-node.**
