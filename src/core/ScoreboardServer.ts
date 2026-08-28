@@ -215,6 +215,8 @@ export class ScoreboardServer {
         <th>Win %</th>
         <th>Elim. ⚔️</th>
         <th>Elim. 💀</th>
+        <th>100+</th>
+        <th>Best</th>
         <th>180s</th>
       </tr>
     </thead>
@@ -229,6 +231,7 @@ export class ScoreboardServer {
   <div class="cards-grid">
     <div class="stat-card" id="card-eliminator"></div>
     <div class="stat-card" id="card-180king"></div>
+    <div class="stat-card" id="card-highround"></div>
     <div class="stat-card" id="card-buster"></div>
     <div class="stat-card" id="card-closer"></div>
   </div>
@@ -284,6 +287,8 @@ function renderCards(stats) {
     function(v) { return v + (v === 1 ? ' elimination' : ' eliminations'); });
   buildCard('card-180king', '🎯', 'The 180 King', stats, 'oneEighties',
     function(v) { return v + ' × 180'; });
+  buildCard('card-highround', '🔥', 'High Round', stats, 'highestRound',
+    function(v) { return v + ' pts in one round'; });
   buildCard('card-buster', '💥', 'Bust Machine', stats, 'busts',
     function(v) { return v + (v === 1 ? ' bust' : ' busts'); });
   buildCard('card-closer', '🏆', 'The Closer', stats, 'highestCheckout',
@@ -318,6 +323,8 @@ async function refresh() {
         '<td class="win-pct' + z + '">' + winPctStr + '</td>' +
         '<td class="' + z + '">' + (p.eliminations || 0) + '</td>' +
         '<td class="' + z + '">' + (p.eliminated || 0) + '</td>' +
+        '<td class="' + z + '">' + (p.hundredPlus || 0) + '</td>' +
+        '<td class="' + z + '">' + (p.highestRound || 0) + '</td>' +
         '<td class="' + z + '">' + (p.oneEighties || 0) + '</td>' +
         '</tr>';
     }).join('');

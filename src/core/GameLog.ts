@@ -7,8 +7,10 @@ interface PerPlayerAccum {
 	eliminations: number;
 	eliminated: number;
 	oneEighties: number;
+	hundredPlus: number;
+	highestRound: number;
 	busts: number;
-	eliminatedThisGame: boolean; // dedup flag — reset on startGame
+	eliminatedThisGame: boolean;
 }
 
 interface GameRecord {
@@ -17,7 +19,7 @@ interface GameRecord {
 	gameMode: string | null;
 	players: string[];
 	winner: string | null;
-	perPlayer: Record<string, { eliminations: number; eliminated: number; oneEighties: number; busts: number }>;
+	perPlayer: Record<string, { eliminations: number; eliminated: number; oneEighties: number; hundredPlus: number; highestRound: number; busts: number }>;
 }
 
 interface ActiveGame {
@@ -34,6 +36,8 @@ const SAVE_PATH = path.resolve(__dirname, "..", "..", "data", "game-log.json");
 export class GameLog {
 	private records: GameRecord[] = [];
 	private active: ActiveGame | null = null;
+	private roundPoints = 0;
+	private roundPlayer: string | null = null;
 
 	constructor(private logger: Logger) {
 		this.load();
@@ -59,10 +63,28 @@ export class GameLog {
 			gameMode,
 			players,
 			perPlayer: Object.fromEntries(
-				players.map((p) => [p, { eliminations: 0, eliminated: 0, oneEighties: 0, busts: 0, eliminatedThisGame: false }]),
+				players.map((p) => [p, { eliminations: 0, eliminated: 0, oneEighties: 0, hundredPlus: 0, highestRound: 0, busts: 0, eliminatedThisGame: false }]),
 			),
 		};
 		this.logger.info(`GameLog: started (${players.join(", ")}, mode: ${gameMode ?? "unknown"})`);
+	}
+
+	recordThrow(player: string, points: number): void {
+		if (this.roundPlayer !== player) {
+			this.roundPoints = 0;
+			this.roundPlayer = player;
+		}
+		this.roundPoints += points;
+	}
+
+	finalizeRound(): void {
+		const pp = this.roundPlayer ? this.active?.perPlayer[this.roundPlayer] : null;
+		if (pp && this.roundPoints > 0) {
+			if (this.roundPoints >= 100) pp.hundredPlus++;
+			if (this.roundPoints > pp.highestRound) pp.highestRound = this.roundPoints;
+		}
+		this.roundPoints = 0;
+		this.roundPlayer = null;
 	}
 
 	recordOneEighty(player: string): void {
@@ -96,7 +118,7 @@ export class GameLog {
 			perPlayer: Object.fromEntries(
 				Object.entries(this.active.perPlayer).map(([p, v]) => [
 					p,
-					{ eliminations: v.eliminations, eliminated: v.eliminated, oneEighties: v.oneEighties, busts: v.busts },
+					{ eliminations: v.eliminations, eliminated: v.eliminated, oneEighties: v.oneEighties, hundredPlus: v.hundredPlus, highestRound: v.highestRound, busts: v.busts },
 				]),
 			),
 		};
@@ -126,6 +148,8 @@ export class GameLog {
 			const eliminations = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.eliminations ?? 0), 0);
 			const eliminated = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.eliminated ?? 0), 0);
 			const oneEighties = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.oneEighties ?? 0), 0);
+			const hundredPlus = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.hundredPlus ?? 0), 0);
+			const highestRound = myGames.reduce((s, r) => Math.max(s, r.perPlayer[nick]?.highestRound ?? 0), 0);
 			const busts = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.busts ?? 0), 0);
 			return {
 				nickname: nick,
@@ -135,6 +159,8 @@ export class GameLog {
 				eliminations,
 				eliminated,
 				oneEighties,
+				hundredPlus,
+				highestRound,
 				busts,
 				highestCheckout: 0,
 			};

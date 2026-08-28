@@ -99,22 +99,23 @@
     return mult * parseInt(m[2], 10);
   }
 
-  function count180sFromHistory(history, userId) {
-    let count = 0;
+  function getRoundStats(history, userId) {
+    let oneEighties = 0, hundredPlus = 0, highestRound = 0;
     for (const set of history?.sets ?? []) {
       for (const leg of set.legs ?? []) {
         for (const round of leg.rounds ?? []) {
           for (const visit of round) {
             if (visit.userId !== userId) continue;
             const darts = visit.throwTriplet ?? [];
-            if (darts.length === 3 && darts.reduce((s, d) => s + sectorScore(d.sector), 0) === 180) {
-              count++;
-            }
+            const score = darts.reduce((s, d) => s + sectorScore(d.sector), 0);
+            if (score === 180) oneEighties++;
+            if (score >= 100) hundredPlus++;
+            if (score > highestRound) highestRound = score;
           }
         }
       }
     }
-    return count;
+    return { oneEighties, hundredPlus, highestRound };
   }
 
   const games = allDetails.map(game => {
@@ -127,36 +128,37 @@
     const perPlayer = {};
 
     if (game.type === 'X01' && Array.isArray(game.statistics)) {
-      // X01: Scolia pre-computes all stats
+      // X01: Scolia pre-computes some stats; compute round stats from raw history
       for (const ps of game.statistics) {
         const nick = idToNick[ps.userId];
         if (!nick) continue;
         const st = ps.statistics ?? {};
+        const rs = getRoundStats(game.history, ps.userId);
         perPlayer[nick] = {
           won:             winnerIds.includes(ps.userId) || st.winner === true,
-          oneEighties:     st['180'] ?? 0,
+          oneEighties:     st['180'] ?? rs.oneEighties,
           highestCheckout: st.highestFinish ?? 0,
-          eliminations:    st.eliminations ?? st.numberOfEliminations ?? 0,
-          eliminated:      st.eliminated ?? st.numberOfTimesEliminated ?? st.timesEliminated ?? 0,
+          eliminations:    0,
+          eliminated:      0,
+          hundredPlus:     rs.hundredPlus,
+          highestRound:    rs.highestRound,
         };
       }
     } else if (game.type === 'Elimination') {
       // Elimination: Scolia pre-computes stats in statistics array
       const statsByUserId = {};
       for (const ps of game.statistics ?? []) statsByUserId[ps.userId] = ps.statistics ?? {};
-      // Log raw stats keys on first Elimination game to discover field names
-      if (allDetails.indexOf(game) === 0 && game.statistics?.length) {
-        console.log('📊 Elimination stats keys:', Object.keys(game.statistics[0]?.statistics ?? {}));
-        console.log('📊 Sample:', JSON.stringify(game.statistics[0]?.statistics));
-      }
       for (const p of game.participants ?? []) {
         const st = statsByUserId[p._id] ?? {};
+        const rs = getRoundStats(game.history, p._id);
         perPlayer[p.nickname] = {
           won:             winnerIds.includes(p._id),
-          oneEighties:     count180sFromHistory(game.history, p._id),
+          oneEighties:     rs.oneEighties,
           highestCheckout: 0,
           eliminations:    st.eliminations ?? st.numberOfEliminations ?? 0,
           eliminated:      st.eliminated ?? st.numberOfTimesEliminated ?? st.timesEliminated ?? 0,
+          hundredPlus:     rs.hundredPlus,
+          highestRound:    rs.highestRound,
         };
       }
     } else {
@@ -168,6 +170,8 @@
           highestCheckout: 0,
           eliminations:    0,
           eliminated:      0,
+          hundredPlus:     0,
+          highestRound:    0,
         };
       }
     }

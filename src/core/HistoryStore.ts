@@ -9,6 +9,8 @@ interface HistoryPerPlayer {
 	highestCheckout: number;
 	eliminations: number;
 	eliminated: number;
+	hundredPlus: number;
+	highestRound: number;
 }
 
 interface HistoryGame {
@@ -70,6 +72,8 @@ export class HistoryStore {
 			let highestCheckout = 0;
 			let eliminations = 0;
 			let eliminated = 0;
+			let hundredPlus = 0;
+			let highestRound = 0;
 
 			for (const g of myGames) {
 				const pp = g.perPlayer[nick];
@@ -79,6 +83,8 @@ export class HistoryStore {
 				if (pp.highestCheckout > highestCheckout) highestCheckout = pp.highestCheckout;
 				eliminations += pp.eliminations ?? 0;
 				eliminated += pp.eliminated ?? 0;
+				hundredPlus += pp.hundredPlus ?? 0;
+				if ((pp.highestRound ?? 0) > highestRound) highestRound = pp.highestRound ?? 0;
 			}
 
 			const gamesPlayed = myGames.length;
@@ -90,6 +96,8 @@ export class HistoryStore {
 				eliminations,
 				eliminated,
 				oneEighties,
+				hundredPlus,
+				highestRound,
 				busts: 0,
 				highestCheckout,
 			};
@@ -121,6 +129,8 @@ export class HistoryStore {
 			eliminations: 0,
 			eliminated: 0,
 			oneEighties: 0,
+			hundredPlus: 0,
+			highestRound: 0,
 			busts: 0,
 			highestCheckout: 0,
 		}));

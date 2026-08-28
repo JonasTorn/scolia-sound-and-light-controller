@@ -76,6 +76,9 @@ export class Application {
 		this.eventOrchestrator.onSpecialEvent = (name, player) => {
 			if (name === "180" && player) this.gameLog?.recordOneEighty(player);
 		};
+		this.eventOrchestrator.onThrow = (player, points) => {
+			this.gameLog?.recordThrow(player, points);
+		};
 
 		// Attach Playwright event listeners for bust/leg-won/set-won
 		this.playwrightController.on("bust", () => {
@@ -311,6 +314,7 @@ export class Application {
 				}
 
 				case "TAKEOUT_STARTED":
+					this.gameLog?.finalizeRound();
 					this.eventOrchestrator.handleTakeoutStarted();
 					break;
 
@@ -399,6 +403,8 @@ export class Application {
 					eliminations: h.eliminations + l.eliminations,
 					eliminated: h.eliminated + l.eliminated,
 					oneEighties: h.oneEighties + l.oneEighties,
+					hundredPlus: h.hundredPlus + l.hundredPlus,
+					highestRound: Math.max(h.highestRound, l.highestRound),
 					busts: l.busts,
 					highestCheckout: Math.max(h.highestCheckout, l.highestCheckout),
 				};

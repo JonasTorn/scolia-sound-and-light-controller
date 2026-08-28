@@ -188,6 +188,8 @@ export interface PlayerStats {
 	eliminations: number;    // times you eliminated someone else
 	eliminated: number;      // times your score was reset by someone else
 	oneEighties: number;
+	hundredPlus: number;     // rounds scoring 100+
+	highestRound: number;    // highest single-round score (3 darts)
 	busts: number;
 	highestCheckout: number; // points of the winning dart (0 = no checkout recorded)
 }

@@ -24,6 +24,8 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 	// Optional hook — called once per deduplicated special event (after markEventPlayed guard)
 	public onSpecialEvent?: (name: string, player: string | null) => void;
+	// Optional hook — called after every throw with the active player and points scored
+	public onThrow?: (player: string, points: number) => void;
 
 	constructor(
 		private gameState: GameState,
@@ -80,6 +82,8 @@ export class EventOrchestrator implements IEventOrchestrator {
 
 			await this.effectExecutor.execute(effects);
 
+			const player = this.gameState.getCurrentPlayer();
+			if (player) this.onThrow?.(player, throwData.points);
 			this.logger.info(
 				`Throw: ${throwData.segment}${this.multiplierSuffix(throwData.multiplier)} = ${throwData.points}p`,
 			);
