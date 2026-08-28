@@ -1,233 +1,266 @@
-# Scolia Light Controller
+# Scolia Light & Sound Controller
 
-Styr LightShark-belysning och ljudeffekter i realtid baserat på Scolia darttavla-events.
+Styr LightShark-belysning och ljudeffekter i realtid baserat på Scolia darttavla-events. Inkluderar poängtavla (scoreboard) med live-statistik.
 
 ## Funktioner
 
-- **Färgläge (Color Mode)** - LED-färger matchar darttavlans färger:
-  - Dubbel/Trippel på röda segment (20,18,13,10,2,3,7,8,14,12) → LED Red
-  - Dubbel/Trippel på gröna segment (1,4,6,15,17,19,16,11,9,5) → LED Green
-  - Bullseye (50p) → Moln Ow Strobe
-  - Bull (25p) → LED Green
-  - Singel → Neutral (3k 100%)
-  - Miss → Lampor släcks (via KNX och/eller LightShark)
-- **KNX-integration** - Styr rumsbelysning via KNX IP-gateway:
-  - Miss → Släcker all belysning (KNX + LightShark via extern länk)
-  - Singel efter miss → Återställer belysning
-  - Färg-kast efter miss → Triggar färg direkt (utan att vänta på KNX)
-- **Ljudeffekter (Unreal Tournament-tema)** - Spelar ljud vid kast:
-  - Segment-specifika ljud för T20 (Godlike), T19 (Dominating), T18 (Unstoppable), T17 (Rampage)
-  - Generella ljud för dubblar (Double Kill), tripplar (Triple Kill)
-  - Bullseye → Headshot, Bull 25 → Ultrakill, Miss → BInjur2
-  - 180 → Monster Kill, Tre missar i rad → Lost Match
-  - Takeout (pilar tas ut) → Draw
-  - Volymstöd per ljud (macOS)
-- **Playwright DOM-övervakning** - Övervakar Scolias webbapp för spelhändelser:
-  - Bust-detection → Tjockis-ljud
-  - Leg won / Set won → Vinst-ljud
-  - Auto-login, cookie-hantering, fullscreen
-  - Auto-klick på "Finish & View Stats", board selection
-- **Auto-reset** - Lampor återgår till 3k 100% när pilar tas ut
-- **Random Executor Mode** - Slumpmässig executor vid varje kast (för test)
-- **180 Detection** - Special-effekt vid 180 poäng
-- **Tre missar-detection** - Special-ljud vid 3 missar i rad
+- **Ljuseffekter** — LED-färger matchar darttavlans färger (röda/gröna segment, bullseye, miss)
+- **Ljudeffekter** — Unreal Tournament-tema med segment-specifika ljud (Godlike, Dominating, etc.)
+- **20 special events** — 180, 120, 1-2-3, 007, 420, 1337, 69, 911, med flera
+- **Playwright DOM-övervakning** — Detekterar bust, leg won, set won, eliminated via Scolias webbapp
+- **Scoreboard** — Live-statistik med historik, servad på port 3456
+- **KNX-integration** — Styr rumsbelysning via KNX IP-gateway (valfritt)
+
+## Arkitektur
+
+TypeScript OOP med dependency injection. Körs via pm2 på Windows PC (MadrixPC).
+
+```
+src/
+├── index.ts                    # Entry point (6 rader)
+├── Application.ts              # Bootstrap, WebSocket, event-routing
+├── core/
+│   ├── ConfigManager.ts        # Config-laddning (config.json + config.secrets.json)
+│   ├── GameState.ts            # State + persistens → data/throw-history.json
+│   ├── EventOrchestrator.ts    # 10-stegs throw-pipeline
+│   ├── EffectResolver.ts       # Kast → ljuseffekt-mappning
+│   ├── SpecialEventDetector.ts # 20 data-drivna special events
+│   ├── GameLog.ts              # Live-statistik → data/game-log.json
+│   ├── HistoryStore.ts         # Historisk Scolia-export → data/scolia-history.json
+│   └── ScoreboardServer.ts     # HTTP-server för scoreboard (port 3456)
+├── controllers/
+│   ├── LightSharkController.ts # OSC/UDP
+│   ├── SoundController.ts      # Cross-platform ljud
+│   ├── KNXController.ts        # KNX/IP gateway
+│   └── PlaywrightController.ts # Browser + DOM-polling
+├── config/
+│   └── specialEvents.config.ts # Deklarativa special event-definitioner
+└── utils/
+    ├── Logger.ts               # Loggning med filrotation
+    ├── SectorParser.ts         # Parsear "s14", "d20", "t19" → poäng
+    └── TypeValidator.ts        # Schema-validering
+
+data/                           # Runtime-filer (gitignorerade utom scolia-history.json)
+├── scolia-history.json         # En-gångs Scolia-export (committas)
+├── game-log.json               # Live-spellogg (genereras automatiskt)
+├── throw-history.json          # Kasttillstånd för special events (genereras automatiskt)
+└── scolia-cookies.json         # Playwright-cookies (genereras automatiskt)
+
+scripts/
+└── export-scolia-history.js    # Klistra in i Chrome DevTools för att exportera historik
+```
 
 ## Systemkrav
 
 - Node.js v18+
 - LightShark med OSC aktiverat
 - Scolia darttavla med API-access
-- Ljud: macOS (afplay, inbyggt), Linux (aplay/mpg123), Windows (PowerShell, inbyggt)
+- Ljud: Windows (PowerShell), macOS (afplay), Linux (aplay/mpg123)
 - KNX (valfritt): KNX IP-gateway på nätverket
 
 ## Installation
 
 ```bash
 git clone <repo-url>
-cd "Scolia API"
+cd scolia-sound-and-light-controller
 npm install
+npx playwright install chromium
 ```
-
-Dependencies:
-- `ws` — WebSocket-klient för Scolia
-- `node-osc` — OSC/UDP för LightShark
-- `playwright` — Browser-automation för bust/win-detection
-- `play-sound` — Ljuduppspelning (macOS/Linux)
-- `knx` — KNX IP-gateway kommunikation
 
 ## Konfiguration
 
-Kopiera `config.example.json` till `config.json` och fyll i:
+Appen använder två config-filer som deep-mergas vid start:
 
-```bash
-cp config.example.json config.json
+- **`config.json`** — Committas till git. Innehåller struktur och standardvärden (inga hemligheter).
+- **`config.secrets.json`** — Gitignorerad. Innehåller riktiga credentials.
+
+Minsta möjliga `config.secrets.json`:
+```json
+{
+  "scolia": { "serialNumber": "...", "accessToken": "..." },
+  "lightshark": { "ip": "192.168.6.242" },
+  "playwright": { "credentials": { "email": "din@email.com", "password": "ditt-lösenord" } }
+}
 ```
 
-### Scolia-inställningar
+### Viktiga config-sektioner
+
+**Scolia:**
 ```json
 "scolia": {
-  "serialNumber": "DITT-SERIENUMMER",
-  "accessToken": "DIN-ACCESS-TOKEN",
   "simulationMode": false,
   "reconnectDelay": 5000
 }
 ```
-
 Sätt `simulationMode: true` för att köra utan Scolia-anslutning.
 
-### LightShark-inställningar
+**Scoreboard:**
 ```json
-"lightshark": {
+"scoreboard": {
   "enabled": true,
-  "ip": "192.168.6.242",
-  "oscPort": 8000,
-  "throwEffect": {
-    "enabled": true,
-    "colorMode": {
-      "enabled": true,
-      "redExecutor": { "page": 1, "column": 2, "row": 1 },
-      "greenExecutor": { "page": 1, "column": 2, "row": 2 },
-      "bullseyeExecutor": { "page": 1, "column": 6, "row": 6 }
-    },
-    "noScoreExecutor": { "page": 1, "column": 8, "row": 4 }
-  }
+  "port": 3456,
+  "idleDelayMs": 30000,
+  "vipMinPlayers": 3,
+  "seasonStartDate": "2026-08-10"
 }
 ```
 
-### Playwright-inställningar
+**Spelare (VIP):**
 ```json
-"playwright": {
-  "enabled": true,
-  "url": "https://game.scoliadarts.com",
-  "fullscreen": true,
-  "pollIntervalMs": 200,
-  "credentials": {
-    "email": "din@email.com",
-    "password": "ditt-lösenord"
-  }
+"players": {
+  "Groggen": {},
+  "Luca": {},
+  "Sony": {},
+  "T10": {},
+  "Laser": {}
 }
 ```
+Matcher räknas mot scoreboard bara om ALLA spelare finns i denna lista och minst `vipMinPlayers` spelar.
 
-Playwright öppnar Scolias webbapp i Chromium och övervakar DOM för bust/leg-won/set-won. Cookies sparas automatiskt för att undvika inloggning vid omstart.
-
-### Ljudeffekter
+**Ljud:**
 ```json
 "sound": {
   "enabled": true,
   "soundsDir": "./sounds",
   "sounds": {
-    "miss": { "file": "BInjur2.wav" },
-    "bullseye": { "file": "headshot.wav" },
-    "bull25": { "file": "ultrakill.wav" },
-    "double": { "file": "doublekill.wav" },
-    "triple": { "file": "triplekill.wav" },
+    "miss": { "file": "miss.wav" },
     "triple_20": { "file": "godlike.wav" },
-    "single_1": { "file": "cd1.wav" },
-    "180": { "file": "monsterkill.wav" },
-    "three_misses": { "file": "lostmatch.wav" },
-    "takeout": { "file": "draw.wav", "volume": 0.25 },
-    "bust": { "file": "tjockis.wav", "volume": 2.0 },
-    "leg_won": { "file": "set_won.wav" },
-    "set_won": { "file": "monsterkill.wav" }
+    "bust": { "file": "tjockis.wav", "volume": 2.0 }
   }
 }
 ```
+Segment-specifika ljud (t.ex. `triple_20`) har prioritet över generella (`triple`). Varje ljud stödjer `volume` (0.0–2.0) och `enabled` (true/false).
 
-Segment-specifika ljud (t.ex. `triple_20`) har prioritet. Om inget segment-specifikt ljud finns faller det tillbaka till det generella (`triple`). Varje ljud stödjer `volume` (0.0–2.0, default 1.0) och `enabled` (true/false). Lägg egna WAV-filer i `sounds/`-mappen.
+## Körning
 
-### KNX-inställningar
-```json
-"knx": {
-  "enabled": false,
-  "gateway": "192.168.6.169",
-  "port": 3671,
-  "actions": {
-    "allOff": [{ "ga": "0/0/1", "value": 5 }],
-    "allOn": [{ "ga": "0/0/1", "value": 0 }]
-  }
-}
-```
-KNX styr rumsbelysning vid miss/scoring. Kräver KNX IP-gateway. Gruppadresser och värden konfigureras under `actions`.
-
-### Executor-koordinater
-
-Executors adresseras med `page`, `column`, `row` som motsvarar LightShark-griddet:
-
-| Executor | Page | Column | Row | Beskrivning |
-|----------|------|--------|-----|-------------|
-| 3k 100% | 1 | 1 | 1 | Bas-belysning (alltid på) |
-| LED Red | 1 | 2 | 1 | Röd färg |
-| LED Green | 1 | 2 | 2 | Grön färg |
-| Moln Ow Strobe | 1 | 6 | 6 | Bullseye-effekt |
-| Disco | 1 | 1 | 5 | Disco-effekt |
-| LED Dim OFF | 1 | 8 | 4 | Släcker lampor |
-
-## Filstruktur
-
-```
-Scolia API/
-├── index.js              # Huvudapp — WebSocket, ljus, ljud, Playwright
-├── simulator.js          # Testa ljuseffekter utan darttavla
-├── test-connection.js    # Testa LightShark-anslutning
-├── knx-monitor.js        # Verktyg: lyssna på KNX-buss för att hitta gruppadresser
-├── plejd_control.py      # Plejd BLE-styrning (Python)
-├── config.json           # Konfiguration (gitignored, se config.example.json)
-├── lib/
-│   ├── lightshark.js     # OSC-kommunikation med LightShark
-│   ├── playwright.js     # Playwright DOM-övervakning (bust/win-detection)
-│   ├── knx.js            # KNX IP-gateway kommunikation
-│   ├── sound.js          # Ljuduppspelning (cross-platform, volymstöd)
-│   └── logger.js         # Loggning
-├── sounds/               # WAV-filer för ljudeffekter
-└── CLAUDE.md             # Projektkontext för AI-assistans
-```
-
-## Protokoll
-
-- **Scolia** → WebSocket (wss://game.scoliadarts.com)
-- **LightShark** → OSC/UDP (port 8000)
-- **KNX** → KNXnet/IP (port 3671)
-- **Playwright** → Chromium (DOM-polling mot Scolias webbapp)
-
-## Användning
-
-### Live-läge
 ```bash
+# Produktion
 npm start
-```
-Ansluter till Scolia och triggar ljuseffekter vid varje kast. Om Playwright är aktiverat öppnas Scolias webbapp i Chromium för bust/win-detection.
 
-### Simulator
-```bash
+# Simulator (testa effekter utan hårdvara)
 npm run simulate
-```
-Meny för att simulera kast och testa ljuseffekter.
 
-### Anslutningstest
-```bash
+# Bygg TypeScript
+npm run build
+
+# Tester
 npm test
 ```
-Testar att LightShark är nåbar via OSC.
+
+## Deployment (Remote PC — MadrixPC)
+
+Appen körs som pm2-process på Windows PC (`madrix@100.117.114.10`).  
+**OBS:** Appen körs från kompilerad JS i `dist/` — `git pull` ensamt räcker inte.
+
+```bash
+# Efter varje kodändring:
+git pull && npm run build && pm2 restart scolia-new
+
+# Kontrollera status:
+pm2 show scolia-new
+pm2 logs scolia-new --lines 30
+
+# Rensa loggar (utan restart):
+pm2 flush scolia-new
+```
+
+Ljud-filer synkas **inte** via git (`sounds/` är gitignorerad). Kopiera nya ljud manuellt:
+```bash
+scp sounds/filnamn.wav madrix@100.117.114.10:~/scolia-new/sounds/
+# Eller synka hela sounds/-mappen:
+npm run sync-assets
+```
+
+## Scoreboard
+
+Scoreboard serveras på port 3456 och visar live-statistik för säsongen.
+
+**Visa från Mac** (SSH port forwarding):
+```bash
+# Öppna ett nytt terminalfönster (inte det SSH:ade) och kör:
+ssh -L 3456:127.0.0.1:3456 madrix@100.117.114.10
+# Öppna sedan: http://127.0.0.1:3456
+# Raw stats JSON: http://127.0.0.1:3456/api/stats
+```
+
+**Statistik som trackas:**
+- Spelade matcher, vinster, vinstprocent
+- Eliminations (orsakade) / Eliminated (drabbad av)
+- 100+ rundor, bästa runda (poäng per 3 pilar)
+- 180:or, busts, högsta checkout
+
+**Datakällor:**
+- `data/scolia-history.json` — Historisk export från Scolias API (kör `scripts/export-scolia-history.js` i Chrome DevTools som Laser)
+- `data/game-log.json` — Live-logg från matcher medan appen kör
+
+Dubbel-räkning förhindras automatiskt: GameLog räknar bara matcher som startat **efter** historik-exportens `fetchedAt`-tidsstämpel.
+
+**Uppdatera historik** (ny säsong eller ny export):
+1. Öppna `game.scoliadarts.com` i Chrome, logga in som Laser
+2. Öppna DevTools → Console, klistra in hela `scripts/export-scolia-history.js`
+3. Vänta tills nedladdning startar, spara filen som `data/scolia-history.json`
+4. Committa och pusha, sedan deploy på remote
+
+## Ljuslogik
+
+Prioritetsordning vid kast:
+
+1. Miss → noScoreExecutor (lampor släcks)
+2. Bullseye 50p → bullseyeExecutor + strobe overlay 3s
+3. Bull 25p → greenExecutor
+4. Triple 20 → redExecutor + strobe overlay 3s
+5. Dubbel/Triple på rött segment → redExecutor
+6. Dubbel/Triple på grönt segment → greenExecutor
+7. Singel → Neutral
+
+Executors är Flash-mode (håller tills explicit release). Takeout → cleanup/release.
+
+## Special Events (20 st)
+
+| Event | Trigger | Ljud |
+|-------|---------|------|
+| 180 | 3 kast = 180p | monsterkill.wav |
+| 120 | 2× Triple 20 i rad | 120.wav |
+| 1-2-3 | S1 → S2 → S3 i följd | one_two_three.wav |
+| 3× Miss | 3 missar i rad | lostmatch.wav |
+| 007 | Miss → Miss → S7 | — |
+| 420 | 4p → 20p | — |
+| 1337 | 13p → 3p → 7p | — |
+| 69 | 6p → 9p | — |
+| 911 | S9 → S1 → S1 | nine_one_one.wav |
+| 112 | S1 → S1 → S2 | one_one_two.wav |
+| ... | (se specialEvents.config.ts) | |
+
+## Lägg till nytt ljud
+
+```bash
+# Ladda ner från YouTube:
+yt-dlp -x --audio-format wav -o "sounds/namn.%(ext)s" "https://youtu.be/VIDEO_ID"
+
+# Konvertera till PCM WAV (krävs för Windows):
+ffmpeg -i sounds/namn.wav -acodec pcm_s16le -ar 44100 -ac 2 sounds/namn_pcm.wav -y
+mv sounds/namn_pcm.wav sounds/namn.wav
+
+# Lägg till i config.json → sound.sounds:
+"mitt_event": { "file": "namn.wav", "volume": 1.0 }
+```
 
 ## Felsökning
 
-### LightShark svarar inte
-1. Kontrollera IP-adress i `config.json`
-2. Verifiera att OSC är aktiverat i LightShark (Settings → Network → OSC)
-3. Kör `npm test` för att testa anslutningen
+**LightShark svarar inte:**
+- Kontrollera IP i `config.secrets.json`
+- Verifiera att OSC är aktiverat i LightShark (Settings → Network → OSC)
 
-### Scolia-anslutning misslyckas
-1. Kontrollera `serialNumber` och `accessToken` i `config.json`
-2. Verifiera att darttavlan är online
-3. Kontrollera internetanslutning
+**Scolia-anslutning misslyckas:**
+- Kontrollera `serialNumber` och `accessToken` i `config.secrets.json`
+- Verifiera att darttavlan är online
 
-### Lampor tänds inte
-1. Verifiera executor-koordinater (page/column/row)
-2. Kontrollera att executorn finns och är aktiv i LightShark
-3. Testa med simulatorn först
+**Playwright-problem:**
+- Kör `npx playwright install chromium` om browser saknas
+- Ta bort `data/scolia-cookies.json` för att tvinga ny inloggning
+- Kolla loggar: `pm2 logs scolia-new --lines 50`
 
-### Playwright-problem
-1. Kontrollera att `playwright` är installerat (`npx playwright install chromium`)
-2. Verifiera credentials i `config.json` → `playwright.credentials`
-3. Ta bort `scolia-cookies.json` för att tvinga ny inloggning
-4. Kolla loggar — Playwright loggar alla state-ändringar
+**Scoreboard visar fel stats:**
+- Kör `http://127.0.0.1:3456/api/stats` för att se rådata
+- Kontrollera `data/game-log.json` på remote för loggade matcher
+- Re-exportera historik om något saknas (se Scoreboard-sektionen ovan)
