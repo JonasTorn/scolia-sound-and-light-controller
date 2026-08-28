@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-08-28T06:38:49.853Z",
+  "fetchedAt": "2026-08-28T07:06:00.587Z",
   "boardId": "67a322937482b642fa656d8a",
   "boardName": "Digiwise HQ",
   "games": [
@@ -18,21 +18,27 @@
           "oneEighties": 0,
           "highestCheckout": 21,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 70
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 41
         }
       }
     },
@@ -50,14 +56,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 61
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 60
         }
       }
     },
@@ -75,14 +85,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 79
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 60
         }
       }
     },
@@ -100,14 +114,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 43
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 7,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 1,
+          "highestRound": 123
         }
       }
     },
@@ -125,14 +143,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 88
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 39
         }
       }
     },
@@ -150,14 +172,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 51
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 62
         }
       }
     },
@@ -175,14 +201,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 84
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         }
       }
     },
@@ -201,21 +231,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 77
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 40
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 1,
+          "highestRound": 119
         }
       }
     },
@@ -234,21 +270,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 75
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 67
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 56
         }
       }
     },
@@ -267,21 +309,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 1,
+          "highestRound": 112
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 38
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 31
         }
       }
     },
@@ -299,14 +347,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 86
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 67
         }
       }
     },
@@ -324,14 +376,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 46
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 55
         }
       }
     },
@@ -349,14 +405,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 49
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         }
       }
     },
@@ -374,14 +434,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 3,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 84
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 3
+          "eliminated": 3,
+          "hundredPlus": 0,
+          "highestRound": 50
         }
       }
     },
@@ -399,14 +463,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 49
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 65
         }
       }
     },
@@ -425,21 +493,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 49
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 77
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 83
         }
       }
     },
@@ -458,21 +532,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 44
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 92
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 52
         }
       }
     },
@@ -491,21 +571,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 28
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 73
         }
       }
     },
@@ -525,28 +611,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 75
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 37
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 65
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 64
         }
       }
     },
@@ -566,28 +660,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 75
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 40
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 91
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 45
         }
       }
     },
@@ -607,28 +709,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 66
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 1,
+          "highestRound": 123
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 76
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 43
         }
       }
     },
@@ -649,35 +759,45 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 47
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 35
         },
         "Luca": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 56
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 54
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 47
         }
       }
     },
@@ -696,21 +816,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 3,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 65
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 73
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 62
         }
       }
     },
@@ -729,21 +855,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 45
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 65
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 66
         }
       }
     },
@@ -762,21 +894,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 48
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 36
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 53
         }
       }
     },
@@ -796,28 +934,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 61
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 63
         },
         "Luca": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 69
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 48
         }
       }
     },
@@ -837,28 +983,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 57
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 3
+          "eliminated": 3,
+          "hundredPlus": 1,
+          "highestRound": 125
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 43
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 62
         }
       }
     },
@@ -877,21 +1031,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 66
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 60
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 85
         }
       }
     },
@@ -911,28 +1071,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 52
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 30
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 66
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 74
         }
       }
     },
@@ -951,21 +1119,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 45
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 50
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 68
         }
       }
     },
@@ -983,14 +1157,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 37
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 45
         }
       }
     },
@@ -1008,14 +1186,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 46
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 75
         }
       }
     },
@@ -1033,14 +1215,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 60
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 47
         }
       }
     },
@@ -1058,14 +1244,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 77
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 89
         }
       }
     },
@@ -1083,14 +1273,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 1,
+          "highestRound": 130
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 47
         }
       }
     },
@@ -1108,14 +1302,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 87
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 41
         }
       }
     },
@@ -1133,14 +1331,18 @@
           "oneEighties": 0,
           "highestCheckout": 17,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 63
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 48
         }
       }
     },
@@ -1158,14 +1360,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 60
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 63,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 75
         }
       }
     },
@@ -1185,28 +1391,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 77
         },
         "Sony": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 72
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 56
         }
       }
     },
@@ -1226,28 +1440,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 69
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 39
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 72
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 58
         }
       }
     },
@@ -1267,28 +1489,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 72
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 52
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 47
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 25
         }
       }
     },
@@ -1306,14 +1536,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 1,
+          "highestRound": 129
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 41
         }
       }
     },
@@ -1331,14 +1565,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 88
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 40
         }
       }
     },
@@ -1356,14 +1594,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 65
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         }
       }
     },
@@ -1381,14 +1623,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 78
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 25
         }
       }
     },
@@ -1408,28 +1654,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 3,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 40
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 51
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 78
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 86
         }
       }
     },
@@ -1449,28 +1703,36 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 42
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 45
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 35
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 68
         }
       }
     },
@@ -1488,14 +1750,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 79
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 2,
-          "eliminated": 2
+          "eliminated": 2,
+          "hundredPlus": 0,
+          "highestRound": 82
         }
       }
     },
@@ -1513,14 +1779,18 @@
           "oneEighties": 0,
           "highestCheckout": 17,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 85
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 49
         }
       }
     },
@@ -1538,14 +1808,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 37
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 75
         }
       }
     },
@@ -1563,14 +1837,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 55
         },
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 16,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 47
         }
       }
     },
@@ -1588,14 +1866,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 50
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 47
         }
       }
     },
@@ -1613,14 +1895,18 @@
           "oneEighties": 0,
           "highestCheckout": 13,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 38
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 86
         }
       }
     },
@@ -1638,14 +1924,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 63
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 78
         }
       }
     },
@@ -1663,14 +1953,18 @@
           "oneEighties": 0,
           "highestCheckout": 21,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 42
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 82
         }
       }
     },
@@ -1688,14 +1982,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 74
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 76
         }
       }
     },
@@ -1713,14 +2011,18 @@
           "oneEighties": 0,
           "highestCheckout": 11,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 68
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 70
         }
       }
     },
@@ -1739,21 +2041,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 59
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 81
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 90
         }
       }
     },
@@ -1772,21 +2080,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 92
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 39
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 60
         }
       }
     },
@@ -1805,21 +2119,27 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 87
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 63
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 1,
+          "highestRound": 144
         }
       }
     },
@@ -1837,14 +2157,18 @@
           "oneEighties": 0,
           "highestCheckout": 6,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 79
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 45
         }
       }
     },
@@ -1862,14 +2186,18 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 50
         },
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 29,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 77
         }
       }
     },
@@ -1890,35 +2218,45 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 50
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 75
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 93
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 53
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 60
         }
       }
     },
@@ -1939,35 +2277,45 @@
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 1,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 42
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 77
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 47
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 3,
-          "eliminated": 0
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 60
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
           "highestCheckout": 0,
           "eliminations": 0,
-          "eliminated": 1
+          "eliminated": 1,
+          "hundredPlus": 0,
+          "highestRound": 63
         }
       }
     }
