@@ -20,6 +20,13 @@
   const LIMIT        = 10;  // Scolia API caps list responses at 10 per page
   const CONCURRENCY  = 8;   // parallel detail fetches
 
+  // Games to permanently exclude (test/warmup games that should never count)
+  const EXCLUDED_IDS = new Set([
+    '6a7c507c09b3fe528eb7bbac', // 2026-08-12 test: Luca+Groggen+Laser
+    '6a7c4f7e09b3fe528eb7b6e4', // 2026-08-12 test: Luca+Groggen+Laser
+    '6a7c4e2409b3fe528eb7b03e', // 2026-08-12 test: Luca+Groggen+Laser
+  ]);
+
   // ── Step 1: Paginate /api/games to collect all summaries ───────────────────
   console.log('⏳ Fetching game list…');
 
@@ -45,7 +52,7 @@
 
     const batch = (data.data ?? []);
     const boardBatch = batch.filter(g =>
-      g.boardId === BOARD_ID && g.startTime >= SEASON_START,
+      g.boardId === BOARD_ID && g.startTime >= SEASON_START && !EXCLUDED_IDS.has(g._id),
     );
     allSummaries.push(...boardBatch);
 
