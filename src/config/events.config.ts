@@ -54,7 +54,9 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 				"goofy_scream.wav",
 				"say_hello_to_my_little_friend.wav",
 				"hasta_la_vista_baby.wav",
-				"dodge_this.wav"], weights: [2, 1, 1, 1]
+				"dodge_this.wav",
+				"die_mf_die_mf.wav"
+			], weights: [2, 1, 1, 1, 1]
 		},
 	},
 };
@@ -420,7 +422,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["s3", "None", "None"] },
 		sound: { files: ["this_is_sparta.wav"] },
-		overlay: { file: "overlays/300_leonidas.gif", durationMs: 5000 },
+		overlay: { file: "overlays/300_kick.gif", durationMs: 5000 },
 	},
 	{
 		name: "99",
