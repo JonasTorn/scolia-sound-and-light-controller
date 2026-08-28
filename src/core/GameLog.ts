@@ -10,7 +10,6 @@ interface PerPlayerAccum {
 	hundredPlus: number;
 	highestRound: number;
 	busts: number;
-	eliminatedThisGame: boolean;
 }
 
 interface GameRecord {
@@ -63,7 +62,7 @@ export class GameLog {
 			gameMode,
 			players,
 			perPlayer: Object.fromEntries(
-				players.map((p) => [p, { eliminations: 0, eliminated: 0, oneEighties: 0, hundredPlus: 0, highestRound: 0, busts: 0, eliminatedThisGame: false }]),
+				players.map((p) => [p, { eliminations: 0, eliminated: 0, oneEighties: 0, hundredPlus: 0, highestRound: 0, busts: 0 }]),
 			),
 		};
 		this.logger.info(`GameLog: started (${players.join(", ")}, mode: ${gameMode ?? "unknown"})`);
@@ -99,9 +98,8 @@ export class GameLog {
 
 	recordElimination(player: string, eliminator?: string): void {
 		const pp = this.active?.perPlayer[player];
-		if (!pp || pp.eliminatedThisGame) return;
+		if (!pp) return;
 		pp.eliminated++;
-		pp.eliminatedThisGame = true;
 		if (eliminator && eliminator !== player && this.active?.perPlayer[eliminator]) {
 			this.active.perPlayer[eliminator].eliminations++;
 		}
