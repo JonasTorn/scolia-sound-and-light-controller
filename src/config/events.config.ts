@@ -555,6 +555,6 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 1,
 		detector: "threeOfAKind",
 		params: { excludeSegments: [6, 7] }, // 666 and 777 have their own events
-		sound: { files: ["three_of_a_kind.wav"] },
+		sound: { files: ["one_more_time.wav"] },
 	},
 ];
