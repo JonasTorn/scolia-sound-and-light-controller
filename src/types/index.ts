@@ -185,7 +185,8 @@ export interface PlayerStats {
 	gamesPlayed: number;
 	wins: number;
 	winPct: number;          // 0–100
-	eliminations: number;
+	eliminations: number;    // times you eliminated someone else
+	eliminated: number;      // times your score was reset by someone else
 	oneEighties: number;
 	busts: number;
 	highestCheckout: number; // points of the winning dart (0 = no checkout recorded)

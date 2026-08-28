@@ -5,6 +5,7 @@ import { PlayerStats } from "../types/index";
 
 interface PerPlayerAccum {
 	eliminations: number;
+	eliminated: number;
 	oneEighties: number;
 	busts: number;
 	eliminatedThisGame: boolean; // dedup flag — reset on startGame
@@ -16,7 +17,7 @@ interface GameRecord {
 	gameMode: string | null;
 	players: string[];
 	winner: string | null;
-	perPlayer: Record<string, { eliminations: number; oneEighties: number; busts: number }>;
+	perPlayer: Record<string, { eliminations: number; eliminated: number; oneEighties: number; busts: number }>;
 }
 
 interface ActiveGame {
@@ -58,7 +59,7 @@ export class GameLog {
 			gameMode,
 			players,
 			perPlayer: Object.fromEntries(
-				players.map((p) => [p, { eliminations: 0, oneEighties: 0, busts: 0, eliminatedThisGame: false }]),
+				players.map((p) => [p, { eliminations: 0, eliminated: 0, oneEighties: 0, busts: 0, eliminatedThisGame: false }]),
 			),
 		};
 		this.logger.info(`GameLog: started (${players.join(", ")}, mode: ${gameMode ?? "unknown"})`);
@@ -77,7 +78,7 @@ export class GameLog {
 	recordElimination(player: string): void {
 		const pp = this.active?.perPlayer[player];
 		if (!pp || pp.eliminatedThisGame) return;
-		pp.eliminations++;
+		pp.eliminated++;
 		pp.eliminatedThisGame = true;
 	}
 
@@ -92,7 +93,7 @@ export class GameLog {
 			perPlayer: Object.fromEntries(
 				Object.entries(this.active.perPlayer).map(([p, v]) => [
 					p,
-					{ eliminations: v.eliminations, oneEighties: v.oneEighties, busts: v.busts },
+					{ eliminations: v.eliminations, eliminated: v.eliminated, oneEighties: v.oneEighties, busts: v.busts },
 				]),
 			),
 		};
@@ -120,6 +121,7 @@ export class GameLog {
 			const wins = myGames.filter((r) => r.winner === nick).length;
 			const gamesPlayed = myGames.length;
 			const eliminations = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.eliminations ?? 0), 0);
+			const eliminated = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.eliminated ?? 0), 0);
 			const oneEighties = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.oneEighties ?? 0), 0);
 			const busts = myGames.reduce((s, r) => s + (r.perPlayer[nick]?.busts ?? 0), 0);
 			return {
@@ -128,6 +130,7 @@ export class GameLog {
 				wins,
 				winPct: gamesPlayed > 0 ? Math.round((wins / gamesPlayed) * 100) : 0,
 				eliminations,
+				eliminated,
 				oneEighties,
 				busts,
 				highestCheckout: 0,

@@ -136,15 +136,27 @@
           won:             winnerIds.includes(ps.userId) || st.winner === true,
           oneEighties:     st['180'] ?? 0,
           highestCheckout: st.highestFinish ?? 0,
+          eliminations:    st.eliminations ?? st.numberOfEliminations ?? 0,
+          eliminated:      st.eliminated ?? st.numberOfTimesEliminated ?? st.timesEliminated ?? 0,
         };
       }
     } else if (game.type === 'Elimination') {
-      // Elimination: compute 180s from raw throw sectors
+      // Elimination: Scolia pre-computes stats in statistics array
+      const statsByUserId = {};
+      for (const ps of game.statistics ?? []) statsByUserId[ps.userId] = ps.statistics ?? {};
+      // Log raw stats keys on first Elimination game to discover field names
+      if (allDetails.indexOf(game) === 0 && game.statistics?.length) {
+        console.log('📊 Elimination stats keys:', Object.keys(game.statistics[0]?.statistics ?? {}));
+        console.log('📊 Sample:', JSON.stringify(game.statistics[0]?.statistics));
+      }
       for (const p of game.participants ?? []) {
+        const st = statsByUserId[p._id] ?? {};
         perPlayer[p.nickname] = {
           won:             winnerIds.includes(p._id),
           oneEighties:     count180sFromHistory(game.history, p._id),
           highestCheckout: 0,
+          eliminations:    st.eliminations ?? st.numberOfEliminations ?? 0,
+          eliminated:      st.eliminated ?? st.numberOfTimesEliminated ?? st.timesEliminated ?? 0,
         };
       }
     } else {
@@ -154,6 +166,8 @@
           won:             winnerIds.includes(p._id),
           oneEighties:     0,
           highestCheckout: 0,
+          eliminations:    0,
+          eliminated:      0,
         };
       }
     }
