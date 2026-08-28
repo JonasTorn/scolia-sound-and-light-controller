@@ -1,8 +1,66 @@
 {
-  "fetchedAt": "2026-08-26T10:58:03.764Z",
+  "fetchedAt": "2026-08-28T06:38:49.853Z",
   "boardId": "67a322937482b642fa656d8a",
   "boardName": "Digiwise HQ",
   "games": [
+    {
+      "_id": "6a9015d100253e38d2b782cf",
+      "type": "X01",
+      "startTime": "2026-08-27T10:47:45.521Z",
+      "players": [
+        "Sony",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 21,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        }
+      }
+    },
+    {
+      "_id": "6a8ee7247e99ea381aceecce",
+      "type": "Elimination",
+      "startTime": "2026-08-26T13:16:20.877Z",
+      "players": [
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
+        },
+        "Laser": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
+        }
+      }
+    },
     {
       "_id": "6a8dca60351af2423fc6059e",
       "type": "Elimination",
@@ -15,12 +73,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -36,12 +98,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 7
+          "highestCheckout": 7,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -57,12 +123,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -78,12 +148,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     },
@@ -99,12 +173,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -121,17 +199,23 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     },
@@ -148,17 +232,23 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -175,17 +265,23 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 1
         }
       }
     },
@@ -201,12 +297,16 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -222,12 +322,16 @@
         "Luca": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -243,12 +347,16 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -264,12 +372,16 @@
         "Luca": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 3,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 3
         }
       }
     },
@@ -285,12 +397,16 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -307,17 +423,23 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         }
       }
     },
@@ -334,17 +456,23 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -361,17 +489,23 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -389,22 +523,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         }
       }
     },
@@ -422,22 +564,30 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     },
@@ -455,22 +605,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -489,27 +647,37 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 2
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Luca": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 2
         }
       }
     },
@@ -526,17 +694,23 @@
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 3,
+          "eliminated": 2
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 2
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         }
       }
     },
@@ -553,17 +727,23 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -580,17 +760,23 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -608,22 +794,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Luca": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 0
         }
       }
     },
@@ -641,22 +835,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 1
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 3
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 0
         }
       }
     },
@@ -673,17 +875,23 @@
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -701,22 +909,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 2
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 0
         }
       }
     },
@@ -733,17 +949,23 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -759,12 +981,16 @@
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -780,12 +1006,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     },
@@ -801,12 +1031,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -822,12 +1056,16 @@
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -843,12 +1081,16 @@
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -864,12 +1106,16 @@
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -885,12 +1131,16 @@
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 17
+          "highestCheckout": 17,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -906,12 +1156,16 @@
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 63
+          "highestCheckout": 63,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -929,22 +1183,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Sony": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -962,22 +1224,30 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -995,22 +1265,30 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1026,12 +1304,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -1047,12 +1329,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1068,12 +1354,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -1089,12 +1379,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1112,22 +1406,30 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 3,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 2
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 2
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -1145,22 +1447,30 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1176,12 +1486,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 2
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 2,
+          "eliminated": 2
         }
       }
     },
@@ -1197,12 +1511,16 @@
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 17
+          "highestCheckout": 17,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1218,12 +1536,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     },
@@ -1239,12 +1561,16 @@
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 16
+          "highestCheckout": 16,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1260,12 +1586,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         }
       }
     },
@@ -1281,12 +1611,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 13
+          "highestCheckout": 13,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1302,12 +1636,16 @@
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -1323,12 +1661,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 21
+          "highestCheckout": 21,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1344,12 +1686,16 @@
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     },
@@ -1365,12 +1711,115 @@
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 11
+          "highestCheckout": 11,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c507c09b3fe528eb7bbac",
+      "type": "Elimination",
+      "startTime": "2026-08-12T10:52:44.421Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c4f7e09b3fe528eb7b6e4",
+      "type": "Elimination",
+      "startTime": "2026-08-12T10:48:30.956Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        }
+      }
+    },
+    {
+      "_id": "6a7c4e2409b3fe528eb7b03e",
+      "type": "Elimination",
+      "startTime": "2026-08-12T10:42:44.804Z",
+      "players": [
+        "Luca",
+        "Groggen",
+        "Laser"
+      ],
+      "perPlayer": {
+        "Luca": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Groggen": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
+        },
+        "Laser": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1386,12 +1835,16 @@
         "Laser": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 6
+          "highestCheckout": 6,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Digiwise": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1407,12 +1860,16 @@
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Digiwise": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 29
+          "highestCheckout": 29,
+          "eliminations": 0,
+          "eliminated": 0
         }
       }
     },
@@ -1431,27 +1888,37 @@
         "T10": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0
         },
         "Groggen": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 0
         }
       }
     },
@@ -1470,27 +1937,37 @@
         "T10": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 1,
+          "eliminated": 1
         },
         "Sony": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Luca": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         },
         "Groggen": {
           "won": true,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 3,
+          "eliminated": 0
         },
         "Laser": {
           "won": false,
           "oneEighties": 0,
-          "highestCheckout": 0
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 1
         }
       }
     }
