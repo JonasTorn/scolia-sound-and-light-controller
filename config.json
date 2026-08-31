@@ -153,6 +153,17 @@
     "discoverStats": true,
     "_comment_discoverStats": "Log all /history API responses at info level — enable once to discover Scolia field names, then remove"
   },
+  "notifications": {
+    "enabled": false,
+    "slackWebhookUrl": "",
+    "label": "Scolia (madrixpc)",
+    "socketMode": {
+      "enabled": false,
+      "appToken": "",
+      "command": "!restart",
+      "debounceMs": 30000
+    }
+  },
   "logging": {
     "enabled": true,
     "logFile": "dart-events.log",

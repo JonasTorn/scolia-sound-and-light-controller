@@ -205,6 +205,18 @@ export interface ScoreboardConfig {
 	discoverStats?: boolean;  // log /history API responses for endpoint discovery
 }
 
+export interface NotificationsConfig {
+	enabled: boolean;
+	slackWebhookUrl?: string;
+	label?: string;
+	socketMode?: {
+		enabled: boolean;
+		appToken?: string;
+		command?: string;
+		debounceMs?: number;
+	};
+}
+
 export interface FullConfig {
 	scolia: ScoliaConfig;
 	lightshark: LightSharkConfig;
@@ -212,6 +224,7 @@ export interface FullConfig {
 	sound: SoundConfig;
 	playwright: PlaywrightConfig;
 	logging: LoggingConfig;
+	notifications?: NotificationsConfig;
 	scoreboard?: ScoreboardConfig;
 	players?: Record<string, Record<string, SoundEntry>>; // known players + optional per-player throw-sound overrides
 	executors?: Record<string, LightSharkExecutor>;       // named executor map — reference by name in events and colorMode

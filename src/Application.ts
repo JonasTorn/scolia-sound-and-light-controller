@@ -1,3 +1,4 @@
+import * as path from "path";
 import * as WebSocket from "ws";
 import { Logger, LoggerConfig } from "./utils/Logger";
 import { ConfigManager } from "./core/ConfigManager";
@@ -10,11 +11,14 @@ import { LightSharkController } from "./controllers/LightSharkController";
 import { SoundController } from "./controllers/SoundController";
 import { KNXController } from "./controllers/KNXController";
 import { PlaywrightController } from "./controllers/PlaywrightController";
+import { SlackController, markRestart, consumeRestartFlag } from "./controllers/SlackController";
 import {
 	ScoliaThrowPayload,
 	FullConfig,
 	ScoliaThrowPayload as ScoliaPayload,
 } from "./types/index";
+
+const RESTART_FLAG = path.join(process.cwd(), "data", ".restart-flag");
 
 export class Application {
 	private logger: Logger;
@@ -31,6 +35,7 @@ export class Application {
 	private scoreboardServer: ScoreboardServer | null = null;
 	private gameLog: GameLog | null = null;
 	private historyStore: HistoryStore | null = null;
+	private slackController: SlackController;
 	private scoreboardShowing = false;
 	private running = false;
 
@@ -42,6 +47,17 @@ export class Application {
 		// Initialize logger
 		const loggerConfig: LoggerConfig = this.config.logging;
 		this.logger = new Logger(loggerConfig);
+
+		// Slack controller — disabled/unconfigured becomes a no-op
+		this.slackController = new SlackController(
+			this.config.notifications ?? { enabled: false },
+			this.logger,
+			async () => {
+				this.logger.warn("♻️  Restart requested via Slack — exiting (pm2 will restart)");
+				markRestart(RESTART_FLAG);
+				process.exit(0);
+			},
+		);
 
 		// Initialize game state with persistence
 		this.gameState = new GameState();
@@ -227,6 +243,14 @@ export class Application {
 			// 5. Setup graceful shutdown
 			process.on("SIGINT", () => this.shutdown());
 			process.on("SIGTERM", () => this.shutdown());
+
+			// Start Slack listener (no-op if unconfigured)
+			await this.slackController.start();
+
+			// If this startup was triggered by a Slack !restart, confirm it
+			if (consumeRestartFlag(RESTART_FLAG)) {
+				await this.slackController.send("✅ Back online after restart");
+			}
 
 			this.logger.success("Application started");
 		} catch (err) {
@@ -443,6 +467,7 @@ export class Application {
 			await this.playwrightController.stop();
 		}
 
+		await this.slackController.stop();
 		this.scoreboardServer?.stop();
 		this.lightsharkController.close();
 		this.soundController.close();
