@@ -459,12 +459,26 @@ export class PlaywrightController extends EventEmitter {
 			// Detect elimination via status field change: ["active", "eliminated"] or similar.
 			// Suppressed during takeout — Scolia sometimes re-sends eliminated status in the
 			// GAME_STATE_CHANGED that arrives around TAKEOUT_FINISHED, causing a false re-fire.
+			let eliminationFired = false;
 			const statusDelta = playerDiff.status;
 			if (!this.inTakeout && Array.isArray(statusDelta)) {
 				const newStatus = statusDelta.length >= 2 ? statusDelta[1] : statusDelta[0];
 				if (typeof newStatus === "string" && newStatus.toLowerCase().includes("eliminat")) {
+					eliminationFired = true;
 					const name = this.getPlayerName(playerId);
 					this.logger.info(`💀 Player eliminated: ${name}`);
+					this.emit("eliminated", name);
+				}
+			}
+
+			// Fallback: Scolia sometimes omits the status delta and only sends a score delta
+			// of [0, 0] (score reset to zero = eliminated). Catch those here so they don't go silent.
+			if (!eliminationFired && !this.inTakeout && Array.isArray(playerDiff.score)) {
+				const scoreDelta = playerDiff.score as unknown[];
+				const newScore = scoreDelta.length >= 2 ? scoreDelta[1] : scoreDelta[0];
+				if (newScore === 0) {
+					const name = this.getPlayerName(playerId);
+					this.logger.info(`💀 Player eliminated (score reset): ${name}`);
 					this.emit("eliminated", name);
 				}
 			}
