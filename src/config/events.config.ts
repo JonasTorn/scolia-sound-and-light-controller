@@ -38,7 +38,10 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		sound: { files: ["simply_the_best.wav"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
 		playerOverwrites: {
-			"Groggen": { overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 } },
+			"Groggen": { 
+				overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 },
+				sound: { files: ["groggen_win.wav"] }
+			 },
 			"Laser": {
 				overlay: { file: "overlays/laser_win.gif", durationMs: 10000 },
 				sound: { files: ["laser_win.wav"] }
