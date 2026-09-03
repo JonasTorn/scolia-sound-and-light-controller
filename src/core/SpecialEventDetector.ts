@@ -249,6 +249,8 @@ export class SpecialEventDetector {
 		if (exclude.includes(currentThrow.segment)) return false;
 
 		const last2 = throwHistory.slice(-2);
-		return last2.every((t) => t.segment === currentThrow.segment);
+		return last2.every(
+			(t) => t.segment === currentThrow.segment && t.multiplier === currentThrow.multiplier,
+		);
 	}
 }
