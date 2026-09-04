@@ -259,8 +259,8 @@ export class ScoreboardServer {
         <th>Games</th>
         <th>Wins</th>
         <th>Win %</th>
-        <th>Elim. ⚔️</th>
-        <th>180s</th>
+        <th>Kills ⚔️</th>
+        <th>Deaths 💀</th>
         <th>Best</th>
       </tr>
     </thead>
@@ -377,7 +377,7 @@ async function refresh() {
         '<td class="' + z + '">' + p.wins + '</td>' +
         '<td class="win-pct' + z + '">' + winPctStr + '</td>' +
         '<td class="' + z + '">' + (p.eliminations || 0) + '</td>' +
-        '<td class="' + z + '">' + (p.oneEighties || 0) + '</td>' +
+        '<td class="' + z + '">' + (p.eliminated || 0) + '</td>' +
         '<td class="' + z + '">' + (p.highestRound || 0) + '</td>' +
         '</tr>';
     }).join('');
