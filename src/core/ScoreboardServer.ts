@@ -64,150 +64,160 @@ export class ScoreboardServer {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dart Scoreboard</title>
+<title>Digiwise Dart League</title>
 <style>
+  /* Load Axiforma if font files are placed in the app's static directory.
+     Falls back to Segoe UI (Windows system font) if not available. */
+  :root {
+    --gold:       #d8c281;
+    --bg:         #313535;
+    --bg-card:    #3a3f3f;
+    --secondary:  #54595F;
+    --dim:        #464b4b;
+    --text:       #ffffff;
+    --font-body:  "Axiforma Regular", "Segoe UI", sans-serif;
+    --font-heavy: "Axiforma Heavy", "Segoe UI", sans-serif;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #0d0d0d;
-    color: #e8e8e8;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
     height: 100vh;
     overflow: hidden;
-    position: relative;
   }
 
+  /* ── View shell ── */
   .view {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 48px 60px;
+    padding: 24px 36px 16px;
     opacity: 0;
     transition: opacity 0.8s ease;
     pointer-events: none;
   }
+  .view.active { opacity: 1; pointer-events: auto; }
 
-  .view.active {
-    opacity: 1;
-    pointer-events: auto;
+  /* ── Brand header (shown in every view) ── */
+  .brand-bar {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--gold);
+    flex-shrink: 0;
   }
-
-  h1 {
-    font-size: 4.5rem;
-    font-weight: 900;
-    letter-spacing: 0.08em;
+  .brand-logo { height: 30px; }
+  .brand-divider { width: 1px; height: 26px; background: var(--secondary); }
+  .brand-league {
+    font-family: var(--font-heavy);
+    font-size: 1rem;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: #f5c518;
-    text-shadow: 0 0 60px rgba(245, 197, 24, 0.3);
-    margin-bottom: 44px;
+    color: var(--gold);
+  }
+  .view-label {
+    margin-left: auto;
+    font-family: var(--font-heavy);
+    font-size: 1rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--secondary);
   }
 
-  /* ── Leaderboard ── */
-  table {
-    width: 100%;
-    max-width: 1100px;
-    border-collapse: collapse;
-  }
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; }
 
   thead th {
-    padding: 12px 28px;
+    padding: 8px 18px 12px;
     text-align: center;
-    color: #555;
-    font-weight: 600;
-    font-size: 1.15rem;
+    font-family: var(--font-heavy);
+    font-size: 0.88rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    border-bottom: 2px solid #1e1e1e;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    border-bottom: 1px solid var(--dim);
   }
-
   thead th:nth-child(2) { text-align: left; }
 
-  tbody tr { border-bottom: 1px solid #161616; }
-  tbody tr:hover { background: #111; }
+  tbody tr { border-bottom: 1px solid var(--dim); }
 
   tbody td {
-    padding: 20px 28px;
+    padding: 15px 18px;
     text-align: center;
-    font-size: 2rem;
+    font-size: 1.95rem;
   }
-
   tbody td:nth-child(2) {
     text-align: left;
-    font-weight: 700;
-    font-size: 2.2rem;
+    font-family: var(--font-heavy);
+    font-size: 2.1rem;
   }
 
-  .rank { font-size: 1.5rem; color: #3a3a3a; min-width: 48px; }
-  .rank-1 { color: #FFD700; font-weight: 800; }
-  .rank-2 { color: #C0C0C0; font-weight: 800; }
-  .rank-3 { color: #CD7F32; font-weight: 800; }
+  .rank { font-size: 1.4rem; color: var(--dim); min-width: 40px; }
+  .rank-1 { color: var(--gold);  font-family: var(--font-heavy); }
+  .rank-2 { color: #C0C0C0; font-family: var(--font-heavy); }
+  .rank-3 { color: #CD7F32; font-family: var(--font-heavy); }
 
-  .win-pct { font-weight: 800; font-size: 2.4rem; color: #f5c518; }
-  .zero { color: #2e2e2e; }
+  .win-pct { font-family: var(--font-heavy); font-size: 2.1rem; color: var(--gold); }
+  .zero { color: var(--dim); }
 
   .no-data {
-    color: #2a2a2a;
-    font-size: 2rem;
+    color: var(--secondary);
+    font-size: 1.8rem;
     text-align: center;
-    padding: 60px 0;
+    margin-top: 80px;
   }
 
-  /* ── Cards ── */
+  /* ── Hall of Fame cards ── */
   .cards-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 28px;
-    max-width: 1100px;
-    width: 100%;
+    gap: 18px;
+    flex: 1;
   }
 
   .stat-card {
-    background: #111;
-    border: 1px solid #1e1e1e;
-    border-radius: 20px;
-    padding: 36px 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--dim);
+    border-radius: 10px;
+    padding: 24px 28px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    transition: border-color 0.3s;
+    justify-content: center;
+    gap: 7px;
   }
+  .stat-card.has-data { border-color: var(--gold); }
 
-  .stat-card.has-data { border-color: #2a2a2a; }
-
-  .card-icon { font-size: 2.6rem; }
-
+  .card-icon { font-size: 2rem; }
   .card-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    font-family: var(--font-heavy);
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #444;
-    margin-top: 4px;
+    color: var(--secondary);
   }
-
   .card-player {
-    font-size: 3.2rem;
-    font-weight: 900;
-    color: #f5c518;
-    text-shadow: 0 0 40px rgba(245, 197, 24, 0.25);
+    font-family: var(--font-heavy);
+    font-size: 2.8rem;
+    color: var(--gold);
     line-height: 1.1;
   }
-
-  .card-value { font-size: 1.6rem; color: #777; }
-
-  .card-empty .card-player { color: #222; }
-  .card-empty .card-value  { color: #222; }
+  .card-value { font-size: 1.35rem; color: #a0a8a8; }
+  .card-empty .card-player { color: var(--dim); }
+  .card-empty .card-value  { color: var(--dim); }
 
   footer {
     position: fixed;
-    bottom: 16px;
-    right: 24px;
-    color: #1e1e1e;
-    font-size: 0.9rem;
+    bottom: 8px;
+    right: 18px;
+    color: var(--dim);
+    font-size: 0.75rem;
   }
 </style>
 </head>
@@ -215,7 +225,12 @@ export class ScoreboardServer {
 
 <!-- View A: Leaderboard -->
 <div class="view active" id="view-leaderboard">
-  <h1>🎯 Scoreboard</h1>
+  <div class="brand-bar">
+    <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193.17 49.39"><path d="M22.56 37.57A12.06 12.06 0 0115 39.94c-9.12 0-15-6.2-15-14.84 0-8.26 5.83-15 14.57-15a13.5 13.5 0 017.29 1.78V0h8.69v39.46h-8zm-7.18-5.4c4.27 0 6.75-3.18 6.75-7.18s-2.64-7.23-6.75-7.23S8.64 20.94 8.64 25s2.75 7.17 6.74 7.17zM42.4 39.46h-8.69V10.58h8.69zM66.37 10.58h8.15v24.07c0 10.8-6.42 14.74-15.71 14.74A23 23 0 0148.45 47L51 40.27a19.79 19.79 0 007.83 1.67c3.94 0 7-1.4 7-4.21A10.12 10.12 0 0159 39.94c-9 0-15-6-15-14.84 0-8.26 5.94-15 14.69-15a11.71 11.71 0 017.66 2.32zm-7 21.64c4.26 0 6.74-3.18 6.74-7.17s-2.64-7.24-6.74-7.24-6.71 3.19-6.71 7.24 2.75 7.17 6.75 7.17zM86.33 39.46h-8.69V10.58h8.69zM118 28.28l3.94-17.7h9l-7.66 28.88h-9.61l-4.59-16.3-4.43 16.3h-9.79l-8.09-28.88h9.82l3.89 17.7 4.15-17.7h9.23zM140.24 39.46h-8.69V10.58h8.69zM42.4 0h-8.69v7.19h8.69zM86.33 0h-8.69v7.19h8.69zM140.24 0h-8.69v7.19h8.69zM153.25 20.57c1.24.27 2.54.48 3.51.75 5 1.4 7.29 3.73 7.29 9 0 6.8-5.24 9.55-11 9.55-8.53 0-11-4.85-10.8-9.87h8.26c-.05 1.45.43 3 2.64 3 1.46 0 2.49-.65 2.49-1.78s-.6-1.73-2.38-2.11a34.56 34.56 0 01-4.38-1.11c-4.21-1.46-6.15-4.43-6.15-8.74 0-5.62 4.53-9 10.47-9 6.15 0 10.31 2.75 10.36 9.39h-7.93c-.06-1.72-.87-2.8-2.59-2.8-1.3 0-2.11.7-2.11 1.78s.7 1.61 2.32 1.94zM173.8 27.85c.37 2.75 2.53 4.43 5.88 4.43a6.71 6.71 0 005.88-3.4l6.64 3.88c-1.62 3.35-5.4 7.18-12.57 7.18-8.8 0-14.85-5.56-14.85-14.79 0-8.63 5.78-15.06 14.2-15.06 8.85 0 14.19 5.78 14.19 14.42 0 .86 0 1.88-.1 3.34zm.21-6.1h10.15a4.86 4.86 0 00-5.16-4.42 4.76 4.76 0 00-5 4.42z" fill="#d8c281"/></svg>
+    <div class="brand-divider"></div>
+    <span class="brand-league">Dart League</span>
+    <span class="view-label">Scoreboard</span>
+  </div>
   <table id="table">
     <thead>
       <tr>
@@ -224,8 +239,8 @@ export class ScoreboardServer {
         <th>Games</th>
         <th>Wins</th>
         <th>Win %</th>
-        <th>Elim. ⚔️</th>
-        <th>Elim. 💀</th>
+        <th>Kills ⚔️</th>
+        <th>Deaths 💀</th>
         <th>100+</th>
         <th>Best round</th>
         <th>180s</th>
@@ -238,7 +253,12 @@ export class ScoreboardServer {
 
 <!-- View B: Hall of Fame -->
 <div class="view" id="view-cards">
-  <h1>⭐ Hall of Fame</h1>
+  <div class="brand-bar">
+    <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193.17 49.39"><path d="M22.56 37.57A12.06 12.06 0 0115 39.94c-9.12 0-15-6.2-15-14.84 0-8.26 5.83-15 14.57-15a13.5 13.5 0 017.29 1.78V0h8.69v39.46h-8zm-7.18-5.4c4.27 0 6.75-3.18 6.75-7.18s-2.64-7.23-6.75-7.23S8.64 20.94 8.64 25s2.75 7.17 6.74 7.17zM42.4 39.46h-8.69V10.58h8.69zM66.37 10.58h8.15v24.07c0 10.8-6.42 14.74-15.71 14.74A23 23 0 0148.45 47L51 40.27a19.79 19.79 0 007.83 1.67c3.94 0 7-1.4 7-4.21A10.12 10.12 0 0159 39.94c-9 0-15-6-15-14.84 0-8.26 5.94-15 14.69-15a11.71 11.71 0 017.66 2.32zm-7 21.64c4.26 0 6.74-3.18 6.74-7.17s-2.64-7.24-6.74-7.24-6.71 3.19-6.71 7.24 2.75 7.17 6.75 7.17zM86.33 39.46h-8.69V10.58h8.69zM118 28.28l3.94-17.7h9l-7.66 28.88h-9.61l-4.59-16.3-4.43 16.3h-9.79l-8.09-28.88h9.82l3.89 17.7 4.15-17.7h9.23zM140.24 39.46h-8.69V10.58h8.69zM42.4 0h-8.69v7.19h8.69zM86.33 0h-8.69v7.19h8.69zM140.24 0h-8.69v7.19h8.69zM153.25 20.57c1.24.27 2.54.48 3.51.75 5 1.4 7.29 3.73 7.29 9 0 6.8-5.24 9.55-11 9.55-8.53 0-11-4.85-10.8-9.87h8.26c-.05 1.45.43 3 2.64 3 1.46 0 2.49-.65 2.49-1.78s-.6-1.73-2.38-2.11a34.56 34.56 0 01-4.38-1.11c-4.21-1.46-6.15-4.43-6.15-8.74 0-5.62 4.53-9 10.47-9 6.15 0 10.31 2.75 10.36 9.39h-7.93c-.06-1.72-.87-2.8-2.59-2.8-1.3 0-2.11.7-2.11 1.78s.7 1.61 2.32 1.94zM173.8 27.85c.37 2.75 2.53 4.43 5.88 4.43a6.71 6.71 0 005.88-3.4l6.64 3.88c-1.62 3.35-5.4 7.18-12.57 7.18-8.8 0-14.85-5.56-14.85-14.79 0-8.63 5.78-15.06 14.2-15.06 8.85 0 14.19 5.78 14.19 14.42 0 .86 0 1.88-.1 3.34zm.21-6.1h10.15a4.86 4.86 0 00-5.16-4.42 4.76 4.76 0 00-5 4.42z" fill="#d8c281"/></svg>
+    <div class="brand-divider"></div>
+    <span class="brand-league">Dart League</span>
+    <span class="view-label">Hall of Fame</span>
+  </div>
   <div class="cards-grid">
     <div class="stat-card" id="card-eliminator"></div>
     <div class="stat-card" id="card-180king"></div>
@@ -250,7 +270,12 @@ export class ScoreboardServer {
 
 <!-- View C: Today -->
 <div class="view" id="view-today">
-  <h1>📅 Today</h1>
+  <div class="brand-bar">
+    <svg class="brand-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 193.17 49.39"><path d="M22.56 37.57A12.06 12.06 0 0115 39.94c-9.12 0-15-6.2-15-14.84 0-8.26 5.83-15 14.57-15a13.5 13.5 0 017.29 1.78V0h8.69v39.46h-8zm-7.18-5.4c4.27 0 6.75-3.18 6.75-7.18s-2.64-7.23-6.75-7.23S8.64 20.94 8.64 25s2.75 7.17 6.74 7.17zM42.4 39.46h-8.69V10.58h8.69zM66.37 10.58h8.15v24.07c0 10.8-6.42 14.74-15.71 14.74A23 23 0 0148.45 47L51 40.27a19.79 19.79 0 007.83 1.67c3.94 0 7-1.4 7-4.21A10.12 10.12 0 0159 39.94c-9 0-15-6-15-14.84 0-8.26 5.94-15 14.69-15a11.71 11.71 0 017.66 2.32zm-7 21.64c4.26 0 6.74-3.18 6.74-7.17s-2.64-7.24-6.74-7.24-6.71 3.19-6.71 7.24 2.75 7.17 6.75 7.17zM86.33 39.46h-8.69V10.58h8.69zM118 28.28l3.94-17.7h9l-7.66 28.88h-9.61l-4.59-16.3-4.43 16.3h-9.79l-8.09-28.88h9.82l3.89 17.7 4.15-17.7h9.23zM140.24 39.46h-8.69V10.58h8.69zM42.4 0h-8.69v7.19h8.69zM86.33 0h-8.69v7.19h8.69zM140.24 0h-8.69v7.19h8.69zM153.25 20.57c1.24.27 2.54.48 3.51.75 5 1.4 7.29 3.73 7.29 9 0 6.8-5.24 9.55-11 9.55-8.53 0-11-4.85-10.8-9.87h8.26c-.05 1.45.43 3 2.64 3 1.46 0 2.49-.65 2.49-1.78s-.6-1.73-2.38-2.11a34.56 34.56 0 01-4.38-1.11c-4.21-1.46-6.15-4.43-6.15-8.74 0-5.62 4.53-9 10.47-9 6.15 0 10.31 2.75 10.36 9.39h-7.93c-.06-1.72-.87-2.8-2.59-2.8-1.3 0-2.11.7-2.11 1.78s.7 1.61 2.32 1.94zM173.8 27.85c.37 2.75 2.53 4.43 5.88 4.43a6.71 6.71 0 005.88-3.4l6.64 3.88c-1.62 3.35-5.4 7.18-12.57 7.18-8.8 0-14.85-5.56-14.85-14.79 0-8.63 5.78-15.06 14.2-15.06 8.85 0 14.19 5.78 14.19 14.42 0 .86 0 1.88-.1 3.34zm.21-6.1h10.15a4.86 4.86 0 00-5.16-4.42 4.76 4.76 0 00-5 4.42z" fill="#d8c281"/></svg>
+    <div class="brand-divider"></div>
+    <span class="brand-league">Dart League</span>
+    <span class="view-label">Today</span>
+  </div>
   <table id="table-today">
     <thead>
       <tr>
