@@ -227,7 +227,7 @@ export class ScoreboardServer {
         <th>Elim. ⚔️</th>
         <th>Elim. 💀</th>
         <th>100+</th>
-        <th>Best</th>
+        <th>Best round</th>
         <th>180s</th>
       </tr>
     </thead>
@@ -261,7 +261,7 @@ export class ScoreboardServer {
         <th>Win %</th>
         <th>Kills ⚔️</th>
         <th>Deaths 💀</th>
-        <th>Best</th>
+        <th>Best round</th>
       </tr>
     </thead>
     <tbody id="tbody-today"></tbody>
