@@ -58,7 +58,9 @@ export class PlaywrightController extends EventEmitter {
 	private domPlayerNames: string[] = []; // latest player names from DOM scoreboard (more reliable than WS PLAYER_JOINED)
 	private sbcConnected = false;
 	private sbcEverConnected = false;
-	private wsConnectionCount = 0;
+	private sbcWsCount = 0;       // only counts scoliadarts.com WebSockets
+	private sbcReloadAttempts = 0;
+	private readonly SBC_MAX_RELOADS = 4;
 	private sbcWatchdogTimer: NodeJS.Timeout | null = null;
 
 	getPlayerName(id: string): string {
@@ -142,8 +144,10 @@ export class PlaywrightController extends EventEmitter {
 			if (this.config.proxyWebSocket !== false) {
 				this.page.on("websocket", (ws) => {
 					this.logger.debug(`Playwright: WebSocket opened: ${ws.url()}`);
+					// Ignore non-Scolia WebSockets (analytics, etc.) — they don't carry game events
+					if (!ws.url().includes("scoliadarts.com")) return;
 					this.sbcConnected = false;
-					this.wsConnectionCount++;
+					this.sbcWsCount++;
 					this.startSbcWatchdog();
 					ws.on("framereceived", (frame) => {
 						const payload =
@@ -208,6 +212,7 @@ export class PlaywrightController extends EventEmitter {
 							} else if (msg.type === "API::COMMON::SBC_FOUND") {
 								this.sbcConnected = true;
 								this.sbcEverConnected = true;
+								this.sbcReloadAttempts = 0;
 								this.clearSbcWatchdog();
 								this.logger.info("Playwright WS recv: API::COMMON::SBC_FOUND — board connected");
 							} else if (msg.type === "API::COMMON::REFRESH_CLIENT_TOKEN") {
@@ -305,13 +310,18 @@ export class PlaywrightController extends EventEmitter {
 		this.sbcWatchdogTimer = setTimeout(async () => {
 			this.sbcWatchdogTimer = null;
 			if (this.sbcConnected || !this.running) return;
-			// On first WS connection: board is simply offline if SBC never announced itself
-			if (this.wsConnectionCount === 1 && !this.sbcEverConnected) {
+			// First Scolia WS, board never connected — it's simply offline, don't reload
+			if (this.sbcWsCount === 1 && !this.sbcEverConnected) {
 				this.logger.debug("Playwright: SBC not found within 30s — board offline, not reloading");
 				return;
 			}
-			// On reconnects: board was working before — reload to re-establish the session
-			this.logger.warn("Playwright: SBC connection lost after reconnect — reloading page");
+			// Give up after max reloads to avoid infinite loops when board stays offline
+			if (this.sbcReloadAttempts >= this.SBC_MAX_RELOADS) {
+				this.logger.warn(`Playwright: SBC still not found after ${this.SBC_MAX_RELOADS} reloads — board offline, giving up`);
+				return;
+			}
+			this.sbcReloadAttempts++;
+			this.logger.warn(`Playwright: SBC connection lost — reloading page (attempt ${this.sbcReloadAttempts}/${this.SBC_MAX_RELOADS})`);
 			try {
 				await this.page?.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
 			} catch (err) {
