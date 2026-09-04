@@ -438,6 +438,14 @@ export class Application {
 		}
 
 		this.scoreboardServer.updateStats(stats);
+
+		// "Today" starts at 05:00 — sessions can run past midnight
+		const now = new Date();
+		const cutoff = new Date(now);
+		cutoff.setHours(5, 0, 0, 0);
+		if (now < cutoff) cutoff.setDate(cutoff.getDate() - 1); // before 05:00 → yesterday's 05:00
+		const todayStats = this.gameLog.getPlayerStats(players, vipMin, cutoff.getTime());
+		this.scoreboardServer.updateTodayStats(todayStats);
 	}
 
 	private async handlePlayerEliminated(): Promise<void> {

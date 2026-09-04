@@ -5,6 +5,7 @@ import { PlayerStats } from "../types/index";
 export class ScoreboardServer {
 	private server: http.Server | null = null;
 	private stats: PlayerStats[] = [];
+	private todayStats: PlayerStats[] = [];
 	private lastUpdated: Date | null = null;
 
 	constructor(private logger: Logger) {}
@@ -17,6 +18,12 @@ export class ScoreboardServer {
 					"Access-Control-Allow-Origin": "*",
 				});
 				res.end(JSON.stringify({ stats: this.stats, lastUpdated: this.lastUpdated }));
+			} else if (req.url === "/api/stats/today") {
+				res.writeHead(200, {
+					"Content-Type": "application/json",
+					"Access-Control-Allow-Origin": "*",
+				});
+				res.end(JSON.stringify({ stats: this.todayStats, lastUpdated: this.lastUpdated }));
 			} else {
 				res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
 				res.end(this.buildHtml());
@@ -40,6 +47,10 @@ export class ScoreboardServer {
 		this.stats = stats;
 		this.lastUpdated = new Date();
 		this.logger.info(`Scoreboard: Stats updated (${stats.length} players)`);
+	}
+
+	updateTodayStats(stats: PlayerStats[]): void {
+		this.todayStats = stats;
 	}
 
 	stop(): void {
@@ -237,24 +248,39 @@ export class ScoreboardServer {
   </div>
 </div>
 
+<!-- View C: Today -->
+<div class="view" id="view-today">
+  <h1>📅 Today</h1>
+  <table id="table-today">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Player</th>
+        <th>Games</th>
+        <th>Wins</th>
+        <th>Win %</th>
+        <th>Elim. ⚔️</th>
+        <th>180s</th>
+        <th>Best</th>
+      </tr>
+    </thead>
+    <tbody id="tbody-today"></tbody>
+  </table>
+  <p class="no-data" id="no-data-today" style="display:none">No games today yet — get throwing!</p>
+</div>
+
 <footer id="footer"></footer>
 
 <script>
 const SWITCH_MS = 15000;
-let currentView = 'leaderboard';
+const VIEWS = ['leaderboard', 'cards', 'today'];
+let currentViewIdx = 0;
 
 function switchView() {
-  const lb = document.getElementById('view-leaderboard');
-  const hof = document.getElementById('view-cards');
-  if (currentView === 'leaderboard') {
-    lb.classList.remove('active');
-    hof.classList.add('active');
-    currentView = 'cards';
-  } else {
-    hof.classList.remove('active');
-    lb.classList.add('active');
-    currentView = 'leaderboard';
-  }
+  const ids = { leaderboard: 'view-leaderboard', cards: 'view-cards', today: 'view-today' };
+  document.getElementById(ids[VIEWS[currentViewIdx]]).classList.remove('active');
+  currentViewIdx = (currentViewIdx + 1) % VIEWS.length;
+  document.getElementById(ids[VIEWS[currentViewIdx]]).classList.add('active');
 }
 
 setInterval(switchView, SWITCH_MS);
@@ -297,9 +323,11 @@ function renderCards(stats) {
 
 async function refresh() {
   try {
-    const res = await fetch('/api/stats');
+    const [res, resToday] = await Promise.all([fetch('/api/stats'), fetch('/api/stats/today')]);
     const data = await res.json();
+    const dataToday = await resToday.json();
     const stats = data.stats || [];
+    const todayStats = dataToday.stats || [];
 
     // Leaderboard
     const hasData = stats.some(function(p) { return p.gamesPlayed > 0; });
@@ -326,6 +354,31 @@ async function refresh() {
         '<td class="' + z + '">' + (p.hundredPlus || 0) + '</td>' +
         '<td class="' + z + '">' + (p.highestRound || 0) + '</td>' +
         '<td class="' + z + '">' + (p.oneEighties || 0) + '</td>' +
+        '</tr>';
+    }).join('');
+
+    // Today
+    const hasTodayData = todayStats.some(function(p) { return p.gamesPlayed > 0; });
+    document.getElementById('table-today').style.display = hasTodayData ? '' : 'none';
+    document.getElementById('no-data-today').style.display = hasTodayData ? 'none' : 'block';
+    const sortedToday = [...todayStats].sort(function(a, b) {
+      return (b.wins - a.wins) || (b.gamesPlayed - a.gamesPlayed);
+    });
+    document.getElementById('tbody-today').innerHTML = sortedToday.map(function(p, i) {
+      const rankClass = i < 3 ? ' rank-' + (i + 1) : '';
+      const medals = ['🥇', '🥈', '🥉'];
+      const medal = i < 3 ? medals[i] : (i + 1);
+      const winPctStr = p.gamesPlayed > 0 ? p.winPct.toFixed(0) + '%' : '—';
+      const z = p.gamesPlayed === 0 ? ' zero' : '';
+      return '<tr>' +
+        '<td class="rank' + rankClass + '">' + medal + '</td>' +
+        '<td>' + p.nickname + '</td>' +
+        '<td class="' + z + '">' + p.gamesPlayed + '</td>' +
+        '<td class="' + z + '">' + p.wins + '</td>' +
+        '<td class="win-pct' + z + '">' + winPctStr + '</td>' +
+        '<td class="' + z + '">' + (p.eliminations || 0) + '</td>' +
+        '<td class="' + z + '">' + (p.oneEighties || 0) + '</td>' +
+        '<td class="' + z + '">' + (p.highestRound || 0) + '</td>' +
         '</tr>';
     }).join('');
 
