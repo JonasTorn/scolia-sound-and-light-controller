@@ -57,6 +57,7 @@ export class PlaywrightController extends EventEmitter {
 	private inTakeout = false; // true between TAKEOUT_STARTED and TAKEOUT_FINISHED — suppress elimination WS events during this window
 	private domPlayerNames: string[] = []; // latest player names from DOM scoreboard (more reliable than WS PLAYER_JOINED)
 	private sbcConnected = false;
+	private sbcEverConnected = false;
 	private sbcWatchdogTimer: NodeJS.Timeout | null = null;
 
 	getPlayerName(id: string): string {
@@ -204,6 +205,7 @@ export class PlaywrightController extends EventEmitter {
 								this.logger.info("Playwright WS recv: API::BULL_THROW::GAME_ENDED");
 							} else if (msg.type === "API::COMMON::SBC_FOUND") {
 								this.sbcConnected = true;
+								this.sbcEverConnected = true;
 								this.clearSbcWatchdog();
 								this.logger.info("Playwright WS recv: API::COMMON::SBC_FOUND — board connected");
 							} else if (msg.type === "API::COMMON::REFRESH_CLIENT_TOKEN") {
@@ -301,7 +303,11 @@ export class PlaywrightController extends EventEmitter {
 		this.sbcWatchdogTimer = setTimeout(async () => {
 			this.sbcWatchdogTimer = null;
 			if (this.sbcConnected || !this.running) return;
-			this.logger.warn("Playwright: SBC not found within 30s — reloading page to reconnect");
+			if (!this.sbcEverConnected) {
+				this.logger.debug("Playwright: SBC not found within 30s — board offline, not reloading");
+				return;
+			}
+			this.logger.warn("Playwright: SBC connection lost — reloading page to reconnect");
 			try {
 				await this.page?.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
 			} catch (err) {
