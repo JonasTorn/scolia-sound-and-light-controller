@@ -56,6 +56,8 @@ export class PlaywrightController extends EventEmitter {
 	private processedBullThrowPlayers = new Set<string>(); // dedup: which players' bull throws have been emitted this round
 	private inTakeout = false; // true between TAKEOUT_STARTED and TAKEOUT_FINISHED — suppress elimination WS events during this window
 	private domPlayerNames: string[] = []; // latest player names from DOM scoreboard (more reliable than WS PLAYER_JOINED)
+	private sbcConnected = false;
+	private sbcWatchdogTimer: NodeJS.Timeout | null = null;
 
 	getPlayerName(id: string): string {
 		return this.players.get(id)?.nickname ?? id;
@@ -138,6 +140,8 @@ export class PlaywrightController extends EventEmitter {
 			if (this.config.proxyWebSocket !== false) {
 				this.page.on("websocket", (ws) => {
 					this.logger.debug(`Playwright: WebSocket opened: ${ws.url()}`);
+					this.sbcConnected = false;
+					this.startSbcWatchdog();
 					ws.on("framereceived", (frame) => {
 						const payload =
 							typeof frame.payload === "string"
@@ -198,6 +202,10 @@ export class PlaywrightController extends EventEmitter {
 							} else if (msg.type === "API::BULL_THROW::GAME_ENDED") {
 								this.processedBullThrowPlayers.clear();
 								this.logger.info("Playwright WS recv: API::BULL_THROW::GAME_ENDED");
+							} else if (msg.type === "API::COMMON::SBC_FOUND") {
+								this.sbcConnected = true;
+								this.clearSbcWatchdog();
+								this.logger.info("Playwright WS recv: API::COMMON::SBC_FOUND — board connected");
 							} else if (msg.type === "API::COMMON::REFRESH_CLIENT_TOKEN") {
 								this.logger.info("Playwright WS recv: API::COMMON::REFRESH_CLIENT_TOKEN");
 								this.emit("token-refresh");
@@ -207,6 +215,11 @@ export class PlaywrightController extends EventEmitter {
 						} catch {
 							// ignore non-JSON frames
 						}
+					});
+
+					ws.on("close", () => {
+						this.logger.debug("Playwright: Scolia WebSocket closed");
+						this.sbcConnected = false;
 					});
 				});
 			} else {
@@ -278,6 +291,29 @@ export class PlaywrightController extends EventEmitter {
 		} catch (err) {
 			this.logger.error(`Playwright launch failed: ${err}`);
 			throw err;
+		}
+	}
+
+	private startSbcWatchdog(): void {
+		this.clearSbcWatchdog();
+		// If SBC_FOUND doesn't arrive within 30s of a WS opening, the Scolia cloud
+		// won't route throw events to this session. Reloading forces a clean reconnect.
+		this.sbcWatchdogTimer = setTimeout(async () => {
+			this.sbcWatchdogTimer = null;
+			if (this.sbcConnected || !this.running) return;
+			this.logger.warn("Playwright: SBC not found within 30s — reloading page to reconnect");
+			try {
+				await this.page?.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
+			} catch (err) {
+				this.logger.warn(`Playwright: SBC watchdog reload failed: ${err}`);
+			}
+		}, 30000);
+	}
+
+	private clearSbcWatchdog(): void {
+		if (this.sbcWatchdogTimer) {
+			clearTimeout(this.sbcWatchdogTimer);
+			this.sbcWatchdogTimer = null;
 		}
 	}
 
@@ -935,6 +971,8 @@ export class PlaywrightController extends EventEmitter {
 			clearTimeout(this.stableTimer);
 			this.stableTimer = null;
 		}
+
+		this.clearSbcWatchdog();
 
 		if (this.scoreboardPage) {
 			await this.scoreboardPage.close().catch(() => {});
