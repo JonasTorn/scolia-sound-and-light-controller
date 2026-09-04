@@ -58,6 +58,7 @@ export class PlaywrightController extends EventEmitter {
 	private domPlayerNames: string[] = []; // latest player names from DOM scoreboard (more reliable than WS PLAYER_JOINED)
 	private sbcConnected = false;
 	private sbcEverConnected = false;
+	private wsConnectionCount = 0;
 	private sbcWatchdogTimer: NodeJS.Timeout | null = null;
 
 	getPlayerName(id: string): string {
@@ -142,6 +143,7 @@ export class PlaywrightController extends EventEmitter {
 				this.page.on("websocket", (ws) => {
 					this.logger.debug(`Playwright: WebSocket opened: ${ws.url()}`);
 					this.sbcConnected = false;
+					this.wsConnectionCount++;
 					this.startSbcWatchdog();
 					ws.on("framereceived", (frame) => {
 						const payload =
@@ -303,11 +305,13 @@ export class PlaywrightController extends EventEmitter {
 		this.sbcWatchdogTimer = setTimeout(async () => {
 			this.sbcWatchdogTimer = null;
 			if (this.sbcConnected || !this.running) return;
-			if (!this.sbcEverConnected) {
+			// On first WS connection: board is simply offline if SBC never announced itself
+			if (this.wsConnectionCount === 1 && !this.sbcEverConnected) {
 				this.logger.debug("Playwright: SBC not found within 30s — board offline, not reloading");
 				return;
 			}
-			this.logger.warn("Playwright: SBC connection lost — reloading page to reconnect");
+			// On reconnects: board was working before — reload to re-establish the session
+			this.logger.warn("Playwright: SBC connection lost after reconnect — reloading page");
 			try {
 				await this.page?.reload({ waitUntil: "domcontentloaded", timeout: 30000 });
 			} catch (err) {
