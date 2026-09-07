@@ -34,6 +34,7 @@
     inset: 0;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     padding: 24px 36px 52px;
     opacity: 0;
     transition: opacity 0.8s ease;
@@ -76,10 +77,10 @@
   table { width: 100%; border-collapse: collapse; }
 
   thead th {
-    padding: 6px 18px 10px;
+    padding: 6px 18px 12px;
     text-align: center;
     font-family: var(--font-heavy);
-    font-size: 0.95rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--gold);
@@ -90,22 +91,22 @@
   tbody tr { border-bottom: 1px solid var(--dim); }
 
   tbody td {
-    padding: 13px 18px;
+    padding: 18px 18px;
     text-align: center;
-    font-size: 2.3rem;
+    font-size: 2.8rem;
   }
   tbody td:nth-child(2) {
     text-align: left;
     font-family: var(--font-heavy);
-    font-size: 2.5rem;
+    font-size: 3rem;
   }
 
-  .rank { font-size: 1.6rem; color: var(--dim); min-width: 40px; }
+  .rank { font-size: 2rem; color: var(--dim); min-width: 40px; }
   .rank-1 { color: var(--gold);  font-family: var(--font-heavy); }
   .rank-2 { color: #C0C0C0; font-family: var(--font-heavy); }
   .rank-3 { color: #CD7F32; font-family: var(--font-heavy); }
 
-  .win-pct { font-family: var(--font-heavy); font-size: 2.5rem; color: var(--gold); }
+  .win-pct { font-family: var(--font-heavy); font-size: 3rem; color: var(--gold); }
   .zero { color: var(--dim); }
 
   .no-data {
@@ -229,7 +230,6 @@
         <th>Deaths 💀</th>
         <th>100+</th>
         <th>Best round</th>
-        <th>180s</th>
       </tr>
     </thead>
     <tbody id="tbody"></tbody>
@@ -397,7 +397,6 @@ async function refresh() {
         '<td class="' + z + '">' + (p.eliminated || 0) + '</td>' +
         '<td class="' + z + '">' + (p.hundredPlus || 0) + '</td>' +
         '<td class="' + z + '">' + (p.highestRound || 0) + '</td>' +
-        '<td class="' + z + '">' + (p.oneEighties || 0) + '</td>' +
         '</tr>';
     }).join('');
 
