@@ -34,7 +34,7 @@
     inset: 0;
     display: flex;
     flex-direction: column;
-    padding: 24px 36px 16px;
+    padding: 24px 36px 52px;
     opacity: 0;
     transition: opacity 0.8s ease;
     pointer-events: none;
@@ -127,30 +127,30 @@
     background: var(--bg-card);
     border: 1px solid var(--dim);
     border-radius: 10px;
-    padding: 24px 28px;
+    padding: 28px 32px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 7px;
+    gap: 10px;
   }
   .stat-card.has-data { border-color: var(--gold); }
 
-  .card-icon { font-size: 2rem; }
+  .card-icon { font-size: 3.5rem; line-height: 1; }
   .card-title {
     font-family: var(--font-heavy);
-    font-size: 0.8rem;
+    font-size: 1rem;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--secondary);
   }
   .card-player {
     font-family: var(--font-heavy);
-    font-size: 2.8rem;
+    font-size: 4.5rem;
     color: var(--gold);
-    line-height: 1.1;
+    line-height: 1.05;
   }
-  .card-value { font-size: 1.35rem; color: #a0a8a8; }
+  .card-value { font-size: 1.8rem; color: #a0a8a8; }
   .card-empty .card-player { color: var(--dim); }
   .card-empty .card-value  { color: var(--dim); }
 
@@ -246,10 +246,9 @@
   </div>
   <div class="cards-grid">
     <div class="stat-card" id="card-eliminator"></div>
-    <div class="stat-card" id="card-180king"></div>
     <div class="stat-card" id="card-highround"></div>
     <div class="stat-card" id="card-buster"></div>
-    <div class="stat-card" id="card-closer"></div>
+    <div class="stat-card" id="card-eliminated"></div>
   </div>
 </div>
 
@@ -356,16 +355,14 @@ function buildCard(id, icon, title, stats, key, format) {
 }
 
 function renderCards(stats) {
-  buildCard('card-eliminator', '💀', 'The Eliminator', stats, 'eliminations',
+  buildCard('card-eliminator', '⊕', 'The Eliminator', stats, 'eliminations',
     function(v) { return v + (v === 1 ? ' elimination' : ' eliminations'); });
-  buildCard('card-180king', '🎯', 'The 180 King', stats, 'oneEighties',
-    function(v) { return v + ' × 180'; });
   buildCard('card-highround', '🔥', 'High Round', stats, 'highestRound',
     function(v) { return v + ' pts in one round'; });
   buildCard('card-buster', '💥', 'Bust Machine', stats, 'busts',
     function(v) { return v + (v === 1 ? ' bust' : ' busts'); });
-  buildCard('card-closer', '🏆', 'The Closer', stats, 'highestCheckout',
-    function(v) { return 'Checked out on ' + v; });
+  buildCard('card-eliminated', '💀', 'Most Eliminated', stats, 'eliminated',
+    function(v) { return v + (v === 1 ? ' time' : ' times'); });
 }
 
 async function refresh() {
