@@ -15,6 +15,7 @@ interface PerPlayerAccum {
 interface GameRecord {
 	id: string;
 	timestamp: number;
+	date: string;
 	gameMode: string | null;
 	players: string[];
 	winner: string | null;
@@ -111,6 +112,7 @@ export class GameLog {
 		const record: GameRecord = {
 			id: this.active.id,
 			timestamp: this.active.timestamp,
+			date: new Date(this.active.timestamp).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" }),
 			gameMode: this.active.gameMode,
 			players: this.active.players,
 			winner,

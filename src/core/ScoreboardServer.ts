@@ -231,6 +231,51 @@ export class ScoreboardServer {
     color: var(--dim);
     font-size: 0.75rem;
   }
+
+  /* ── Nav bar ── */
+  #nav {
+    position: fixed;
+    bottom: 10px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.18;
+    transition: opacity 0.3s;
+    z-index: 100;
+  }
+  #nav:hover { opacity: 0.72; }
+
+  .nav-btn {
+    background: none;
+    border: 1px solid var(--dim);
+    border-radius: 4px;
+    color: var(--secondary);
+    font-family: var(--font-heavy);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav-btn:hover { color: var(--text); border-color: var(--secondary); }
+  .nav-btn.active { color: var(--gold); border-color: var(--gold); }
+
+  .nav-sep { width: 1px; height: 14px; background: var(--dim); margin: 0 2px; }
+
+  #btn-rotate {
+    background: none;
+    border: none;
+    color: var(--secondary);
+    font-size: 0.75rem;
+    padding: 3px 5px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  #btn-rotate:hover { color: var(--text); }
+  #btn-rotate.paused { color: #5a8a5a; }
 </style>
 </head>
 <body>
@@ -312,21 +357,59 @@ export class ScoreboardServer {
   <p class="no-data" id="no-data-today" style="display:none">No games today yet — get throwing!</p>
 </div>
 
+<div id="nav">
+  <button class="nav-btn active" data-view="leaderboard">Board</button>
+  <button class="nav-btn" data-view="cards">Fame</button>
+  <button class="nav-btn" data-view="today">Today</button>
+  <div class="nav-sep"></div>
+  <button id="btn-rotate" title="Toggle auto-rotate">▶</button>
+</div>
+
 <footer id="footer"></footer>
 
 <script>
 const SWITCH_MS = 15000;
 const VIEWS = ['leaderboard', 'cards', 'today'];
+const VIEW_IDS = { leaderboard: 'view-leaderboard', cards: 'view-cards', today: 'view-today' };
 let currentViewIdx = 0;
+let autoRotate = true;
+let rotateTimer = null;
 
-function switchView() {
-  const ids = { leaderboard: 'view-leaderboard', cards: 'view-cards', today: 'view-today' };
-  document.getElementById(ids[VIEWS[currentViewIdx]]).classList.remove('active');
-  currentViewIdx = (currentViewIdx + 1) % VIEWS.length;
-  document.getElementById(ids[VIEWS[currentViewIdx]]).classList.add('active');
+function showView(idx) {
+  document.getElementById(VIEW_IDS[VIEWS[currentViewIdx]]).classList.remove('active');
+  currentViewIdx = idx;
+  document.getElementById(VIEW_IDS[VIEWS[currentViewIdx]]).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.dataset.view === VIEWS[currentViewIdx]);
+  });
 }
 
-setInterval(switchView, SWITCH_MS);
+function scheduleNext() {
+  clearTimeout(rotateTimer);
+  if (autoRotate) rotateTimer = setTimeout(function() { showView((currentViewIdx + 1) % VIEWS.length); scheduleNext(); }, SWITCH_MS);
+}
+
+function setAutoRotate(on) {
+  autoRotate = on;
+  const btn = document.getElementById('btn-rotate');
+  btn.textContent = on ? '▶' : '⏸';
+  btn.classList.toggle('paused', !on);
+  scheduleNext();
+}
+
+document.querySelectorAll('.nav-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const idx = VIEWS.indexOf(btn.dataset.view);
+    showView(idx);
+    setAutoRotate(false);
+  });
+});
+
+document.getElementById('btn-rotate').addEventListener('click', function() {
+  setAutoRotate(!autoRotate);
+});
+
+scheduleNext();
 
 function buildCard(id, icon, title, stats, key, format) {
   const card = document.getElementById(id);

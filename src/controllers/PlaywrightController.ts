@@ -218,6 +218,8 @@ export class PlaywrightController extends EventEmitter {
 							} else if (msg.type === "API::COMMON::REFRESH_CLIENT_TOKEN") {
 								this.logger.info("Playwright WS recv: API::COMMON::REFRESH_CLIENT_TOKEN");
 								this.emit("token-refresh");
+							} else if (msg.type === "API::GAME::GAME_ENDED" || msg.type === "API::GAME::GAME_ENDED_STATISTICS") {
+								this.logger.info(`Playwright WS recv: ${msg.type} payload: ${JSON.stringify(msg.payload)}`);
 							} else {
 								this.logger.info(`Playwright WS recv: ${msg.type}`);
 							}
@@ -664,8 +666,18 @@ export class PlaywrightController extends EventEmitter {
 					'[class*="statusInfoBusted"], [class*="isBusted"], [class*="Busted"], [class*="busted"]',
 				);
 
-				// Scoped to winner/result elements to avoid false positives
-				const winnerEl = document.querySelector('[class*="winnerTile"], [class*="winner"], [class*="gameOver"], [class*="game-over"]');
+				// Find the specific element that contains a win announcement.
+				// Using querySelectorAll + find ensures we pick the element with actual "Won the"
+				// text, not just the first DOM element with "winner" in its class (which in
+				// Elimination mode can be an eliminated player's tile, appearing before the real
+				// winner's tile in DOM order and causing the wrong player to be detected).
+				const winnerCandidates = Array.from(document.querySelectorAll(
+					'[class*="winnerTile"], [class*="winner"], [class*="gameOver"], [class*="game-over"]',
+				));
+				const winnerEl = winnerCandidates.find((el) => {
+					const t = el.textContent?.toLowerCase() ?? "";
+					return t.includes("won the leg") || t.includes("won the set") || t.includes("won the game");
+				}) ?? null;
 				const winnerText = winnerEl?.textContent?.toLowerCase() ?? "";
 				const winnerTextRaw = winnerEl?.textContent?.trim() ?? "";
 
@@ -688,10 +700,14 @@ export class PlaywrightController extends EventEmitter {
 				})).filter((p) => p.id && p.nickname);
 				const playerNames = playerTabMap.map((p) => p.nickname);
 
-				// Extract winner name: match known player nicknames against winner element text
-				const winnerName = playerTabMap.find(
-					(p) => p.nickname && winnerTextRaw.toLowerCase().includes(p.nickname.toLowerCase()),
-				)?.nickname ?? "";
+				// Extract winner name: first try parsing "X Won the" from the text directly
+				// (most reliable), then fall back to nickname substring search.
+				const winnerMatch = winnerTextRaw.match(/^(.+?)\s+Won the\s+/i);
+				const winnerName = winnerMatch?.[1]?.trim()
+					|| playerTabMap.find(
+						(p) => p.nickname && winnerTextRaw.toLowerCase().includes(p.nickname.toLowerCase()),
+					)?.nickname
+					|| "";
 
 				return {
 					bustCount: bustElements.length,
