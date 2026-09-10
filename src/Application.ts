@@ -137,6 +137,13 @@ export class Application {
 			this.logger.info(`🎯 Active player: ${name}`);
 		});
 
+		this.playwrightController.on("game-ended-stats", (payload: any) => {
+			this.gameLog?.finalizeFromStats(payload);
+			if (this.config.scoreboard?.enabled) {
+				this.pushStatsToScoreboard();
+			}
+		});
+
 		this.playwrightController.on("game-mode", (mode: string) => {
 			this.gameState.setGameMode(mode);
 			// Bull-throw phase started — cancel scoreboard timer and return to game view

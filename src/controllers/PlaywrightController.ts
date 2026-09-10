@@ -220,6 +220,9 @@ export class PlaywrightController extends EventEmitter {
 								this.emit("token-refresh");
 							} else if (msg.type === "API::GAME::GAME_ENDED" || msg.type === "API::GAME::GAME_ENDED_STATISTICS") {
 								this.logger.info(`Playwright WS recv: ${msg.type} payload: ${JSON.stringify(msg.payload)}`);
+								if (msg.type === "API::GAME::GAME_ENDED_STATISTICS") {
+									this.emit("game-ended-stats", msg.payload);
+								}
 							} else {
 								this.logger.info(`Playwright WS recv: ${msg.type}`);
 							}
