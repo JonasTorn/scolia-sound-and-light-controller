@@ -539,7 +539,11 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		priority: 2,
 		detector: "sumLastN",
 		params: { n: 3, targetSum: "<10" },
-		sound: { files: ["skogsturken_edit.wav", "sadtrombone.wav"] },
+		sound: { files: [
+			"skogsturken_edit.wav",
+			"sadtrombone.wav",
+			"det_ar_kort_for_dig.wav"
+		] },
 	},
 
 	// ── Multiplier ───────────────────────────────────────────────────────
