@@ -14,7 +14,7 @@ export interface IEventOrchestrator {
 	handleBustDetected(): Promise<void>;
 	handleLegWon(): Promise<void>;
 	handleSetWon(): Promise<void>;
-	handlePlayerEliminated(): Promise<void>;
+	handlePlayerEliminated(playerName?: string): Promise<void>;
 }
 
 export class EventOrchestrator implements IEventOrchestrator {
@@ -111,14 +111,14 @@ export class EventOrchestrator implements IEventOrchestrator {
 		this.gameState.reset();
 	}
 
-	async handleBustDetected(): Promise<void>     { await this.fireGameEvent("bust", "Bust detected"); }
-	async handleLegWon(): Promise<void>           { await this.fireGameEvent("leg_won", "Leg won"); }
-	async handleSetWon(): Promise<void>           { await this.fireGameEvent("set_won", "Set won"); }
-	async handlePlayerEliminated(): Promise<void> { await this.fireGameEvent("eliminated", "Player eliminated"); }
+	async handleBustDetected(): Promise<void>                    { await this.fireGameEvent("bust", "Bust detected"); }
+	async handleLegWon(): Promise<void>                          { await this.fireGameEvent("leg_won", "Leg won"); }
+	async handleSetWon(): Promise<void>                          { await this.fireGameEvent("set_won", "Set won"); }
+	async handlePlayerEliminated(playerName?: string): Promise<void> { await this.fireGameEvent("eliminated", "Player eliminated", playerName); }
 
-	private async fireGameEvent(name: string, logMsg: string): Promise<void> {
+	private async fireGameEvent(name: string, logMsg: string, playerOverride?: string): Promise<void> {
 		try {
-			const player = this.gameState.getCurrentPlayer();
+			const player = playerOverride ?? this.gameState.getCurrentPlayer();
 			this.logger.info(`${logMsg} (player: ${player ?? "unknown"})`);
 			const cfg = gameEventsConfig[name];
 			// Fall back to another event's config if this one has no sound/overlay set
