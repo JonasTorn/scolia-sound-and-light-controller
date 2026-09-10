@@ -65,6 +65,10 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 			], weights: [2, 1, 1, 1, 1]
 		},
 	},
+	// Fires instead of "eliminated" when the eliminated player had 100+ points
+	eliminated_big: {
+		sound: { files: ["eliminated_big.wav"] },
+	},
 };
 
 // ============================================================

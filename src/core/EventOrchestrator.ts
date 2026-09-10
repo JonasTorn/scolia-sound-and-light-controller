@@ -14,7 +14,7 @@ export interface IEventOrchestrator {
 	handleBustDetected(): Promise<void>;
 	handleLegWon(): Promise<void>;
 	handleSetWon(): Promise<void>;
-	handlePlayerEliminated(playerName?: string): Promise<void>;
+	handlePlayerEliminated(playerName?: string, score?: number): Promise<void>;
 }
 
 export class EventOrchestrator implements IEventOrchestrator {
@@ -114,7 +114,11 @@ export class EventOrchestrator implements IEventOrchestrator {
 	async handleBustDetected(): Promise<void>                    { await this.fireGameEvent("bust", "Bust detected"); }
 	async handleLegWon(): Promise<void>                          { await this.fireGameEvent("leg_won", "Leg won"); }
 	async handleSetWon(): Promise<void>                          { await this.fireGameEvent("set_won", "Set won"); }
-	async handlePlayerEliminated(playerName?: string): Promise<void> { await this.fireGameEvent("eliminated", "Player eliminated", playerName); }
+	async handlePlayerEliminated(playerName?: string, score?: number): Promise<void> {
+		const BIG_ELIM_THRESHOLD = 100;
+		const eventName = score != null && score >= BIG_ELIM_THRESHOLD ? "eliminated_big" : "eliminated";
+		await this.fireGameEvent(eventName, "Player eliminated", playerName);
+	}
 
 	private async fireGameEvent(name: string, logMsg: string, playerOverride?: string): Promise<void> {
 		try {

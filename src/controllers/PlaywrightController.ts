@@ -527,8 +527,10 @@ export class PlaywrightController extends EventEmitter {
 				if (typeof newStatus === "string" && newStatus.toLowerCase().includes("eliminat")) {
 					eliminationFired = true;
 					const name = this.getPlayerName(playerId);
-					this.logger.info(`💀 Player eliminated: ${name}`);
-					this.emit("eliminated", name);
+					const scoreArr = Array.isArray(playerDiff.score) ? playerDiff.score as unknown[] : null;
+					const oldScore = scoreArr && scoreArr.length >= 2 ? (scoreArr[0] as number) : null;
+					this.logger.info(`💀 Player eliminated: ${name}${oldScore != null ? ` (had ${oldScore}pts)` : ""}`);
+					this.emit("eliminated", name, oldScore);
 				}
 			}
 
@@ -538,9 +540,10 @@ export class PlaywrightController extends EventEmitter {
 				const scoreDelta = playerDiff.score as unknown[];
 				const newScore = scoreDelta.length >= 2 ? scoreDelta[1] : scoreDelta[0];
 				if (newScore === 0) {
+					const oldScore = scoreDelta.length >= 2 ? (scoreDelta[0] as number) : null;
 					const name = this.getPlayerName(playerId);
-					this.logger.info(`💀 Player eliminated (score reset): ${name}`);
-					this.emit("eliminated", name);
+					this.logger.info(`💀 Player eliminated (score reset): ${name}${oldScore != null ? ` (had ${oldScore}pts)` : ""}`);
+					this.emit("eliminated", name, oldScore);
 				}
 			}
 

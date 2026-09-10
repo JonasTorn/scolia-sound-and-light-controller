@@ -120,7 +120,7 @@ export class Application {
 			this.handleSetWon();
 		});
 
-		this.playwrightController.on("eliminated", (name?: string) => {
+		this.playwrightController.on("eliminated", (name?: string, score?: number | null) => {
 			if (name) {
 				const eliminator = this.gameState.getCurrentPlayer();
 				this.gameLog?.recordElimination(name, eliminator ?? undefined);
@@ -128,7 +128,7 @@ export class Application {
 			// Pass name directly — do NOT setCurrentPlayer to the eliminated player.
 			// If elimination and win happen on the same turn, currentPlayer must stay
 			// as the active thrower so the subsequent set-won event fires for the right person.
-			this.handlePlayerEliminated(name);
+			this.handlePlayerEliminated(name, score ?? undefined);
 		});
 
 		// Update active player when Playwright detects a new thrower
@@ -456,8 +456,8 @@ export class Application {
 		this.scoreboardServer.updateTodayStats(todayStats);
 	}
 
-	private async handlePlayerEliminated(playerName?: string): Promise<void> {
-		await this.eventOrchestrator.handlePlayerEliminated(playerName);
+	private async handlePlayerEliminated(playerName?: string, score?: number): Promise<void> {
+		await this.eventOrchestrator.handlePlayerEliminated(playerName, score);
 	}
 
 	async shutdown(): Promise<void> {
