@@ -131,14 +131,15 @@ export class EventOrchestrator implements IEventOrchestrator {
 			const effects: Effect[] = [{ type: "sound", event: name, files: sound?.files, volume: sound?.volume, priority: 5 }];
 
 			for (const light of (overwrite?.lights ?? baseCfg?.lights) ?? []) {
-				effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode });
+				if (light.durationMs) {
+					effects.push({ type: "strobe", executor: this.re(light.executor), durationMs: light.durationMs });
+				} else {
+					effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode ?? "additive" });
+				}
 			}
 
 			const overlay = overwrite?.overlay ?? baseCfg?.overlay;
 			if (overlay) effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
-
-			const strobe = baseCfg?.strobe;
-			if (strobe) effects.push({ type: "strobe", executor: this.re(strobe.executor), durationMs: strobe.durationMs });
 
 			await this.effectExecutor.execute(effects);
 		} catch (err) {
@@ -164,7 +165,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 		if (throwData.points === 0) {
 			if (this.config.knx.enabled) effects.push({ type: "knx", action: "allOff" });
 			for (const light of gameEventsConfig["miss"]?.lights ?? []) {
-				effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode });
+				effects.push({ type: "light", executor: this.re(light.executor), mode: light.mode ?? "main" });
 			}
 			return effects;
 		}

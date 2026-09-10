@@ -10,8 +10,7 @@ import { SpecialEventDefinition, SoundEntry, PlayerOverwrite, ExecutorRef } from
 export interface GameEventConfig {
 	fallback?: string;  // if no sound/overlay set, use this event's config instead
 	sound?: SoundEntry;
-	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
-	strobe?: { executor: ExecutorRef; durationMs: number };
+	lights?: Array<{ executor: ExecutorRef; mode?: "main" | "additive"; durationMs?: number }>;
 	overlay?: { file: string; durationMs: number };
 	playerOverwrites?: Record<string, PlayerOverwrite>;
 }
@@ -37,7 +36,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	set_won: {
 		sound: { files: ["simply_the_best.wav"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
-		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
+		lights: [{ executor: "led_strobe_rnd_hold", durationMs: 5000 }],
 		playerOverwrites: {
 			"Groggen": { 
 				overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 },
@@ -107,8 +106,10 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["50"] },
 		sound: { files: ["headshot_remix.wav"] },
-		lights: [{ executor: "moln_ow_strobe", mode: "main" }],
-		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
+		lights: [
+			{ executor: "moln_ow_strobe", mode: "main" },
+			{ executor: "led_strobe_rnd_hold", durationMs: 5000 },
+		],
 	},
 	{
 		name: "bull25",
@@ -217,7 +218,7 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["t20"] },
 		sound: { files: ["godlike.wav"] },
-		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
+		lights: [{ executor: "led_strobe_rnd_hold", durationMs: 5000 }],
 	},
 	{
 		name: "t19",

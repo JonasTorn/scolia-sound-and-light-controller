@@ -59,12 +59,11 @@ export class SpecialEventDetector {
 
 		const lights = overwrite?.lights ?? eventDef.lights ?? [];
 		for (const light of lights) {
-			effects.push({ type: "light", executor: resolveExecutor(light.executor, this.executors), mode: light.mode });
-		}
-
-		const strobe = eventDef.strobe;
-		if (strobe) {
-			effects.push({ type: "strobe", executor: resolveExecutor(strobe.executor, this.executors), durationMs: strobe.durationMs });
+			if (light.durationMs) {
+				effects.push({ type: "strobe", executor: resolveExecutor(light.executor, this.executors), durationMs: light.durationMs });
+			} else {
+				effects.push({ type: "light", executor: resolveExecutor(light.executor, this.executors), mode: light.mode ?? "additive" });
+			}
 		}
 
 		const overlay = overwrite?.overlay ?? eventDef.overlay;

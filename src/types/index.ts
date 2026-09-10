@@ -57,7 +57,7 @@ export interface ThrowEvent {
 export interface PlayerOverwrite {
 	sound?: SoundEntry;
 	overlay?: { file: string; durationMs: number };
-	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
+	lights?: Array<{ executor: ExecutorRef; mode?: "main" | "additive"; durationMs?: number }>;
 }
 
 // Round position constraint — evaluated before the detector runs.
@@ -78,8 +78,7 @@ export interface SpecialEventDefinition {
 	roundConstraint?: RoundConstraint; // optional positional gate, checked before detector
 	sound?: SoundEntry; // default sound — auto-falls back to core/{name}.wav if omitted
 	overlay?: { file: string; durationMs: number };
-	lights?: Array<{ executor: ExecutorRef; mode: "main" | "additive" }>;
-	strobe?: { executor: ExecutorRef; durationMs: number }; // timed strobe effect, independent of lights
+	lights?: Array<{ executor: ExecutorRef; mode?: "main" | "additive"; durationMs?: number }>;
 	players?: string[]; // if set, event only fires when current player is in this list
 	gameModes?: string[]; // if set, event only fires in these Scolia game modes (e.g. ["X01", "Elimination"])
 	playerOverwrites?: Record<string, PlayerOverwrite>; // per-player effect overrides, keyed by player nickname
