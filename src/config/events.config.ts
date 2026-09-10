@@ -47,7 +47,10 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 				sound: { files: ["laser_win.wav"] }
 			},
 			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
-			"Sony": { overlay: { file: "overlays/sonny_win.gif", durationMs: 10000 } },
+			"Sony": { 
+				overlay: { file: "overlays/sonny_win.gif", durationMs: 10000 },
+				sound: { files: ["sonny_win.wav"] } 
+			},
 
 		},
 	},
