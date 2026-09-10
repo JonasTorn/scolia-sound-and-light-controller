@@ -137,6 +137,9 @@ export class EventOrchestrator implements IEventOrchestrator {
 			const overlay = overwrite?.overlay ?? baseCfg?.overlay;
 			if (overlay) effects.push({ type: "overlay", file: overlay.file, durationMs: overlay.durationMs });
 
+			const strobe = baseCfg?.strobe;
+			if (strobe) effects.push({ type: "strobe", executor: this.re(strobe.executor), durationMs: strobe.durationMs });
+
 			await this.effectExecutor.execute(effects);
 		} catch (err) {
 			this.logger.error(`Error handling ${name}:`, err);

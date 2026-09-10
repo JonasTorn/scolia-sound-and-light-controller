@@ -37,6 +37,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	set_won: {
 		sound: { files: ["simply_the_best.wav"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
+		strobe: { executor: "led_strobe_rnd_hold", durationMs: 5000 },
 		playerOverwrites: {
 			"Groggen": { 
 				overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 },
