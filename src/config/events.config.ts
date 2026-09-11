@@ -36,7 +36,11 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 	set_won: {
 		sound: { files: ["simply_the_best.wav"] },
 		overlay: { file: "overlays/winwin.gif", durationMs: 10000 },
-		lights: [{ executor: "led_strobe_rnd_hold", durationMs: 5000 }],
+		lights: [
+			{ executor: "moln_ow_strobe", durationMs: 10000 },
+			{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
+			{ executor: "strobe_dart", durationMs: 5000 },
+		],
 		playerOverwrites: {
 			"Groggen": { 
 				overlay: { file: "overlays/groggen_win.gif", durationMs: 10000 },
@@ -44,9 +48,24 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 			 },
 			"Laser": {
 				overlay: { file: "overlays/laser_win.gif", durationMs: 10000 },
-				sound: { files: ["laser_win.wav"] }
+				sound: { files: ["laser_win.wav"] },
+				lights: [ 
+					{ executor: "led_mag", durationMs: 20000 },
+					{ executor: "moln_ow_strobe", durationMs: 10000 },
+					{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
+					{ executor: "strobe_dart", durationMs: 5000 },
+				],
 			},
-			"T10": { overlay: { file: "overlays/t10_win.gif", durationMs: 10000 } },
+			"T10": { 
+				overlay: { file: "overlays/t10_win.gif", durationMs: 10000 },
+				sound: { files: ["we_are_all_the_winners.wav"] },
+				lights: [ 
+					{ executor: "vsk_hold", durationMs: 20000 },
+					{ executor: "moln_ow_strobe", durationMs: 10000 },
+					{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
+					{ executor: "strobe_dart", durationMs: 5000 },
+				],
+			},
 			"Sony": { 
 				overlay: { file: "overlays/sonny_win_party.gif", durationMs: 10000 },
 				sound: { files: ["sonny_win.wav"] } 
@@ -113,7 +132,8 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { throws: ["50"] },
 		sound: { files: ["headshot_remix.wav"] },
 		lights: [
-			{ executor: "moln_ow_strobe", mode: "main" },
+			{ executor: "led_green", mode: "main" },
+			{ executor: "moln_ow_strobe", durationMs: 5000 },
 			{ executor: "led_strobe_rnd_hold", durationMs: 5000 },
 		],
 	},
@@ -124,7 +144,10 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		detector: "sequentialSegments",
 		params: { throws: ["25"] },
 		sound: { files: ["headshot.wav"] },
-		lights: [{ executor: "led_green", mode: "main" }],
+		lights: [
+			{ executor: "led_green", mode: "main" },
+			{ executor: "moln_ow_strobe", durationMs: 5000 }
+		],
 	},
 
 	// ── High priority ────────────────────────────────────────────────────────

@@ -183,7 +183,9 @@
     "led_strobe_rnd_hold": { "page": 1, "column": 5, "row": 4, "flashMode": true },
     "strobe_dart":    { "page": 1, "column": 5, "row": 6, "flashMode": true },
     "ow_rnd_strobe":  { "page": 1, "column": 6, "row": 2 },
-    "speed_x4":       { "page": 1, "column": 7, "row": 2 }
+    "speed_x4":       { "page": 1, "column": 7, "row": 2 },
+    "vsk_hold":       { "page": 1, "column": 4, "row": 4, "flashMode": true },
+    "led_mag":        { "page": 1, "column": 2, "row": 5 }
   },
   "_comment_players": "Known players — Scolia nickname (exact match, case-sensitive). Used to filter events like important_round. Add per-player throw-sound overrides as { \"miss\": { \"files\": [\"...wav\"] } }. Event-level overrides (bust, set_won, overlays) go in src/config/events.config.ts playerOverwrites.",
   "players": {
