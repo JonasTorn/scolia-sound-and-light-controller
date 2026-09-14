@@ -2,10 +2,10 @@ import { Effect, FullConfig, IKNXController, ILightSharkController, IPlaywrightC
 import { GameState } from "./GameState";
 import { Logger } from "../utils/Logger";
 
+type StrobeEntry = { timer: NodeJS.Timeout; executor: LightSharkExecutor; fired: boolean };
+
 export class EffectExecutor {
-	private strobeTimer: NodeJS.Timeout | null = null;
-	private activeStrobeExecutor: LightSharkExecutor | null = null;
-	private strobeTimerFired = false; // true when timer has already sent toggle-off (cleanup skips to avoid double-toggle)
+	private strobeEntries: Map<string, StrobeEntry> = new Map();
 
 	constructor(
 		private gameState: GameState,
@@ -41,18 +41,15 @@ export class EffectExecutor {
 
 	// Toggle off all active lights and strobe, KNX recover. Called on takeout.
 	async cleanup(): Promise<void> {
-		// Cancel timer if still running
-		if (this.strobeTimer) {
-			clearTimeout(this.strobeTimer);
-			this.strobeTimer = null;
+		// Cancel all strobe timers and turn off any that haven't auto-fired yet
+		for (const entry of this.strobeEntries.values()) {
+			clearTimeout(entry.timer);
+			if (this.config.lightshark.enabled && !entry.fired) {
+				await this.lightshark.triggerExecutor(entry.executor);
+			}
 		}
-		// Toggle off strobe if active. Skip if timer already fired its toggle-off (to avoid double-toggle).
-		if (this.config.lightshark.enabled && this.activeStrobeExecutor && !this.strobeTimerFired) {
-			await this.lightshark.triggerExecutor(this.activeStrobeExecutor);
-			this.gameState.setStrobeActive(false);
-		}
-		this.activeStrobeExecutor = null;
-		this.strobeTimerFired = false;
+		this.strobeEntries.clear();
+		this.gameState.setStrobeActive(false);
 
 		if (this.config.lightshark.enabled) {
 			for (const executor of this.gameState.getSpecialExecutors()) {
@@ -123,13 +120,14 @@ export class EffectExecutor {
 	): Promise<void> {
 		if (!this.config.lightshark.enabled) return;
 
-		// Clear previous strobe first
-		if (this.strobeTimer) {
-			clearTimeout(this.strobeTimer);
-			this.strobeTimer = null;
-			await this.lightshark.triggerExecutor(effect.executor); // toggle off
+		const key = `${effect.executor.page}/${effect.executor.column}/${effect.executor.row}`;
+
+		// If this executor already has a running timer, cancel it (restart the duration)
+		const existing = this.strobeEntries.get(key);
+		if (existing) {
+			clearTimeout(existing.timer);
+			this.strobeEntries.delete(key);
 		}
-		this.strobeTimerFired = false;
 
 		// Flash mode: 1.0 to start (idempotent). Toggle mode: 0.0 to toggle on.
 		if (effect.executor.flashMode) {
@@ -138,16 +136,19 @@ export class EffectExecutor {
 			await this.lightshark.triggerExecutor(effect.executor);
 		}
 		this.gameState.setStrobeActive(true);
-		this.activeStrobeExecutor = effect.executor;
 
-		this.strobeTimer = setTimeout(async () => {
-			this.strobeTimer = null;
-			this.strobeTimerFired = true; // tell cleanup the timer already sent toggle-off
-			await this.lightshark.triggerExecutor(effect.executor);
-			this.activeStrobeExecutor = null;
-			this.gameState.setStrobeActive(false);
-			this.logger.debug(`Strobe auto-off after ${effect.durationMs}ms`);
-		}, effect.durationMs);
+		const entry: StrobeEntry = {
+			executor: effect.executor,
+			fired: false,
+			timer: setTimeout(async () => {
+				entry.fired = true;
+				this.strobeEntries.delete(key);
+				await this.lightshark.triggerExecutor(effect.executor);
+				if (this.strobeEntries.size === 0) this.gameState.setStrobeActive(false);
+				this.logger.debug(`Strobe auto-off after ${effect.durationMs}ms`);
+			}, effect.durationMs),
+		};
+		this.strobeEntries.set(key, entry);
 	}
 
 	private async executeKnx(
