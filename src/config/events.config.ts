@@ -39,7 +39,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 		lights: [
 			{ executor: "moln_ow_strobe", durationMs: 10000 },
 			{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
-			{ executor: "strobe_dart", durationMs: 5000 },
+			{ executor: "strobe_dart", durationMs: 10000 },
 		],
 		playerOverwrites: {
 			"Groggen": { 
@@ -53,7 +53,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 					{ executor: "led_mag", durationMs: 20000 },
 					{ executor: "moln_ow_strobe", durationMs: 10000 },
 					{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
-					{ executor: "strobe_dart", durationMs: 5000 },
+					{ executor: "strobe_dart", durationMs: 10000 },
 				],
 			},
 			"T10": { 
@@ -63,7 +63,7 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 					{ executor: "vsk_hold", durationMs: 20000 },
 					{ executor: "moln_ow_strobe", durationMs: 10000 },
 					{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
-					{ executor: "strobe_dart", durationMs: 5000 },
+					{ executor: "strobe_dart", durationMs: 10000 },
 				],
 			},
 			"Sony": { 
