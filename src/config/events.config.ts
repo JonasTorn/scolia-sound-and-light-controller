@@ -556,6 +556,15 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { n: 3, targetSum: "40" },
 		sound: { files: ["40_tusen_miljarder.wav"] },
 	},
+	{
+		name: "d20",
+		enabled: true,
+		priority: 2,
+		detector: "sequentialSegments",
+		params: { throws: ["d20"] },
+		sound: { files: ["40_tusen_miljarder.wav"] },
+	},
+	
 	// ── Over / Under ────────────────────────────────────────────────────────
 	{
 		name: "over_100",
