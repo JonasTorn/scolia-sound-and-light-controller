@@ -557,6 +557,15 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["40_tusen_miljarder.wav"] },
 	},
 	{
+		name: "total=40",
+		enabled: true,
+		priority: 2,
+		detector: "playerScoreIs",
+		params: { score: 40 },
+		gameModes: ["Elimination"],
+		sound: { files: ["40_tusen_miljarder.wav"] },
+	},
+	{
 		name: "d20",
 		enabled: true,
 		priority: 2,
