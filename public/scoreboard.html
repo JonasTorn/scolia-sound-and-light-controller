@@ -114,23 +114,23 @@
     margin-top: 80px;
   }
 
-  /* ── Leaderboard view: compact table to make room for cards ── */
+  /* ── Leaderboard view: slightly compact to leave room for cards ── */
   #view-leaderboard tbody td {
-    padding: 11px 18px;
-    font-size: 2.2rem;
+    padding: 15px 18px;
+    font-size: 2.6rem;
   }
   #view-leaderboard tbody td:nth-child(2) {
-    font-size: 2.4rem;
+    font-size: 2.9rem;
   }
-  #view-leaderboard .win-pct { font-size: 2.2rem; }
-  #view-leaderboard .rank { font-size: 1.8rem; }
+  #view-leaderboard .win-pct { font-size: 2.6rem; }
+  #view-leaderboard .rank { font-size: 2rem; }
 
-  /* ── Hall of Fame cards (4-in-a-row below the leaderboard) ── */
+  /* ── Hall of Fame cards (4-in-a-row, pinned to bottom) ── */
   .cards-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 14px;
-    margin-top: 18px;
+    margin-top: auto;
     flex-shrink: 0;
   }
 
