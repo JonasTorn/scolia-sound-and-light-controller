@@ -43,6 +43,45 @@
       }
     },
     {
+      "_id": "6a9016e8aabbccddeeff0027",
+      "type": "X01",
+      "startTime": "2026-08-27T10:52:24.022Z",
+      "players": [
+        "Groggen",
+        "Sony",
+        "Luca"
+      ],
+      "perPlayer": {
+        "Groggen": {
+          "won": true,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 0
+        },
+        "Sony": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 0
+        },
+        "Luca": {
+          "won": false,
+          "oneEighties": 0,
+          "highestCheckout": 0,
+          "eliminations": 0,
+          "eliminated": 0,
+          "hundredPlus": 0,
+          "highestRound": 0
+        }
+      }
+    },
+    {
       "_id": "6a8ee7247e99ea381aceecce",
       "type": "Elimination",
       "startTime": "2026-08-26T13:16:20.877Z",
