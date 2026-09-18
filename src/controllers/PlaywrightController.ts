@@ -517,6 +517,14 @@ export class PlaywrightController extends EventEmitter {
 				this.logger.info(`WS player score delta [${this.getPlayerName(playerId)}]: ${JSON.stringify(playerDiff.score)}`);
 			}
 
+			// Capture post-round total to attach to the 3rd dart (round-end trigger for total=X events)
+			let roundEndScore: number | undefined;
+			if (Array.isArray(playerDiff.score)) {
+				const scoreDelta = playerDiff.score as unknown[];
+				const raw = scoreDelta.length >= 2 ? scoreDelta[1] : scoreDelta[0];
+				if (typeof raw === "number" && raw > 0) roundEndScore = raw;
+			}
+
 			// Detect elimination via status field change: ["active", "eliminated"] or similar.
 			// Suppressed during takeout — Scolia sometimes re-sends eliminated status in the
 			// GAME_STATE_CHANGED that arrives around TAKEOUT_FINISHED, causing a false re-fire.
@@ -581,6 +589,7 @@ export class PlaywrightController extends EventEmitter {
 					sector: dart.sector,
 					coordinates: dart.coordinates || [0, 0],
 					bounceout: dart.bounceout || false,
+					...(throwIdx === 2 && roundEndScore !== undefined && { playerScore: roundEndScore }),
 				}));
 			}
 		}

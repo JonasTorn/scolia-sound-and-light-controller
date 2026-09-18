@@ -3,6 +3,7 @@ export interface ScoliaThrowPayload {
 	sector: string; // "s14", "d20", "t19", "25", "50", "None", "Bull"
 	coordinates: [number, number];
 	bounceout: boolean;
+	playerScore?: number; // Elimination mode: player's total accumulated score after this round (only set on 3rd dart)
 }
 
 // Parsed throw data
@@ -18,6 +19,7 @@ export interface GameThrow extends ParsedThrow {
 	playedEvents: Record<string, boolean>; // Tracks which special events fired for this throw
 	bounceout?: boolean;
 	coordinates?: [number, number];
+	playerScore?: number; // Elimination mode: player's total accumulated score after this round
 }
 
 export interface GameStateSnapshot {

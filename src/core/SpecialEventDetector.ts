@@ -95,6 +95,8 @@ export class SpecialEventDetector {
 				return this.multiplierIs(throwHistory, currentThrow, params);
 			case "threeOfAKind":
 				return this.threeOfAKind(throwHistory, currentThrow, params);
+			case "playerScoreIs":
+				return this.playerScoreIs(currentThrow, params);
 			default:
 				return false;
 		}
@@ -230,6 +232,11 @@ export class SpecialEventDetector {
 		params: Record<string, any>,
 	): boolean {
 		return currentThrow.multiplier === params.multiplier && currentThrow.segment !== 0;
+	}
+
+	private playerScoreIs(currentThrow: GameThrow, params: Record<string, any>): boolean {
+		if (currentThrow.playerScore === undefined) return false;
+		return this.evalSumCondition(params.score, currentThrow.playerScore);
 	}
 
 	// Fires when the last 3 throws all hit the same segment (any multiplier).

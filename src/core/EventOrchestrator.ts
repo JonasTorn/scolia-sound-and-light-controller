@@ -226,6 +226,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			timestamp: Date.now(),
 			bounceout: payload.bounceout,
 			coordinates: payload.coordinates,
+			playerScore: payload.playerScore,
 			playedEvents: {},
 		};
 	}
