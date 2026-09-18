@@ -548,6 +548,14 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		params: { n: 3, targetSum: "33" },
 		sound: { files: ["32_33.wav"] },
 	},
+	{
+		name: "sum=40",
+		enabled: true,
+		priority: 2,
+		detector: "sumLastN",
+		params: { n: 3, targetSum: "40" },
+		sound: { files: ["40_tusen_miljarder.wav"] },
+	},
 	// ── Over / Under ────────────────────────────────────────────────────────
 	{
 		name: "over_100",
