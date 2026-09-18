@@ -133,8 +133,8 @@ export const specialEventsConfig: SpecialEventDefinition[] = [
 		sound: { files: ["headshot_remix.wav"] },
 		lights: [
 			{ executor: "led_green", mode: "main" },
-			{ executor: "moln_ow_strobe", durationMs: 5000 },
-			{ executor: "led_strobe_rnd_hold", durationMs: 5000 },
+			{ executor: "moln_ow_strobe", durationMs: 10000 },
+			{ executor: "led_strobe_rnd_hold", durationMs: 10000 },
 		],
 	},
 	{
