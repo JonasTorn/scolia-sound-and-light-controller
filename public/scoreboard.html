@@ -146,19 +146,20 @@
     border: 1px solid var(--dim);
     border-radius: 10px;
     padding: 18px 24px;
+    aspect-ratio: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
   }
   .stat-card.has-data { border-color: var(--gold); }
 
-  .card-icon { font-size: 2.2rem; line-height: 1; }
+  .card-icon { font-size: 2.8rem; line-height: 1; }
   .card-title {
     font-family: var(--font-heavy);
-    font-size: 0.85rem;
-    letter-spacing: 0.22em;
+    font-size: 1.3rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--secondary);
   }
@@ -168,7 +169,7 @@
     color: var(--gold);
     line-height: 1.05;
   }
-  .card-value { font-size: 1.4rem; color: #a0a8a8; }
+  .card-value { font-size: 1.5rem; color: #a0a8a8; }
   .card-empty .card-player { color: var(--dim); }
   .card-empty .card-value  { color: var(--dim); }
 
@@ -350,11 +351,12 @@ document.getElementById('btn-rotate').addEventListener('click', function() {
 
 scheduleNext();
 
-function buildCard(id, icon, title, stats, key, format) {
+function buildCard(id, icon, title, stats, key, format, getter) {
+  var getValue = getter || function(p) { return p[key] || 0; };
   const card = document.getElementById(id);
-  const sorted = [...stats].sort((a, b) => (b[key] || 0) - (a[key] || 0));
+  const sorted = [...stats].sort((a, b) => getValue(b) - getValue(a));
   const best = sorted[0];
-  const isEmpty = !best || !(best[key] > 0);
+  const isEmpty = !best || !(getValue(best) > 0);
 
   if (isEmpty) {
     card.className = 'stat-card card-empty';
@@ -369,7 +371,7 @@ function buildCard(id, icon, title, stats, key, format) {
       '<span class="card-icon">' + icon + '</span>' +
       '<span class="card-title">' + title + '</span>' +
       '<span class="card-player">' + best.nickname + '</span>' +
-      '<span class="card-value">' + format(best[key]) + '</span>';
+      '<span class="card-value">' + format(getValue(best), best) + '</span>';
   }
 }
 
@@ -379,9 +381,11 @@ function renderCards(stats) {
   buildCard('card-highround', '🔥', 'High Round', stats, 'highestRound',
     function(v) { return v + ' pts in one round'; });
   buildCard('card-buster', '💥', 'Bust Machine', stats, 'busts',
-    function(v) { return v + (v === 1 ? ' bust' : ' busts'); });
+    function(v, p) { return v.toFixed(1) + ' busts/match'; },
+    function(p) { return p.gamesPlayed > 0 ? p.busts / p.gamesPlayed : 0; });
   buildCard('card-eliminated', '💀', 'Most Eliminated', stats, 'eliminated',
-    function(v) { return v + (v === 1 ? ' time' : ' times'); });
+    function(v, p) { return v.toFixed(1) + 'x/match'; },
+    function(p) { return p.gamesPlayed > 0 ? p.eliminated / p.gamesPlayed : 0; });
 }
 
 async function refresh() {
