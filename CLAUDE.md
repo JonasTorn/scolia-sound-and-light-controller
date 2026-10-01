@@ -598,7 +598,9 @@ npm run simulate
 
 ## Scoreboard (viewing from Mac)
 
-The scoreboard runs on the remote PC at port 3456. To view it on your Mac:
+The scoreboard runs on the remote PC at port 3456. To view it on your Mac, run `npm run scoreboard` — it opens an SSH tunnel in the background (reusing one if it's already up) and opens the browser. Close the tunnel with `pkill -f "3456:127.0.0.1:3456"`.
+
+Manual alternative:
 
 1. Open a terminal on Mac (not the one SSH'd into remote) and run:
    ```bash

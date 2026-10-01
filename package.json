@@ -10,7 +10,8 @@
 		"test:connection": "ts-node src/test-connection.ts",
 		"build": "tsc",
 		"dev": "ts-node-dev --respawn src/index.ts",
-		"sync-assets": "scp -r sounds/* madrix@100.117.114.10:~/scolia-new/sounds/ && scp -r overlays/* madrix@100.117.114.10:~/scolia-new/overlays/"
+		"sync-assets": "scp -r sounds/* madrix@100.117.114.10:~/scolia-new/sounds/ && scp -r overlays/* madrix@100.117.114.10:~/scolia-new/overlays/",
+		"scoreboard": "(nc -z 127.0.0.1 3456 2>/dev/null || ssh -fN -L 3456:127.0.0.1:3456 madrix@100.117.114.10) && open http://127.0.0.1:3456"
 	},
 	"keywords": [
 		"scolia",
