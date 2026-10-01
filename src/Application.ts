@@ -89,12 +89,6 @@ export class Application {
 		this.gameLog = new GameLog(this.logger);
 		// HistoryStore — one-time Scolia history export (data/scolia-history.json)
 		this.historyStore = new HistoryStore(this.logger);
-		this.eventOrchestrator.onSpecialEvent = (name, player) => {
-			if (name === "180" && player) this.gameLog?.recordOneEighty(player);
-		};
-		this.eventOrchestrator.onThrow = (player, points) => {
-			this.gameLog?.recordThrow(player, points);
-		};
 
 		// Attach Playwright event listeners for bust/leg-won/set-won
 		this.playwrightController.on("bust", () => {
@@ -116,15 +110,10 @@ export class Application {
 				this.gameState.setCurrentPlayer(winner);
 				this.soundController.setCurrentPlayer(winner);
 			}
-			this.gameLog?.endGame(winner ?? this.gameState.getCurrentPlayer());
 			this.handleSetWon();
 		});
 
 		this.playwrightController.on("eliminated", (name?: string, score?: number | null) => {
-			if (name) {
-				const eliminator = this.gameState.getCurrentPlayer();
-				this.gameLog?.recordElimination(name, eliminator ?? undefined);
-			}
 			// Pass name directly — do NOT setCurrentPlayer to the eliminated player.
 			// If elimination and win happen on the same turn, currentPlayer must stay
 			// as the active thrower so the subsequent set-won event fires for the right person.
@@ -139,7 +128,7 @@ export class Application {
 		});
 
 		this.playwrightController.on("game-ended-stats", (payload: any) => {
-			this.gameLog?.finalizeFromStats(payload);
+			this.gameLog?.recordGame(payload);
 			if (this.config.scoreboard?.enabled) {
 				this.pushStatsToScoreboard();
 			}
@@ -170,7 +159,7 @@ export class Application {
 				this.scoreboardShowing = false;
 				this.playwrightController.showGame().catch(() => {});
 			}
-			this.gameLog?.startGame(names, this.gameState.getGameMode());
+			this.gameLog?.startGame();
 			if (names.length >= 4) {
 				this.soundController.playSound("important_round");
 			}
@@ -346,7 +335,6 @@ export class Application {
 				}
 
 				case "TAKEOUT_STARTED":
-					this.gameLog?.finalizeRound();
 					this.eventOrchestrator.handleTakeoutStarted();
 					break;
 
@@ -387,7 +375,7 @@ export class Application {
 	private async handleSetWon(): Promise<void> {
 		await this.eventOrchestrator.handleSetWon();
 		if (this.config.scoreboard?.enabled) {
-			// Push updated stats (GameLog already has the completed game) then show scoreboard
+			// Push current stats (GameLog records the game when GAME_ENDED_STATISTICS arrives) then show scoreboard
 			this.pushStatsToScoreboard();
 			const delay = this.config.scoreboard.idleDelayMs ?? 30000;
 			this.startIdleTimer(delay);

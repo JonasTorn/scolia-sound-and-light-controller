@@ -3,7 +3,7 @@ import * as path from "path";
 import { Logger } from "../utils/Logger";
 import { PlayerStats } from "../types/index";
 
-interface PerPlayerAccum {
+interface PerPlayerStats {
 	eliminations: number;
 	eliminated: number;
 	oneEighties: number;
@@ -20,115 +20,108 @@ interface GameRecord {
 	players: string[];
 	winner: string | null;
 	scoliaId?: string;
-	perPlayer: Record<string, { eliminations: number; eliminated: number; oneEighties: number; hundredPlus: number; highestRound: number; busts: number }>;
-}
-
-interface ActiveGame {
-	id: string;
-	timestamp: number;
-	gameMode: string | null;
-	players: string[];
-	perPlayer: Record<string, PerPlayerAccum>;
+	perPlayer: Record<string, PerPlayerStats>;
 }
 
 const MAX_RECORDS = 1000;
 const SAVE_PATH = path.resolve(__dirname, "..", "..", "data", "game-log.json");
 
+// Game records are built entirely from Scolia's GAME_ENDED_STATISTICS payload —
+// the authoritative source for players, winner and per-player stats. The only
+// thing tracked live is busts, which Scolia doesn't report.
 export class GameLog {
 	private records: GameRecord[] = [];
-	private active: ActiveGame | null = null;
-	private roundPoints = 0;
-	private roundPlayer: string | null = null;
+	private liveBusts: Record<string, number> = {};
 
-	constructor(private logger: Logger) {
+	constructor(
+		private logger: Logger,
+		private savePath = SAVE_PATH,
+	) {
 		this.load();
 	}
 
-	startGame(players: string[], gameMode: string | null): void {
-		// Deduplicate: two game-started events sometimes fire <1s apart for the same game
-		if (this.active) {
-			const sameGame =
-				Date.now() - this.active.timestamp < 1000 &&
-				players.length === this.active.players.length &&
-				players.every((p) => this.active!.players.includes(p));
-			if (sameGame) {
-				this.logger.debug("GameLog: duplicate game-started ignored");
-				return;
-			}
-			this.endGame(null); // abandon any in-progress game
-		}
-		const id = Date.now().toString(36) + Math.random().toString(36).slice(2);
-		this.active = {
-			id,
-			timestamp: Date.now(),
-			gameMode,
-			players,
-			perPlayer: Object.fromEntries(
-				players.map((p) => [p, { eliminations: 0, eliminated: 0, oneEighties: 0, hundredPlus: 0, highestRound: 0, busts: 0 }]),
-			),
-		};
-		this.logger.info(`GameLog: started (${players.join(", ")}, mode: ${gameMode ?? "unknown"})`);
-	}
-
-	recordThrow(player: string, points: number): void {
-		if (this.roundPlayer !== player) {
-			this.roundPoints = 0;
-			this.roundPlayer = player;
-		}
-		this.roundPoints += points;
-	}
-
-	finalizeRound(): void {
-		const pp = this.roundPlayer ? this.active?.perPlayer[this.roundPlayer] : null;
-		if (pp && this.roundPoints > 0) {
-			if (this.roundPoints >= 100) pp.hundredPlus++;
-			if (this.roundPoints > pp.highestRound) pp.highestRound = this.roundPoints;
-		}
-		this.roundPoints = 0;
-		this.roundPlayer = null;
-	}
-
-	recordOneEighty(player: string): void {
-		if (!this.active?.perPlayer[player]) return;
-		this.active.perPlayer[player].oneEighties++;
+	// Resets live bust tracking for a new game. Player names are not stored —
+	// at game start they can still be the previous game's.
+	startGame(): void {
+		this.liveBusts = {};
 	}
 
 	recordBust(player: string): void {
-		if (!this.active?.perPlayer[player]) return;
-		this.active.perPlayer[player].busts++;
+		this.liveBusts[player] = (this.liveBusts[player] ?? 0) + 1;
 	}
 
-	recordElimination(player: string, eliminator?: string): void {
-		const pp = this.active?.perPlayer[player];
-		if (!pp) return;
-		pp.eliminated++;
-		if (eliminator && eliminator !== player && this.active?.perPlayer[eliminator]) {
-			this.active.perPlayer[eliminator].eliminations++;
+	// Called when API::GAME::GAME_ENDED_STATISTICS arrives via WS proxy.
+	recordGame(payload: any): void {
+		const game = payload?.game ?? payload;
+		if (!game?._id) {
+			this.logger.warn("GameLog: GAME_ENDED_STATISTICS without game id — not recorded");
+			return;
 		}
-	}
+		if (game.isAborted) {
+			this.logger.info(`GameLog: game ${game._id} was aborted — not recorded`);
+			this.liveBusts = {};
+			return;
+		}
 
-	endGame(winner: string | null): void {
-		if (!this.active) return;
-		this.finalizeRound(); // commit any in-progress round before saving
+		const scoliaId: string = game._id;
+		const idToNick: Record<string, string> = {};
+		for (const p of game.participants ?? []) {
+			if (p._id && p.nickname) idToNick[p._id] = p.nickname;
+		}
+		const nicks = Object.values(idToNick);
+
+		// Guests have no nickname in participants — add a placeholder per guest so
+		// guest games stay excluded from VIP stats.
+		const totalPlayers: number = game.playerNumber ?? game.configuration?.playerNr ?? nicks.length;
+		const guests = Math.max(0, totalPlayers - nicks.length);
+		const players = [...nicks, ...Array.from({ length: guests }, (_, i) => `Guest ${i + 1}`)];
+
+		const winnerIds: string[] = game.winnerIds ?? game.history?.winnerPlayerUserIds ?? [];
+		const winner = winnerIds.map((id) => idToNick[id]).filter(Boolean)[0] ?? null;
+
+		const roundStats = this.computeRoundStats(game.history, idToNick);
+		const statsByUserId: Record<string, any> = {};
+		for (const ps of game.statistics ?? []) {
+			if (ps.userId) statsByUserId[ps.userId] = ps.statistics ?? {};
+		}
+
+		const perPlayer: Record<string, PerPlayerStats> = {};
+		for (const [id, nick] of Object.entries(idToNick)) {
+			const st = statsByUserId[id] ?? {};
+			const rs = roundStats[id] ?? { oneEighties: 0, hundredPlus: 0, highestRound: 0 };
+			perPlayer[nick] = {
+				eliminations: st.eliminations ?? 0,
+				eliminated:   st.eliminated ?? 0,
+				oneEighties:  st["180"] ?? rs.oneEighties,
+				hundredPlus:  rs.hundredPlus,
+				highestRound: rs.highestRound,
+				busts:        this.liveBusts[nick] ?? 0,
+			};
+		}
+
+		const startMs = Date.parse(game.startTime);
+		const timestamp = Number.isFinite(startMs) ? startMs : Date.now();
 		const record: GameRecord = {
-			id: this.active.id,
-			timestamp: this.active.timestamp,
-			date: new Date(this.active.timestamp).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" }),
-			gameMode: this.active.gameMode,
-			players: this.active.players,
+			id: scoliaId,
+			timestamp,
+			date: new Date(timestamp).toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" }),
+			gameMode: game.type ?? null,
+			players,
 			winner,
-			scoliaId: (this.active as any).scoliaId,
-			perPlayer: Object.fromEntries(
-				Object.entries(this.active.perPlayer).map(([p, v]) => [
-					p,
-					{ eliminations: v.eliminations, eliminated: v.eliminated, oneEighties: v.oneEighties, hundredPlus: v.hundredPlus, highestRound: v.highestRound, busts: v.busts },
-				]),
-			),
+			scoliaId,
+			perPlayer,
 		};
-		this.records.push(record);
+
+		// Same game reported twice — replace instead of duplicating
+		const existing = this.records.findIndex((r) => r.scoliaId === scoliaId);
+		if (existing >= 0) this.records[existing] = record;
+		else this.records.push(record);
 		if (this.records.length > MAX_RECORDS) this.records = this.records.slice(-MAX_RECORDS);
-		this.logger.info(`GameLog: ended, winner: ${winner ?? "none"} (${this.records.length} records total)`);
-		this.active = null;
+
+		this.liveBusts = {};
+		this.logger.info(
+			`GameLog: recorded ${record.gameMode ?? "game"} (${players.join(", ")}), winner: ${winner ?? "none"}, scoliaId: ${scoliaId} (${this.records.length} records total)`,
+		);
 		this.save();
 	}
 
@@ -170,73 +163,6 @@ export class GameLog {
 		});
 	}
 
-	// Called when API::GAME::GAME_ENDED_STATISTICS arrives via WS proxy.
-	// Overwrites per-player stats with authoritative Scolia data, preserving
-	// busts (which Scolia doesn't report) from the live tracking.
-	finalizeFromStats(payload: any): void {
-		const game = payload?.game ?? payload;
-		if (!game) return;
-
-		const scoliaId: string | undefined = game._id;
-		const winnerIds: string[] = game.winnerIds ?? game.history?.winnerPlayerUserIds ?? [];
-
-		const idToNick: Record<string, string> = {};
-		for (const p of game.participants ?? []) {
-			if (p._id && p.nickname) idToNick[p._id] = p.nickname;
-		}
-
-		const winnerNick = winnerIds.map((id: string) => idToNick[id]).filter(Boolean)[0] ?? null;
-
-		const roundStats = this.computeRoundStats(game.history, idToNick);
-
-		const statsByUserId: Record<string, any> = {};
-		for (const ps of game.statistics ?? []) {
-			if (ps.userId) statsByUserId[ps.userId] = ps.statistics ?? {};
-		}
-
-		const buildPerPlayer = (existingBusts: Record<string, number>) => {
-			const pp: Record<string, PerPlayerAccum> = {};
-			for (const p of game.participants ?? []) {
-				const nick = idToNick[p._id];
-				if (!nick) continue;
-				const st = statsByUserId[p._id] ?? {};
-				const rs = roundStats[p._id] ?? { oneEighties: 0, hundredPlus: 0, highestRound: 0 };
-				pp[nick] = {
-					eliminations: st.eliminations ?? 0,
-					eliminated:   st.eliminated ?? 0,
-					oneEighties:  st["180"] ?? rs.oneEighties,
-					hundredPlus:  rs.hundredPlus,
-					highestRound: rs.highestRound,
-					busts:        existingBusts[nick] ?? 0,
-				};
-			}
-			return pp;
-		};
-
-		if (this.active) {
-			// Game not yet saved — override accumulator then let endGame() handle saving
-			const busts = Object.fromEntries(
-				Object.entries(this.active.perPlayer).map(([n, v]) => [n, v.busts]),
-			);
-			this.active.perPlayer = buildPerPlayer(busts);
-			if (scoliaId) (this.active as any).scoliaId = scoliaId;
-			this.endGame(winnerNick);
-			return;
-		}
-
-		// Game already saved via DOM set-won — patch the last record
-		const last = this.records[this.records.length - 1];
-		if (!last) return;
-		const busts = Object.fromEntries(
-			Object.entries(last.perPlayer).map(([n, v]) => [n, v.busts]),
-		);
-		last.winner = winnerNick;
-		last.scoliaId = scoliaId;
-		last.perPlayer = buildPerPlayer(busts);
-		this.logger.info(`GameLog: finalized from GAME_ENDED_STATISTICS — winner: ${winnerNick ?? "none"}, scoliaId: ${scoliaId}`);
-		this.save();
-	}
-
 	private computeRoundStats(history: any, idToNick: Record<string, string>): Record<string, { oneEighties: number; hundredPlus: number; highestRound: number }> {
 		const result: Record<string, { oneEighties: number; hundredPlus: number; highestRound: number }> = {};
 		for (const set of history?.sets ?? []) {
@@ -271,19 +197,19 @@ export class GameLog {
 
 	private load(): void {
 		try {
-			if (fs.existsSync(SAVE_PATH)) {
-				const raw = JSON.parse(fs.readFileSync(SAVE_PATH, "utf8"));
+			if (fs.existsSync(this.savePath)) {
+				const raw = JSON.parse(fs.readFileSync(this.savePath, "utf8"));
 				this.records = Array.isArray(raw) ? raw : [];
 				this.logger.info(`GameLog: loaded ${this.records.length} records from disk`);
 			}
 		} catch (err) {
-			this.logger.warn(`GameLog: failed to load ${SAVE_PATH}: ${err}`);
+			this.logger.warn(`GameLog: failed to load ${this.savePath}: ${err}`);
 		}
 	}
 
 	private save(): void {
 		try {
-			fs.writeFileSync(SAVE_PATH, JSON.stringify(this.records, null, 2), "utf8");
+			fs.writeFileSync(this.savePath, JSON.stringify(this.records, null, 2), "utf8");
 		} catch (err) {
 			this.logger.warn(`GameLog: failed to save: ${err}`);
 		}
