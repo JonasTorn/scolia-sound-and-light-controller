@@ -377,7 +377,8 @@ function buildCard(id, icon, title, stats, key, format, getter) {
 
 function renderCards(stats) {
   buildCard('card-eliminator', '⊕', 'The Eliminator', stats, 'eliminations',
-    function(v) { return v + (v === 1 ? ' elimination' : ' eliminations'); });
+    function(v) { return v.toFixed(1) + ' eliminations/match'; },
+    function(p) { return p.gamesPlayed > 0 ? p.eliminations / p.gamesPlayed : 0; });
   buildCard('card-highround', '🔥', 'High Round', stats, 'highestRound',
     function(v) { return v + ' pts in one round'; });
   buildCard('card-buster', '💥', 'Bust Machine', stats, 'busts',
