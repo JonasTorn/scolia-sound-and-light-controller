@@ -37,6 +37,7 @@
     opacity: 0;
     transition: opacity 0.8s ease;
     pointer-events: none;
+    --fit: 1; /* shrunk by fitViews() when content is taller than the screen */
   }
   .view.active { opacity: 1; pointer-events: auto; }
 
@@ -89,22 +90,22 @@
   tbody tr { border-bottom: 1px solid var(--dim); }
 
   tbody td {
-    padding: 18px 18px;
+    padding: calc(var(--fit) * 18px) 18px;
     text-align: center;
-    font-size: 2.8rem;
+    font-size: calc(var(--fit) * 2.8rem);
   }
   tbody td:nth-child(2) {
     text-align: left;
     font-family: var(--font-heavy);
-    font-size: 3rem;
+    font-size: calc(var(--fit) * 3rem);
   }
 
-  .rank { font-size: 2rem; color: var(--dim); min-width: 40px; }
+  .rank { font-size: calc(var(--fit) * 2rem); color: var(--dim); min-width: 40px; }
   .rank-1 { color: var(--gold);  font-family: var(--font-heavy); }
   .rank-2 { color: #C0C0C0; font-family: var(--font-heavy); }
   .rank-3 { color: #CD7F32; font-family: var(--font-heavy); }
 
-  .win-pct { font-family: var(--font-heavy); font-size: 3rem; color: var(--gold); }
+  .win-pct { font-family: var(--font-heavy); font-size: calc(var(--fit) * 3rem); color: var(--gold); }
   .zero { color: var(--dim); }
 
   .no-data {
@@ -123,14 +124,14 @@
     padding: 8px 18px 14px;
   }
   #view-leaderboard tbody td {
-    padding: 1.2vh 18px;
-    font-size: 6.5vh;
+    padding: calc(var(--fit) * 1.2vh) 18px;
+    font-size: calc(var(--fit) * 6.5vh);
   }
   #view-leaderboard tbody td:nth-child(2) {
-    font-size: 7.5vh;
+    font-size: calc(var(--fit) * 7.5vh);
   }
-  #view-leaderboard .win-pct { font-size: 6.5vh; }
-  #view-leaderboard .rank { font-size: 5vh; }
+  #view-leaderboard .win-pct { font-size: calc(var(--fit) * 6.5vh); }
+  #view-leaderboard .rank { font-size: calc(var(--fit) * 5vh); }
 
   /* ── Hall of Fame cards (4-in-a-row, pinned to bottom) ── */
   .cards-grid {
@@ -145,7 +146,7 @@
     background: var(--bg-card);
     border: 1px solid var(--dim);
     border-radius: 10px;
-    padding: 18px 24px;
+    padding: calc(var(--fit) * 18px) 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -154,7 +155,7 @@
   }
   .stat-card.has-data { border-color: var(--gold); }
 
-  .card-icon { font-size: 2.2rem; line-height: 1; }
+  .card-icon { font-size: calc(var(--fit) * 2.2rem); line-height: 1; }
   .card-title {
     font-family: var(--font-heavy);
     font-size: 0.85rem;
@@ -164,17 +165,17 @@
   }
   .card-player {
     font-family: var(--font-heavy);
-    font-size: 3.2rem;
+    font-size: calc(var(--fit) * 3.2rem);
     color: var(--gold);
     line-height: 1.05;
   }
-  .card-value { font-size: 1.4rem; color: #a0a8a8; }
+  .card-value { font-size: max(0.8rem, calc(var(--fit) * 1.4rem)); color: #a0a8a8; }
   .card-empty .card-player { color: var(--dim); }
   .card-empty .card-value  { color: var(--dim); }
 
   .today-heading {
     font-family: var(--font-heavy);
-    font-size: 8rem;
+    font-size: calc(var(--fit) * 8rem);
     letter-spacing: 0.18em;
     color: var(--gold);
     text-align: center;
@@ -449,6 +450,7 @@ async function refresh() {
 
     // Cards
     renderCards(stats);
+    fitViews();
 
     const ts = data.lastUpdated ? new Date(data.lastUpdated).toLocaleTimeString() : 'never';
     document.getElementById('footer').textContent = 'Updated ' + ts;
@@ -456,6 +458,27 @@ async function refresh() {
     console.error('Scoreboard fetch failed:', e);
   }
 }
+
+// Shrink table text until each view fits the screen, so the cards are never
+// pushed off the bottom (row count and screen height vary).
+function fitViews() {
+  document.querySelectorAll('.view').forEach(function(view) {
+    // Content must end above the view's bottom padding (reserved for nav + footer)
+    var limit = view.getBoundingClientRect().bottom - parseFloat(getComputedStyle(view).paddingBottom);
+    var overflows = function() {
+      return Array.prototype.some.call(view.children, function(el) {
+        return el.offsetParent !== null && el.getBoundingClientRect().bottom > limit + 1;
+      });
+    };
+    var fit = 1;
+    view.style.setProperty('--fit', fit);
+    while (overflows() && fit > 0.3) {
+      fit -= 0.02;
+      view.style.setProperty('--fit', fit.toFixed(2));
+    }
+  });
+}
+window.addEventListener('resize', fitViews);
 
 refresh();
 setInterval(refresh, 5000);
