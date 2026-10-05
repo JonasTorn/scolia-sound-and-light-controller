@@ -142,6 +142,8 @@
     "_comment_enabled": "true = show scoreboard when no game is active",
     "port": 3456,
     "_comment_port": "Local HTTP port for the scoreboard page",
+    "host": "0.0.0.0",
+    "_comment_host": "Bind address: 0.0.0.0 = reachable on the LAN, 127.0.0.1 = this PC only",
     "idleDelayMs": 30000,
     "_comment_idleDelayMs": "ms after a game ends before switching to scoreboard (default 30s)",
     "startupDelayMs": 5000,

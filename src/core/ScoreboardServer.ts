@@ -14,7 +14,7 @@ export class ScoreboardServer {
 
 	constructor(private logger: Logger) {}
 
-	start(port: number): void {
+	start(port: number, host = "127.0.0.1"): void {
 		this.server = http.createServer((req, res) => {
 			if (req.url === "/api/stats") {
 				res.writeHead(200, {
@@ -34,8 +34,8 @@ export class ScoreboardServer {
 			}
 		});
 
-		this.server.listen(port, "127.0.0.1", () => {
-			this.logger.info(`Scoreboard: HTTP server at http://127.0.0.1:${port}`);
+		this.server.listen(port, host, () => {
+			this.logger.info(`Scoreboard: HTTP server at http://${host}:${port}`);
 		});
 
 		this.server.on("error", (err: NodeJS.ErrnoException) => {

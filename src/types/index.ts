@@ -198,6 +198,7 @@ export interface PlayerStats {
 export interface ScoreboardConfig {
 	enabled: boolean;
 	port?: number;            // HTTP port for scoreboard server (default 3456)
+	host?: string;            // bind address — "0.0.0.0" exposes it on the LAN (default 127.0.0.1)
 	idleDelayMs?: number;     // ms after game ends before switching to scoreboard (default 30000)
 	startupDelayMs?: number;  // ms after startup before showing scoreboard if no game (default 5000)
 	players?: string[];       // explicit player list — defaults to keys of config.players

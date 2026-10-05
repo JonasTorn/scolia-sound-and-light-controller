@@ -213,7 +213,7 @@ export class Application {
 					const port = sb.port ?? 3456;
 
 					this.scoreboardServer = new ScoreboardServer(this.logger);
-					this.scoreboardServer.start(port);
+					this.scoreboardServer.start(port, sb.host);
 					// Push initial stats from GameLog immediately (instant, no network)
 					this.pushStatsToScoreboard();
 
