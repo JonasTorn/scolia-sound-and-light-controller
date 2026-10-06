@@ -70,6 +70,9 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 				overlay: { file: "overlays/sonny_win_party.gif", durationMs: 10000 },
 				sound: { files: ["sonny_win.wav"] } 
 			},
+			"Luca": { 
+				sound: { files: ["lucky_luke.wav"] },
+			 },
 
 		},
 	},
