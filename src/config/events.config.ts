@@ -81,8 +81,9 @@ export const gameEventsConfig: Record<string, GameEventConfig> = {
 				"hasta_la_vista_baby.wav",
 				"dodge_this.wav",
 				"die_mf_die_mf.wav",
-				"lange_leve_kungen.wav"
-			], weights: [2, 1, 1, 1, 1, 1]
+				"lange_leve_kungen.wav",
+				"borja_om_fran_borjan.wav"
+			], weights: [3, 1, 1, 1, 1, 1, 1]
 		},
 	},
 	// Fires instead of "eliminated" when the eliminated player had 100+ points
