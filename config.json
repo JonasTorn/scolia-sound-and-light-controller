@@ -146,6 +146,12 @@
     "_comment_host": "Bind address: 0.0.0.0 = reachable on the LAN, 127.0.0.1 = this PC only",
     "idleDelayMs": 30000,
     "_comment_idleDelayMs": "ms after a game ends before switching to scoreboard (default 30s)",
+    "website": {
+      "enabled": true,
+      "_comment": "Push stats to the public website. Put url + token in config.secrets.json under scoreboard.website (no url = no-op). WordPress side: wordpress/dart-scoreboard.php",
+      "timeoutMs": 5000,
+      "debounceMs": 5000
+    },
     "startupDelayMs": 5000,
     "_comment_startupDelayMs": "ms after app starts before showing scoreboard if no game detected",
     "vipMinPlayers": 3,

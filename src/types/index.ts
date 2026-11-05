@@ -205,6 +205,15 @@ export interface ScoreboardConfig {
 	vipMinPlayers?: number;   // min VIP players required in a game for it to count (default 3)
 	seasonStartDate?: string; // only count games on or after this date (ISO, e.g. "2026-08-10")
 	discoverStats?: boolean;  // log /history API responses for endpoint discovery
+	website?: WebsitePublishConfig; // push stats to the public website
+}
+
+export interface WebsitePublishConfig {
+	enabled: boolean;
+	url?: string;             // WordPress REST endpoint, e.g. https://example.com/wp-json/dart/v1/scoreboard
+	token?: string;           // shared secret sent as X-Scoreboard-Token (keep in config.secrets.json)
+	timeoutMs?: number;       // abort request after this many ms (default 5000)
+	debounceMs?: number;      // collapse bursts of updates (default 5000)
 }
 
 export interface NotificationsConfig {

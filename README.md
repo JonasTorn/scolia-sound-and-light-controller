@@ -201,6 +201,20 @@ Dubbel-räkning förhindras automatiskt: GameLog räknar bara matcher som starta
 3. Vänta tills nedladdning startar, spara filen som `data/scolia-history.json`
 4. Committa och pusha, sedan deploy på remote
 
+### Publicera till webbplatsen
+
+Appen kan pusha statistiken till en WordPress-sajt (`WebsitePublisher`, ~5s efter senaste uppdatering). Utan URL gör den ingenting (loggar en varning vid start).
+
+1. Installera `wordpress/dart-scoreboard.php` på sajten (mu-plugin eller WPCodeBox-snippet)
+2. Lägg till i sajtens `wp-config.php`: `define('DART_SCOREBOARD_TOKEN', '<samma token som nedan>');`
+3. Lägg till i `config.secrets.json` på remote:
+   ```json
+   "scoreboard": { "website": { "url": "https://<sajt>/wp-json/dart/v1/scoreboard", "token": "<token>" } }
+   ```
+4. `pm2 restart scolia-new` — loggen ska visa `Website: scoreboard pushed (N players)` efter nästa match
+
+Läs datan publikt: `GET https://<sajt>/wp-json/dart/v1/scoreboard`
+
 ## Ljuslogik
 
 Prioritetsordning vid kast:

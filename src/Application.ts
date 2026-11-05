@@ -12,6 +12,7 @@ import { SoundController } from "./controllers/SoundController";
 import { KNXController } from "./controllers/KNXController";
 import { PlaywrightController } from "./controllers/PlaywrightController";
 import { SlackController, markRestart, consumeRestartFlag } from "./controllers/SlackController";
+import { WebsitePublisher } from "./controllers/WebsitePublisher";
 import {
 	ScoliaThrowPayload,
 	FullConfig,
@@ -36,6 +37,7 @@ export class Application {
 	private gameLog: GameLog | null = null;
 	private historyStore: HistoryStore | null = null;
 	private slackController: SlackController;
+	private websitePublisher: WebsitePublisher;
 	private scoreboardShowing = false;
 	private running = false;
 
@@ -58,6 +60,9 @@ export class Application {
 				process.exit(0);
 			},
 		);
+
+		// Website publisher — disabled/unconfigured becomes a no-op
+		this.websitePublisher = new WebsitePublisher(this.config.scoreboard?.website, this.logger);
 
 		// Initialize game state with persistence
 		this.gameState = new GameState();
@@ -442,6 +447,7 @@ export class Application {
 		if (now < cutoff) cutoff.setDate(cutoff.getDate() - 1); // before 05:00 → yesterday's 05:00
 		const todayStats = this.gameLog.getPlayerStats(players, vipMin, cutoff.getTime());
 		this.scoreboardServer.updateTodayStats(todayStats);
+		this.websitePublisher.publish(stats, todayStats);
 	}
 
 	private async handlePlayerEliminated(playerName?: string, score?: number): Promise<void> {
@@ -473,6 +479,7 @@ export class Application {
 
 		await this.slackController.stop();
 		this.scoreboardServer?.stop();
+		this.websitePublisher.stop();
 		this.lightsharkController.close();
 		this.soundController.close();
 		this.logger.info("Shutdown complete");
