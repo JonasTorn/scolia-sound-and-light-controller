@@ -422,6 +422,7 @@ export class PlaywrightController extends EventEmitter {
 					sector: dart.sector,
 					coordinates: dart.coordinates || [0, 0],
 					bounceout: dart.bounceout || false,
+					...(typeof dart.remainingScore === "number" && { remainingScore: dart.remainingScore }),
 				}));
 
 				if (dart.remainingScore === 0) {

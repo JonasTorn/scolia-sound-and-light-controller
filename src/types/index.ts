@@ -4,6 +4,7 @@ export interface ScoliaThrowPayload {
 	coordinates: [number, number];
 	bounceout: boolean;
 	playerScore?: number; // Elimination mode: player's total accumulated score after this round (only set on 3rd dart)
+	remainingScore?: number; // X01: points left after this dart
 }
 
 // Parsed throw data
@@ -20,6 +21,7 @@ export interface GameThrow extends ParsedThrow {
 	bounceout?: boolean;
 	coordinates?: [number, number];
 	playerScore?: number; // Elimination mode: player's total accumulated score after this round
+	remainingScore?: number; // X01: points left after this dart
 }
 
 export interface GameStateSnapshot {

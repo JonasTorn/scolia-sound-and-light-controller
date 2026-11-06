@@ -367,3 +367,76 @@ describe("SpecialEventDetector", () => {
 		});
 	});
 });
+
+describe("SpecialEventDetector — total / remaining score", () => {
+	const defs: SpecialEventDefinition[] = [
+		{
+			name: "total=69",
+			enabled: true,
+			detector: "playerScoreIs",
+			params: { score: 69 },
+			gameModes: ["Elimination"],
+		},
+		{
+			name: "remaining=69",
+			enabled: true,
+			detector: "remainingScoreIs",
+			params: { score: 69 },
+			roundConstraint: { throwNumber: 3 },
+			gameModes: ["X01"],
+		},
+	];
+	const detector = new SpecialEventDetector(defs);
+
+	const dart = (points: number, extra: Partial<GameThrow> = {}): GameThrow => ({
+		points,
+		segment: points === 0 ? 0 : 1,
+		multiplier: 1,
+		timestamp: Date.now(),
+		playedEvents: {},
+		...extra,
+	});
+
+	// Turn starting at 100 left: 20 → 80, 1 → 79, 10 → 69
+	const x01Turn = () => ({
+		history: [dart(20, { remainingScore: 80 }), dart(1, { remainingScore: 79 })],
+		current: dart(10, { remainingScore: 69 }),
+	});
+
+	it("fires total=69 in Elimination when the turn ends on 69", () => {
+		const current = dart(5, { playerScore: 69 });
+		expect(detector.detect([dart(1), dart(1)], current, null, "Elimination")?.name).toBe("total=69");
+	});
+
+	it("does not fire total=69 in X01", () => {
+		const current = dart(5, { playerScore: 69 });
+		expect(detector.detect([dart(1), dart(1)], current, null, "X01")).toBeNull();
+	});
+
+	it("fires remaining=69 on the 3rd dart in X01", () => {
+		const { history, current } = x01Turn();
+		expect(detector.detect(history, current, null, "X01")?.name).toBe("remaining=69");
+	});
+
+	it("does not fire remaining=69 before the 3rd dart", () => {
+		const current = dart(31, { remainingScore: 69 });
+		expect(detector.detect([], current, null, "X01")).toBeNull();
+		expect(detector.detect([dart(20, { remainingScore: 80 })], dart(11, { remainingScore: 69 }), null, "X01")).toBeNull();
+	});
+
+	it("does not fire remaining=69 in Elimination", () => {
+		const { history, current } = x01Turn();
+		expect(detector.detect(history, current, null, "Elimination")).toBeNull();
+	});
+
+	it("does not fire remaining=69 after three misses on 69", () => {
+		const history = [dart(0, { remainingScore: 69 }), dart(0, { remainingScore: 69 })];
+		expect(detector.detect(history, dart(0, { remainingScore: 69 }), null, "X01")).toBeNull();
+	});
+
+	it("does not fire remaining=69 when the turn busts back to 69", () => {
+		// 69 left: 20 → 49, 20 → 29, 40 → bust (score reverts to 69)
+		const history = [dart(20, { remainingScore: 49 }), dart(20, { remainingScore: 29 })];
+		expect(detector.detect(history, dart(40, { remainingScore: 69 }), null, "X01")).toBeNull();
+	});
+});

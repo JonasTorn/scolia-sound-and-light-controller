@@ -219,6 +219,7 @@ export class EventOrchestrator implements IEventOrchestrator {
 			bounceout: payload.bounceout,
 			coordinates: payload.coordinates,
 			playerScore: payload.playerScore,
+			remainingScore: payload.remainingScore,
 			playedEvents: {},
 		};
 	}

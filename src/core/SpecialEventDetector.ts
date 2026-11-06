@@ -97,6 +97,8 @@ export class SpecialEventDetector {
 				return this.threeOfAKind(throwHistory, currentThrow, params);
 			case "playerScoreIs":
 				return this.playerScoreIs(currentThrow, params);
+			case "remainingScoreIs":
+				return this.remainingScoreIs(throwHistory, currentThrow, params);
 			default:
 				return false;
 		}
@@ -237,6 +239,19 @@ export class SpecialEventDetector {
 	private playerScoreIs(currentThrow: GameThrow, params: Record<string, any>): boolean {
 		if (currentThrow.playerScore === undefined) return false;
 		return this.evalSumCondition(params.score, currentThrow.playerScore);
+	}
+
+	// X01: matches the points left after this dart. Only fires when the turn actually lowered
+	// the score (points left = turn start - points scored this turn), so misses and busts don't
+	// re-trigger it every turn for a player stuck on e.g. 40.
+	private remainingScoreIs(throwHistory: GameThrow[], currentThrow: GameThrow, params: Record<string, any>): boolean {
+		if (currentThrow.remainingScore === undefined) return false;
+		const first = throwHistory[0] ?? currentThrow;
+		if (first.remainingScore === undefined) return false;
+		const turnPoints = throwHistory.reduce((acc, t) => acc + t.points, 0) + currentThrow.points;
+		const turnStart = first.remainingScore + first.points;
+		if (turnPoints === 0 || currentThrow.remainingScore !== turnStart - turnPoints) return false;
+		return this.evalSumCondition(params.score, currentThrow.remainingScore);
 	}
 
 	// Fires when the last 3 throws all hit the same segment (any multiplier).
