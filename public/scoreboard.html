@@ -427,7 +427,7 @@ function renderRecent() {
   }, 0);
   probe.remove();
 
-  const m = { top: font, right: widest + 30, bottom: font * 2.6, left: font * 2 };
+  const m = { top: font, right: widest + font * 2.2, bottom: font * 2.6, left: font * 2 };
   const n = recentGames.length;
   const xAt = function(i) { return n === 1 ? (m.left + W - m.right) / 2 : m.left + (W - m.right - m.left) * i / (n - 1); };
   const yAt = function(v) { return H - m.bottom - (H - m.bottom - m.top) * v / maxY; };
