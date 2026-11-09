@@ -197,6 +197,12 @@ export interface PlayerStats {
 	highestCheckout: number; // points of the winning dart (0 = no checkout recorded)
 }
 
+export interface RecentGame {
+	timestamp: number;
+	players: string[];
+	winner: string;
+}
+
 export interface ScoreboardConfig {
 	enabled: boolean;
 	port?: number;            // HTTP port for scoreboard server (default 3456)

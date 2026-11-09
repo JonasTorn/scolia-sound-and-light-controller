@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as http from "http";
 import * as path from "path";
 import { Logger } from "../utils/Logger";
-import { PlayerStats } from "../types/index";
+import { PlayerStats, RecentGame } from "../types/index";
 
 const HTML_PATH = path.resolve(__dirname, "..", "..", "public", "scoreboard.html");
 
@@ -10,6 +10,7 @@ export class ScoreboardServer {
 	private server: http.Server | null = null;
 	private stats: PlayerStats[] = [];
 	private todayStats: PlayerStats[] = [];
+	private recentGames: RecentGame[] = [];
 	private lastUpdated: Date | null = null;
 
 	constructor(private logger: Logger) {}
@@ -28,6 +29,12 @@ export class ScoreboardServer {
 					"Access-Control-Allow-Origin": "*",
 				});
 				res.end(JSON.stringify({ stats: this.todayStats, lastUpdated: this.lastUpdated }));
+			} else if (req.url === "/api/games/recent") {
+				res.writeHead(200, {
+					"Content-Type": "application/json",
+					"Access-Control-Allow-Origin": "*",
+				});
+				res.end(JSON.stringify({ games: this.recentGames, lastUpdated: this.lastUpdated }));
 			} else {
 				res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
 				res.end(fs.readFileSync(HTML_PATH, "utf8"));
@@ -55,6 +62,10 @@ export class ScoreboardServer {
 
 	updateTodayStats(stats: PlayerStats[]): void {
 		this.todayStats = stats;
+	}
+
+	updateRecentGames(games: RecentGame[]): void {
+		this.recentGames = games;
 	}
 
 	stop(): void {

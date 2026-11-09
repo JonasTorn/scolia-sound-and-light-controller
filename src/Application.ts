@@ -447,6 +447,7 @@ export class Application {
 		if (now < cutoff) cutoff.setDate(cutoff.getDate() - 1); // before 05:00 → yesterday's 05:00
 		const todayStats = this.gameLog.getPlayerStats(players, vipMin, cutoff.getTime());
 		this.scoreboardServer.updateTodayStats(todayStats);
+		this.scoreboardServer.updateRecentGames(this.gameLog.getRecentGames(players, vipMin));
 		this.websitePublisher.publish(stats, todayStats);
 	}
 

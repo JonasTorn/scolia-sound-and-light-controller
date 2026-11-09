@@ -70,6 +70,14 @@ describe("GameLog", () => {
 		expect(statsFor("Laser").gamesPlayed).toBe(0);
 	});
 
+	it("returns the latest qualifying games oldest first, capped at the limit", () => {
+		const players = ["Laser", "T10", "Sony"];
+		["a", "b", "c"].forEach((id, i) => log.recordGame(statsPayload({ id, players, winner: players[i] })));
+		log.recordGame(statsPayload({ id: "guest", players, guests: 1, winner: "Laser" }));
+
+		expect(log.getRecentGames(VIPS, 3, 2).map((g) => g.winner)).toEqual(["T10", "Sony"]);
+	});
+
 	it("excludes games with fewer than vipMinPlayers", () => {
 		log.recordGame(statsPayload({ players: ["Laser", "T10"], winner: "T10" }));
 		expect(statsFor("T10").gamesPlayed).toBe(0);

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { Logger } from "../utils/Logger";
-import { PlayerStats } from "../types/index";
+import { PlayerStats, RecentGame } from "../types/index";
 
 interface PerPlayerStats {
 	eliminations: number;
@@ -129,14 +129,26 @@ export class GameLog {
 	// Only games with >= vipMinPlayers VIP participants count.
 	// afterMs: if > 0, only count games that started AFTER this timestamp (to avoid
 	// double-counting with HistoryStore when a history export has been loaded).
-	getPlayerStats(vipPlayers: string[], vipMinPlayers: number, afterMs = 0): PlayerStats[] {
-		const qualifying = this.records.filter(
+	private qualifyingRecords(vipPlayers: string[], vipMinPlayers: number, afterMs = 0): GameRecord[] {
+		return this.records.filter(
 			(r) =>
 				r.winner !== null &&
 				r.players.every((p) => vipPlayers.includes(p)) &&
 				r.players.length >= vipMinPlayers &&
 				(afterMs === 0 || r.timestamp > afterMs),
 		);
+	}
+
+	// Latest qualifying games, oldest first — feeds the scoreboard's "10 senaste" chart
+	getRecentGames(vipPlayers: string[], vipMinPlayers: number, limit = 10): RecentGame[] {
+		return this.qualifyingRecords(vipPlayers, vipMinPlayers)
+			.sort((a, b) => a.timestamp - b.timestamp)
+			.slice(-limit)
+			.map((r) => ({ timestamp: r.timestamp, players: r.players, winner: r.winner as string }));
+	}
+
+	getPlayerStats(vipPlayers: string[], vipMinPlayers: number, afterMs = 0): PlayerStats[] {
+		const qualifying = this.qualifyingRecords(vipPlayers, vipMinPlayers, afterMs);
 		return vipPlayers.map((nick) => {
 			const myGames = qualifying.filter((r) => r.players.includes(nick));
 			const wins = myGames.filter((r) => r.winner === nick).length;
